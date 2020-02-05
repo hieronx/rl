@@ -2,6 +2,7 @@ import argparse
 import sys
 import numpy as np
 import random
+import math
 
 from hex_skeleton import HexBoard
 
@@ -9,12 +10,14 @@ char_to_row_idx = { 'a': 0, 'b': 1, 'c': 2, 'd': 3 }
 
 class HexMinimax:
 
-    def __init__(self, board_size):
-        self.board_size = board_size
+    def __init__(self, args):
+        self.board_size = args.size
+        self.search_depth = args.depth
+        self.eval_method = args.eval
 
     def run_interactively(self, board):
         while not board.game_over:
-            board.place(self.get_next_move(board), HexBoard.RED)
+            board.place(self.get_next_move(board, self.search_depth), HexBoard.RED)
             board.print()
             print('\n')
 
@@ -28,18 +31,24 @@ class HexMinimax:
             
             board.place((char_to_row_idx[x], int(y)), HexBoard.BLUE)
 
+        if board.check_win(HexBoard.RED): print('The AI won.')
+        else: print('You won.')
+
     def simulate(self, board):
         while not board.game_over:
-            board.place(self.get_next_move(board), HexBoard.RED)
-            board.place(self.get_next_move(board), HexBoard.BLUE)
+            board.place(self.get_next_move(board, self.search_depth), HexBoard.RED)
+            board.place(self.get_next_move(board, self.search_depth), HexBoard.BLUE)
 
         if board.check_win(HexBoard.RED): print('Red won.')
         else: print('Blue won.')
 
         board.print()
 
-    def get_next_move(self, board):
+    def get_next_move(self, board, depth):
         moves = self.get_possible_moves(board)
+
+        alpha = -math.inf
+        beta = math.inf
 
         return random.choice(moves)
     
@@ -53,17 +62,23 @@ class HexMinimax:
         return empty_coordinates
     
     def evaluate_board(self, board):
-        return np.random.uniform(0, 1)
+        if self.eval_method == 'dijkstra':
+            # TODO: implement Dijkstra
+            return np.random.uniform(0, 1)
 
+        else:
+            return np.random.uniform(0, 1)
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description="Minimax for Hex", formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+    parser = argparse.ArgumentParser(description="Minimax for Hex")
     parser.add_argument('--simulate', action='store_true', help='If added, simulates both sides')
     parser.add_argument('--size', type=int, default=4, help='Set the board size')
+    parser.add_argument('--depth', type=int, default=3, help='Set the search depth')
+    parser.add_argument('--eval', choices=['dijkstra', 'random'], default='dijkstra', help='Choose the evaluation method')
     args = parser.parse_args(sys.argv[1:])
 
-    hex_minimax = HexMinimax(args.size)
+    hex_minimax = HexMinimax(args)
     board = HexBoard(args.size)
 
     if args.simulate: hex_minimax.simulate(board)
-    else: hex_minimax.run_interactively()
+    else: hex_minimax.run_interactively(board)
