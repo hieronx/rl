@@ -89,4 +89,4 @@ class HexBoard:
                 else:
                     print("- ",end="")
         print("|")
-    print("   -----------------------\n")
+    print("   -----------------------")
