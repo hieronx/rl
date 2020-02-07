@@ -1,4 +1,3 @@
-from util import cls
 from copy import deepcopy
 
 
@@ -123,7 +122,6 @@ class HexBoard:
 
     def print(self):
         """Outputs the board pieces to the console"""
-        cls()
         print("   ", end="")
 
         for y in range(self.size):
