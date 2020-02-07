@@ -68,6 +68,12 @@ class HexBoard:
       if self.traverse(color, move, {}):
         return True
     return False
+  
+  def get_source_coordinates(self, color):
+    if color == HexBoard.BLUE:
+      return [(0, i) for i in range(self.size)]
+    else:
+      return [(i, 0) for i in range(self.size)]
 
   def print(self):
     print("   ",end="")

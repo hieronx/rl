@@ -61,13 +61,21 @@ class HexMinimax:
 
         return empty_coordinates
     
-    def evaluate_board(self, board):
+    def evaluate_board(self, board, color):
+        # TODO: implement Dijkstra
+        # For each color
+        #   source_positions = positions of color on the source border
+        #   paths = [find_shortest_path_to_border(board, color, position_source_border) for position in source_positions]
+        #   shortest_path =  min(paths)
+        # return shortest_path_red - shortest_path_blue
         if self.eval_method == 'dijkstra':
-            # TODO: implement Dijkstra
             return np.random.uniform(0, 1)
-
         else:
             return np.random.uniform(0, 1)
+
+    def find_shortest_path_to_border(self, board, color, from_coordinate):
+        # Only count nodes without placed positions of this color
+        return 0
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="Minimax for Hex")
