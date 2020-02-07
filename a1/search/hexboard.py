@@ -64,7 +64,12 @@ class HexBoard:
     return (color == HexBoard.BLUE and nx == self.size-1) or (color == HexBoard.RED and ny == self.size-1)
 
   def traverse(self, color, move, visited):
-    """?"""
+    """
+    Returns true if we can reach the end of the board using this move.
+    Returns false if the next move is already visited or the wrong color.
+    If we did not reach the end we recursively check each of the neighbors,
+    and if we reach the otherside that way we return true as well.
+    """
     if not self.is_color(move, color) or (move in visited and visited[move]): return False
     if self.border(color, move): return True
     visited[move] = True
@@ -73,7 +78,7 @@ class HexBoard:
     return False
 
   def check_win(self, color):
-    """Check if we have reached the opposing side for the provided color"""
+    """Check if we have made a snake from the source side to the opposing side for the provided color"""
     for i in range(self.size):
       if color == HexBoard.BLUE: move = (0,i)
       else: move = (i,0)
