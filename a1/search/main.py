@@ -18,8 +18,7 @@ class HexMinimax:
 
     def run_interactively(self, board):
         while not board.game_over:
-            board.place(self.get_next_move(
-                board, self.search_depth), HexBoard.RED)
+            board.place(self.get_next_move(board, self.search_depth), HexBoard.RED)
             board.print()
             print('\n')
 
@@ -41,10 +40,8 @@ class HexMinimax:
 
     def simulate(self, board):
         while not board.game_over:
-            board.place(self.get_next_move(
-                board, self.search_depth), HexBoard.RED)
-            board.place(self.get_next_move(
-                board, self.search_depth), HexBoard.BLUE)
+            board.place(self.get_next_move(board, self.search_depth), HexBoard.RED)
+            board.place(self.get_next_move(board, self.search_depth), HexBoard.BLUE)
 
         if board.check_win(HexBoard.RED):
             print('Red won.')
