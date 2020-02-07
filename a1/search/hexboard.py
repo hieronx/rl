@@ -1,4 +1,5 @@
 from util import cls
+from copy import copy
 
 
 class HexBoard:
@@ -42,6 +43,12 @@ class HexBoard:
             self.board[coordinates] = color
             if self.check_win(HexBoard.RED) or self.check_win(HexBoard.BLUE):
                 self.game_over = True
+
+    def make_move(self, coordinates, color):
+        """Should return the new board without modifying the existing board"""
+        new_board = copy(self)
+        new_board.place(coordinates, color)
+        return new_board
 
     def get_opposite_color(self, current_color):
         """Returns the opposite color of the provided color. Returns BLUE if the color is not recognized"""
