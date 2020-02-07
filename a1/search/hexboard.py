@@ -1,3 +1,5 @@
+from util import cls
+
 class HexBoard:
   """This class holds all the data for a single board state"""
 
@@ -94,6 +96,7 @@ class HexBoard:
 
   def print(self):
     """Outputs the board pieces to the console"""
+    cls()
     print("   ",end="")
     for y in range(self.size):
         print(chr(y+ord('a')),"",end="")
