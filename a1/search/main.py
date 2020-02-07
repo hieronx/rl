@@ -47,8 +47,8 @@ class HexMinimax:
     def get_next_move(self, board, depth):
         moves = self.get_possible_moves(board)
 
-        alpha = -math.inf
-        beta = math.inf
+        lower_bound_a = -math.inf
+        upper_bound_b = math.inf
 
         return random.choice(moves)
     

@@ -89,6 +89,7 @@ class HexBoard:
     return False
   
   def get_source_coordinates(self, color):
+    """Returns the coordinates of the left border (for blue) or the top border (for red)"""
     if color == HexBoard.BLUE:
       return [(0, i) for i in range(self.size)]
     else:
