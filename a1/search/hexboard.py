@@ -99,7 +99,7 @@ class HexBoard:
     cls()
     print("   ",end="")
     for y in range(self.size):
-        print(chr(y+ord('a')),"",end="")
+        print(chr(y + ord('a')), "",end="")
     print("")
     print(" -----------------------")
     for y in range(self.size):
