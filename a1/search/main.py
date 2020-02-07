@@ -4,16 +4,16 @@ import numpy as np
 import random
 import math
 
-from hex_skeleton import HexBoard
+from hexboard import HexBoard
 
 char_to_row_idx = { 'a': 0, 'b': 1, 'c': 2, 'd': 3 }
 
 class HexMinimax:
 
-    def __init__(self, args):
-        self.board_size = args.size
-        self.search_depth = args.depth
-        self.eval_method = args.eval
+    def __init__(self, size, depth, eval_method):
+        self.board_size = size
+        self.search_depth = depth
+        self.eval_method = eval_method
 
     def run_interactively(self, board):
         while not board.game_over:
@@ -77,7 +77,7 @@ if __name__ == '__main__':
     parser.add_argument('--eval', choices=['dijkstra', 'random'], default='dijkstra', help='Choose the evaluation method')
     args = parser.parse_args(sys.argv[1:])
 
-    hex_minimax = HexMinimax(args)
+    hex_minimax = HexMinimax(args.size, args.depth, args.eval)
     board = HexBoard(args.size)
 
     if args.simulate: hex_minimax.simulate(board)
