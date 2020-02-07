@@ -1,120 +1,134 @@
 from util import cls
 
+
 class HexBoard:
-  """This class holds all the data for a single board state"""
+    """This class holds all the data for a single board state"""
 
-  BLUE = 1
-  RED = 2
-  EMPTY = 3
+    BLUE = 1
+    RED = 2
+    EMPTY = 3
 
-  def __init__(self, board_size):
-    """Creates a new empty board with the provided size"""
-    self.board = {}
-    self.size = board_size
-    self.game_over = False
-    
-    for x in range(board_size):
-      for y in range (board_size):
-        self.board[x,y] = HexBoard.EMPTY
+    def __init__(self, board_size):
+        """Creates a new empty board with the provided size"""
+        self.board = {}
+        self.size = board_size
+        self.game_over = False
 
-  def is_game_over():
-    """Returns if the game is over already"""
-    return self.game_over
+        for x in range(board_size):
+            for y in range(board_size):
+                self.board[x, y] = HexBoard.EMPTY
 
-  def is_empty(self, coordinates):
-    """Returns if the board is empty at the provided coordinate"""
-    return self.board[coordinates] == HexBoard.EMPTY
+    def is_game_over():
+        """Returns if the game is over already"""
+        return self.game_over
 
-  def is_color(self, coordinates, color):
-    """Returns if the board is a certain color at the provided coordinate"""
-    return self.board[coordinates] == color
+    def is_empty(self, coordinates):
+        """Returns if the board is empty at the provided coordinate"""
+        return self.board[coordinates] == HexBoard.EMPTY
 
-  def get_color(self, coordinates):
-    """Returns the color at the provided board coordinate"""
-    if coordinates == (-1,-1):
-      return HexBoard.EMPTY
-    return self.board[coordinates]
+    def is_color(self, coordinates, color):
+        """Returns if the board is a certain color at the provided coordinate"""
+        return self.board[coordinates] == color
 
-  def place(self, coordinates, color):
-    """Places the provided color at the board coordinate. This modifies the interior board state of this object"""
-    if not self.game_over and self.board[coordinates] == HexBoard.EMPTY:
-      self.board[coordinates] = color
-      if self.check_win(HexBoard.RED) or self.check_win(HexBoard.BLUE):
-        self.game_over = True
+    def get_color(self, coordinates):
+        """Returns the color at the provided board coordinate"""
+        if coordinates == (-1, -1):
+            return HexBoard.EMPTY
+        return self.board[coordinates]
 
-  def get_opposite_color(self, current_color):
-    """Returns the opposite color of the provided color. Returns BLUE if the color is not recognized"""
-    if current_color == HexBoard.BLUE:
-      return HexBoard.RED
-    return HexBoard.BLUE
+    def place(self, coordinates, color):
+        """Places the provided color at the board coordinate. This modifies the interior board state of this object"""
+        if not self.game_over and self.board[coordinates] == HexBoard.EMPTY:
+            self.board[coordinates] = color
+            if self.check_win(HexBoard.RED) or self.check_win(HexBoard.BLUE):
+                self.game_over = True
 
-  def get_neighbors(self, coordinates):
-    """Returns a list with the coordinates of every possible/valid neighbor."""
-    (cx,cy) = coordinates
-    neighbors = []
-    if cx-1>=0:   neighbors.append((cx-1,cy))
-    if cx+1<self.size: neighbors.append((cx+1,cy))
-    if cx-1>=0    and cy+1<self.size-1: neighbors.append((cx-1,cy+1))
-    if cx+1<self.size  and cy-1>=0: neighbors.append((cx+1,cy-1))
-    if cy+1<self.size: neighbors.append((cx,cy+1))
-    if cy-1>=0:   neighbors.append((cx,cy-1))
-    return neighbors
+    def get_opposite_color(self, current_color):
+        """Returns the opposite color of the provided color. Returns BLUE if the color is not recognized"""
+        if current_color == HexBoard.BLUE:
+            return HexBoard.RED
+        return HexBoard.BLUE
 
-  def border(self, color, move):
-    """Returns if we have reached the border (goal) for a specific color"""
-    (nx, ny) = move
-    return (color == HexBoard.BLUE and nx == self.size-1) or (color == HexBoard.RED and ny == self.size-1)
+    def get_neighbors(self, coordinates):
+        """Returns a list with the coordinates of every possible/valid neighbor."""
+        (cx, cy) = coordinates
+        neighbors = []
+        if cx-1 >= 0:
+            neighbors.append((cx-1, cy))
+        if cx+1 < self.size:
+            neighbors.append((cx+1, cy))
+        if cx-1 >= 0 and cy+1 < self.size-1:
+            neighbors.append((cx-1, cy+1))
+        if cx+1 < self.size and cy-1 >= 0:
+            neighbors.append((cx+1, cy-1))
+        if cy+1 < self.size:
+            neighbors.append((cx, cy+1))
+        if cy-1 >= 0:
+            neighbors.append((cx, cy-1))
+        return neighbors
 
-  def traverse(self, color, move, visited):
-    """
-    Returns true if we can reach the end of the board using this move.
-    Returns false if the next move is already visited or the wrong color.
-    If we did not reach the end we recursively check each of the neighbors,
-    and if we reach the otherside that way we return true as well.
-    """
-    if not self.is_color(move, color) or (move in visited and visited[move]): return False
-    if self.border(color, move): return True
-    visited[move] = True
-    for n in self.get_neighbors(move):
-      if self.traverse(color, n, visited): return True
-    return False
+    def border(self, color, move):
+        """Returns if we have reached the border (goal) for a specific color"""
+        (nx, ny) = move
+        return (color == HexBoard.BLUE and nx == self.size-1) or (color == HexBoard.RED and ny == self.size-1)
 
-  def check_win(self, color):
-    """Check if we have made a snake from the source side to the opposing side for the provided color"""
-    for i in range(self.size):
-      if color == HexBoard.BLUE: move = (0,i)
-      else: move = (i,0)
-      if self.traverse(color, move, {}):
-        return True
-    return False
-  
-  def get_source_coordinates(self, color):
-    """Returns the coordinates of the left border (for blue) or the top border (for red)"""
-    if color == HexBoard.BLUE:
-      return [(0, i) for i in range(self.size)]
-    else:
-      return [(i, 0) for i in range(self.size)]
+    def traverse(self, color, move, visited):
+        """
+        Returns true if we can reach the end of the board using this move.
+        Returns false if the next move is already visited or the wrong color.
+        If we did not reach the end we recursively check each of the neighbors,
+        and if we reach the otherside that way we return true as well.
+        """
+        if not self.is_color(move, color) or (move in visited and visited[move]):
+            return False
+        if self.border(color, move):
+            return True
+        visited[move] = True
+        for n in self.get_neighbors(move):
+            if self.traverse(color, n, visited):
+                return True
+        return False
 
-  def print(self):
-    """Outputs the board pieces to the console"""
-    cls()
-    print("   ",end="")
-    for y in range(self.size):
-        print(chr(y + ord('a')), "",end="")
-    print("")
-    print(" -----------------------")
-    for y in range(self.size):
-        print(y, "|",end="")
-        for z in range(y):
-            print(" ", end="")
-        for x in range(self.size):
-            piece = self.board[x,y]
-            if piece == HexBoard.BLUE: print("b ",end="")
-            elif piece == HexBoard.RED: print("r ",end="")
+    def check_win(self, color):
+        """Check if we have made a snake from the source side to the opposing side for the provided color"""
+        for i in range(self.size):
+            if color == HexBoard.BLUE:
+                move = (0, i)
             else:
-                if x==self.size:
-                    print("-",end="")
+                move = (i, 0)
+            if self.traverse(color, move, {}):
+                return True
+        return False
+
+    def get_source_coordinates(self, color):
+        """Returns the coordinates of the left border (for blue) or the top border (for red)"""
+        if color == HexBoard.BLUE:
+            return [(0, i) for i in range(self.size)]
+        else:
+            return [(i, 0) for i in range(self.size)]
+
+    def print(self):
+        """Outputs the board pieces to the console"""
+        cls()
+        print("   ", end="")
+        for y in range(self.size):
+            print(chr(y + ord('a')), "", end="")
+        print("")
+        print(" -----------------------")
+        for y in range(self.size):
+            print(y, "|", end="")
+            for z in range(y):
+                print(" ", end="")
+            for x in range(self.size):
+                piece = self.board[x, y]
+                if piece == HexBoard.BLUE:
+                    print("b ", end="")
+                elif piece == HexBoard.RED:
+                    print("r ", end="")
                 else:
-                    print("- ",end="")
-        print("|")
-    print("   -----------------------")
+                    if x == self.size:
+                        print("-", end="")
+                    else:
+                        print("- ", end="")
+            print("|")
+        print("   -----------------------")
