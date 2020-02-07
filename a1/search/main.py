@@ -17,9 +17,8 @@ class HexMinimax:
 
     def run_interactively(self, board):
         while not board.game_over:
-            move, _, nodes_searched = self.get_next_move(board, self.search_depth, HexBoard.RED)
+            move = self.get_next_move(board, self.search_depth, HexBoard.RED)
             board.place(move, HexBoard.RED)
-            print("Searched %d nodes" % nodes_searched)
             board.print()
             print('\n')
 
@@ -51,31 +50,50 @@ class HexMinimax:
 
         board.print()
 
-    def get_next_move(self, board, depth, color, maximizing = True):
+    def alpha_beta_search(self, board, depth, color, lower_bound_a, upper_bound_b, maximizing = True):
         if depth == 0:
             return (None, self.evaluate_board(board, color), 1)
 
         moves = self.get_possible_moves(board)
-
-        # lower_bound_a = -math.inf
-        # upper_bound_b = math.inf
 
         best_score = math.inf if not maximizing else -math.inf
         best_move = None
         total_nodes_searched = 0
         for move in moves:
             new_board = board.make_move(move, color)
-            _, score, nodes_searched = self.get_next_move(new_board, depth - 1, board.get_opposite_color(color), not maximizing)
+            _, score, nodes_searched = self.alpha_beta_search(new_board, depth - 1, board.get_opposite_color(color), lower_bound_a, upper_bound_b, not maximizing)
             total_nodes_searched += nodes_searched
             
             if maximizing and score > best_score:
                 best_move = move
                 best_score = score
+                
+                if score >= lower_bound_a:
+                    lower_bound_a = score
+
+                    if lower_bound_a >= upper_bound_b: 
+                        return (best_move, best_score, total_nodes_searched)
+
             elif not maximizing and score < best_score:
                 best_move = move
                 best_score = score
 
+                if score <= upper_bound_b:
+                    upper_bound_b = score
+                    
+                    if upper_bound_b <= lower_bound_a:
+                        return (best_move, best_score, total_nodes_searched)
+
         return (best_move, best_score, total_nodes_searched)
+
+
+    def get_next_move(self, board, depth, color):
+        lower_bound_a = -math.inf
+        upper_bound_b = math.inf
+        
+        move, _, nodes_searched = self.alpha_beta_search(board, depth, color, lower_bound_a, upper_bound_b, True)
+        print("Searched %d nodes" % nodes_searched)
+        return move
 
     def get_possible_moves(self, board):
         empty_coordinates = []

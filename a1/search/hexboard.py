@@ -1,5 +1,5 @@
 from util import cls
-from copy import copy
+from copy import deepcopy
 
 
 class HexBoard:
@@ -46,7 +46,7 @@ class HexBoard:
 
     def make_move(self, coordinates, color):
         """Should return the new board without modifying the existing board"""
-        new_board = copy(self)
+        new_board = deepcopy(self)
         new_board.place(coordinates, color)
         return new_board
 
