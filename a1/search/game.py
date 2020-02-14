@@ -23,7 +23,7 @@ class HexGame:
             board.print()
             print('\n')
 
-            while True:
+            while True and not board.game_over:
                 move = input("Your move: ")
 
                 if len(move) == 2:
