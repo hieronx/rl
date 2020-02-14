@@ -76,7 +76,7 @@ class Evaluate:
             closed_list.append(node)
         
         # return the path between these two points
-        if end_node == None: return -1
+        if end_node == None: return math.inf
         return end_node.distance
 
     def get_cost_between(self, board, coordA, coordB):
