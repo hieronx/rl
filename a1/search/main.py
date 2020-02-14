@@ -22,19 +22,22 @@ def evaluate():
 
         for _ in tqdm(range(game_cnt)):
             board = HexBoard(board_size)
-            while not board.game_over:
-                # TODO: reverse starting positions each game
+            first_player, second_player = m1, m2
 
-                p1_move = m1.get_next_move(board, p1['depth'], HexBoard.RED)
-                board.place(p1_move, HexBoard.RED)
+            while not board.game_over:
+                first_player = m2 if first_player == m1 else m1
+                second_player = m2 if second_player == m1 else m1
+
+                first_move = first_player.get_next_move(board, HexBoard.RED)
+                board.place(first_move, HexBoard.RED)
 
                 if not board.game_over:
-                    p2_move = m2.get_next_move(board, p2['depth'], HexBoard.BLUE)
+                    second_move = second_player.get_next_move(board, HexBoard.BLUE)
 
-                    if not p2_move:
+                    if not second_move:
                         board.print()
                     else:
-                        board.place(p2_move, HexBoard.BLUE)
+                        board.place(second_move, HexBoard.BLUE)
             
             winner = r1 if board.check_win(HexBoard.RED) else r2
             loser = r1 if board.check_win(HexBoard.BLUE) else r2

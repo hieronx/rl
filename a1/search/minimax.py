@@ -56,12 +56,12 @@ class Minimax:
 
         return (best_move, best_score, total_nodes_searched, total_cutoffs)
 
-    def get_next_move(self, board, depth, color):
+    def get_next_move(self, board, color):
         start_time = time.time()
         lower_bound_a = -math.inf
         upper_bound_b = math.inf
         
-        move, _, nodes_searched, cutoffs = self.alpha_beta_search(board, depth, color, lower_bound_a, upper_bound_b, True)
+        move, _, nodes_searched, cutoffs = self.alpha_beta_search(board, self.search_depth, color, lower_bound_a, upper_bound_b, True)
 
         if self.live_play:
             cls()
