@@ -20,22 +20,17 @@ class Evaluate:
         for from_coord in source_coords:
             for to_coord in target_coords:
                 # Only count nodes without placed positions of this color
-                path = self.get_path_between(from_coord, to_coord, color)
+                score = self.get_path_between(board, from_coord, to_coord, color)
 
-                # invalid or impossible path
-                if len(path) < 1: 
-                    continue
-
-                score = len(path)
                 if score < min_score:
                     min_score = score
 
         return min_score
 
-    def get_path_between(self, from_coord, to_coord, color):
+    def get_path_between(self, board, from_coord, to_coord, color):
         open_list = [Node(from_coord, 0)]
         closed_list = []
-        endNode = None
+        end_node = None
 
         while len(open_list) > 0:
             # find the node in the open_list with the lowest distance
@@ -45,44 +40,46 @@ class Evaluate:
             neighbors = board.get_traversable_neighbors(node.coord, color)
             for neighbor in neighbors:
                 
-                cost = self.get_cost_between(neighbor, node.coord)
+                cost = self.get_cost_between(board, neighbor, node.coord)
 
-                neighborNode = Node(neighbor, node.distance + cost)
-                neighborNode.prevNode = node
+                neighbor_node = Node(neighbor, node.distance + cost)
+                neighbor_node.prev_node = node
 
                 if neighbor == to_coord: 
-                    endNode = neighborNode
+                    end_node = neighbor_node
                     break
 
                 found = False
                 for otherNode in open_list:
-                    if otherNode.coord == neighborNode.coord:
-                        if otherNode.distance > neighborNode.coord:
-                            otherNode.distance = neighborNode.distance
-                            otherNode.prevNode = neighborNode.prevNode
-                            found = True
+                    if otherNode.coord == neighbor_node.coord:
+                        found = True
+                        if otherNode.distance > neighbor_node.distance:
+                            otherNode.distance = neighbor_node.distance
+                            otherNode.prev_node = neighbor_node.prev_node
+                            
+                
                 # we already have an entry for this coord, so no need to continue this
-                if found: continue
-
-                found = False
+                
                 for otherNode in closed_list:
-                    if otherNode.coord == neighborNode.coord:
-                        if otherNode.distance > neighborNode.coord:
-                            otherNode.distance = neighborNode.distance
-                            otherNode.prevNode = neighborNode.prevNode
-                            found = True
-                if found: continue
-
+                    if otherNode.coord == neighbor_node.coord:
+                        found = True
+                        if otherNode.distance > neighbor_node.distance:
+                            otherNode.distance = neighbor_node.distance
+                            otherNode.prev_node = neighbor_node.prev_node
+                            
+                
                 # if we make it this far, please add this neighbor to the open_list
-                open_list.append(neighborNode)
+                if not found: 
+                    open_list.append(neighbor_node)
                 
             # we're done with this node, add it to the closed list
             closed_list.append(node)
         
         # return the path between these two points
-        return self.get_path_from_end()
+        if end_node == None: return -1
+        return end_node.distance
 
-    def get_cost_between(self, coordA, coordB):
+    def get_cost_between(self, board, coordA, coordB):
         colorA = board.get_color(coordA)
         colorB = board.get_color(coordB)
         if colorA == board.EMPTY or colorB == board.EMPTY:
@@ -91,18 +88,8 @@ class Evaluate:
             return 0
         return 1
 
-    def get_path_from_end(self, endNode):
-        if endNode == None: 
-            return []
-        path = []
-        node = endNode
-        while node.prevNode != None:
-            path.append(node)
-            node = node.prevNode
-        return path
-
     def find_lowest_dist_node(self, open_list):
-        record = list[0]
+        record = open_list[0]
         for node in open_list:
             if node.distance <= record.distance:
                 record = node
@@ -118,7 +105,7 @@ class Evaluate:
             return np.random.uniform(0, 1)
 
 class Node:
-    prevNode = None
+    prev_node = None
     distance = math.inf
     coord = None
 
