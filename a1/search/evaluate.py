@@ -13,12 +13,16 @@ class Evaluate:
     def find_shortest_path_to_border(self, board, color):
         source_coords = board.get_source_coordinates(color)
         target_coords = board.get_target_coordinates(color)
+        opposite_color = board.get_opposite_color(color)
         
         min_score = math.inf
 
         #For every combination of target and source coord
         for from_coord in source_coords:
             for to_coord in target_coords:
+                # skip if the target or destination coord is already taken by the enemy team
+                if board.get_color(from_coord) == opposite_color or board.get_color(to_coord) == opposite_color:
+                    continue
                 # Only count nodes without placed positions of this color
                 score = self.get_path_between(board, from_coord, to_coord, color)
 
