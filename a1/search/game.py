@@ -5,6 +5,7 @@ from util import cls
 from hexboard import HexBoard
 from minimax import Minimax
 from evaluate import Evaluate
+import time
 
 char_to_row_idx = {'a': 0, 'b': 1, 'c': 2, 'd': 3}
 

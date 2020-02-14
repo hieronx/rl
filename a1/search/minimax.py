@@ -4,6 +4,8 @@ import numpy as np
 from util import cls
 from hexboard import HexBoard
 
+import time
+
 char_to_row_idx = {'a': 0, 'b': 1, 'c': 2, 'd': 3}
 
 class Minimax:
@@ -55,6 +57,7 @@ class Minimax:
         return (best_move, best_score, total_nodes_searched, total_cutoffs)
 
     def get_next_move(self, board, depth, color):
+        start_time = time.time()
         lower_bound_a = -math.inf
         upper_bound_b = math.inf
         
@@ -64,6 +67,8 @@ class Minimax:
             cls()
             print("Searched %d nodes and experienced %d cutoffs" % (nodes_searched, cutoffs))
 
+        elapsed_time = time.time() - start_time
+        print("Generation of this next move took %f seconds." % elapsed_time)
         return move
 
     def get_possible_moves(self, board):
