@@ -5,7 +5,6 @@ from hexboard import HexBoard
 from minimax import Minimax
 from evaluate import Evaluate
 
-
 class TestHexMinimax(unittest.TestCase):
 
     def test_win_detection(self):
@@ -59,25 +58,49 @@ class TestHexMinimax(unittest.TestCase):
                          target_coordinates_correct_len)
 
     def test_possible_moves(self):
-        hex_minimax = Minimax(2, 1, 'random')
+        evaluate = Evaluate('random')
+        minimax = Minimax(2, 1, evaluate)
 
         board = HexBoard(2)
-        possible_moves = hex_minimax.get_possible_moves(board)
+        possible_moves = minimax.get_possible_moves(board)
         possible_moves_correct_len = 4
 
         self.assertEqual(len(possible_moves), possible_moves_correct_len)
+
+    def test_minimax(self):
+        evaluate = Evaluate('Dijkstra')
+        board = HexBoard(3)
+
+        board.place((0, 0), HexBoard.RED)
+        board.place((0, 1), HexBoard.RED)
+
+        self.assertFalse(board.game_over)
+
+        # minimax = Minimax(3, 3, evaluate)
+        # move = minimax.get_next_move(board, HexBoard.RED)
 
     def test_board_evaluation(self):
         evaluate = Evaluate('Dijkstra')
         board = HexBoard(3)
 
         board.place((0, 0), HexBoard.BLUE)
-        board.place((0, 1), HexBoard.BLUE)
-        board.place((0, 2), HexBoard.BLUE)
-
-        # print('%s >? %s' % (evaluate.evaluate_board(board, HexBoard.BLUE), evaluate.evaluate_board(board, HexBoard.RED)))
 
         self.assertTrue(evaluate.evaluate_board(board, HexBoard.BLUE) > evaluate.evaluate_board(board, HexBoard.RED))
+
+        board = HexBoard(3)
+
+        board.place((0, 0), HexBoard.BLUE)
+        board.place((0, 1), HexBoard.BLUE)
+
+        self.assertTrue(evaluate.evaluate_board(board, HexBoard.BLUE) > evaluate.evaluate_board(board, HexBoard.RED))
+
+        board = HexBoard(3)
+
+        board.place((0, 0), HexBoard.RED)
+        board.place((0, 1), HexBoard.RED)
+        board.place((0, 2), HexBoard.RED)
+
+        self.assertTrue(evaluate.evaluate_board(board, HexBoard.RED) > evaluate.evaluate_board(board, HexBoard.BLUE))
 
 
 if __name__ == '__main__':

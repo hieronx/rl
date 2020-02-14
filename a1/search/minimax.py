@@ -28,9 +28,11 @@ class Minimax:
         total_nodes_searched = 0
         total_cutoffs = 0
 
+        current_color = color if maximizing else board.get_opposite_color(color)
+
         for move in moves:
-            new_board = board.make_move(move, color)
-            _, score, nodes_searched, cutoffs = self.alpha_beta_search(new_board, depth - 1, board.get_opposite_color(color), lower_bound_a, upper_bound_b, not maximizing)
+            new_board = board.make_move(move, current_color)
+            _, score, nodes_searched, cutoffs = self.alpha_beta_search(new_board, depth - 1, color, lower_bound_a, upper_bound_b, not maximizing)
             total_nodes_searched += nodes_searched
             total_cutoffs += cutoffs
 
