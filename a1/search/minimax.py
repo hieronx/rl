@@ -8,10 +8,11 @@ char_to_row_idx = {'a': 0, 'b': 1, 'c': 2, 'd': 3}
 
 class Minimax:
 
-    def __init__(self, size, depth, evaluate_class):
+    def __init__(self, size, depth, evaluate_class, live_play = True):
         self.board_size = size
         self.search_depth = depth
         self.evaluate = evaluate_class
+        self.live_play = live_play
 
     def alpha_beta_search(self, board, depth, color, lower_bound_a, upper_bound_b, maximizing = True):
         if depth == 0:
@@ -58,8 +59,11 @@ class Minimax:
         upper_bound_b = math.inf
         
         move, _, nodes_searched, cutoffs = self.alpha_beta_search(board, depth, color, lower_bound_a, upper_bound_b, True)
-        cls()
-        print("Searched %d nodes and experienced %d cutoffs" % (nodes_searched, cutoffs))
+
+        if self.live_play:
+            cls()
+            print("Searched %d nodes and experienced %d cutoffs" % (nodes_searched, cutoffs))
+
         return move
 
     def get_possible_moves(self, board):
