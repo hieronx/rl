@@ -50,22 +50,22 @@ class Evaluate:
                     break
 
                 found = False
-                for otherNode in open_list:
-                    if otherNode.coord == neighbor_node.coord:
+                for other_node in open_list:
+                    if other_node.coord == neighbor_node.coord:
                         found = True
-                        if otherNode.distance > neighbor_node.distance:
-                            otherNode.distance = neighbor_node.distance
-                            otherNode.prev_node = neighbor_node.prev_node
+                        if other_node.distance > neighbor_node.distance:
+                            other_node.distance = neighbor_node.distance
+                            other_node.prev_node = neighbor_node.prev_node
                             
                 
                 # we already have an entry for this coord, so no need to continue this
                 
-                for otherNode in closed_list:
-                    if otherNode.coord == neighbor_node.coord:
+                for other_node in closed_list:
+                    if other_node.coord == neighbor_node.coord:
                         found = True
-                        if otherNode.distance > neighbor_node.distance:
-                            otherNode.distance = neighbor_node.distance
-                            otherNode.prev_node = neighbor_node.prev_node
+                        if other_node.distance > neighbor_node.distance:
+                            other_node.distance = neighbor_node.distance
+                            other_node.prev_node = neighbor_node.prev_node
                             
                 
                 # if we make it this far, please add this neighbor to the open_list
