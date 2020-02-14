@@ -42,7 +42,6 @@ class TestHexMinimax(unittest.TestCase):
 
         board = HexBoard(board_size)
         source_coordinates = board.get_source_coordinates(HexBoard.BLUE)
-        print(source_coordinates)
 
         source_coordinates_correct_len = board_size
         self.assertEqual(len(source_coordinates),
