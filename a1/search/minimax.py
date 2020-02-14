@@ -21,7 +21,7 @@ class Minimax:
         moves = self.get_possible_moves(board)
 
         best_score = math.inf if not maximizing else -math.inf
-        best_move = None
+        best_move = moves[0] if len(moves) > 0 else None
 
         total_nodes_searched = 0
         total_cutoffs = 0

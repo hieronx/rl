@@ -96,6 +96,10 @@ class Evaluate:
         return record
 
     def evaluate_board(self, board, color):
+        if board.check_draw(): return 0
+        if board.check_win(color): return math.inf
+        if board.check_win(board.get_opposite_color(color)): return -math.inf
+
         if self.eval_method == 'Dijkstra':
             player_sp = self.find_shortest_path_to_border(board, color)
             opponent_sp = self.find_shortest_path_to_border(board, board.get_opposite_color(color))
