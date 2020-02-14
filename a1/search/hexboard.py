@@ -18,7 +18,7 @@ class HexBoard:
             for y in range(board_size):
                 self.board[x, y] = HexBoard.EMPTY
 
-    def is_game_over():
+    def is_game_over(self):
         """Returns if the game is over already"""
         return self.game_over
 
