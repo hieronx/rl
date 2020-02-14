@@ -2,7 +2,8 @@ import unittest
 import numpy as np
 
 from hexboard import HexBoard
-from main import HexMinimax
+from minimax import Minimax
+from evaluate import Evaluate
 
 
 class TestHexMinimax(unittest.TestCase):
@@ -58,13 +59,25 @@ class TestHexMinimax(unittest.TestCase):
                          target_coordinates_correct_len)
 
     def test_possible_moves(self):
-        hex_minimax = HexMinimax(2, 1, 'random')
+        hex_minimax = Minimax(2, 1, 'random')
 
         board = HexBoard(2)
         possible_moves = hex_minimax.get_possible_moves(board)
         possible_moves_correct_len = 4
 
         self.assertEqual(len(possible_moves), possible_moves_correct_len)
+
+    def test_board_evaluation(self):
+        evaluate = Evaluate('Dijkstra')
+        board = HexBoard(3)
+
+        board.place((0, 0), HexBoard.BLUE)
+        board.place((0, 1), HexBoard.BLUE)
+        board.place((0, 2), HexBoard.BLUE)
+
+        # print('%s >? %s' % (evaluate.evaluate_board(board, HexBoard.BLUE), evaluate.evaluate_board(board, HexBoard.RED)))
+
+        self.assertTrue(evaluate.evaluate_board(board, HexBoard.BLUE) > evaluate.evaluate_board(board, HexBoard.RED))
 
 
 if __name__ == '__main__':

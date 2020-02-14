@@ -17,7 +17,7 @@ class Minimax:
         self.live_play = live_play
 
     def alpha_beta_search(self, board, depth, color, lower_bound_a, upper_bound_b, maximizing = True):
-        if depth == 0:
+        if depth == 0 or board.game_over:
             return (None, self.evaluate.evaluate_board(board, color), 1, 0)
 
         moves = self.get_possible_moves(board)

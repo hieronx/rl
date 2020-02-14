@@ -157,9 +157,9 @@ class HexBoard:
             for x in range(self.size):
                 piece = self.board[x, y]
                 if piece == HexBoard.BLUE:
-                    print("\u001b[36mb\u001b[0m ", end="")
+                    print("\u001b[36m\u25CF\u001b[0m ", end="")
                 elif piece == HexBoard.RED:
-                    print("\u001b[31mr\u001b[0m ", end="")
+                    print("\u001b[31m\u25CF\u001b[0m ", end="")
                 else:
                     if x == self.size:
                         print("-", end="")
