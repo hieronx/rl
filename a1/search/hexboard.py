@@ -55,6 +55,14 @@ class HexBoard:
             return HexBoard.RED
         return HexBoard.BLUE
 
+    def get_traversable_neighbors(self, coordinates, color):
+        neighbors = self.get_neighbors(coordinates)
+        traversable = []
+        for neighbor in neighbors:
+            if self.is_empty(coordinates) or self.is_color(coordinates, color):
+                traversable.append(neighbor)
+        return traversable
+
     def get_neighbors(self, coordinates):
         """Returns a list with the coordinates of every possible/valid neighbor."""
         (cx, cy) = coordinates
