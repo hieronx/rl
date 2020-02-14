@@ -18,10 +18,6 @@ class HexBoard:
             for y in range(board_size):
                 self.board[x, y] = HexBoard.EMPTY
 
-    def is_game_over(self):
-        """Returns if the game is over already"""
-        return self.game_over
-
     def is_empty(self, coordinates):
         """Returns if the board is empty at the provided coordinate"""
         return self.board[coordinates] == HexBoard.EMPTY
@@ -40,7 +36,7 @@ class HexBoard:
         """Places the provided color at the board coordinate. This modifies the interior board state of this object"""
         if not self.game_over and self.board[coordinates] == HexBoard.EMPTY:
             self.board[coordinates] = color
-            if self.check_win(HexBoard.RED) or self.check_win(HexBoard.BLUE):
+            if self.check_win(HexBoard.RED) or self.check_win(HexBoard.BLUE) or self.check_draw():
                 self.game_over = True
 
     def make_move(self, coordinates, color):
@@ -112,6 +108,14 @@ class HexBoard:
                 return True
 
         return False
+
+    def check_draw(self):
+        for x in range(self.size):
+            for y in range(self.size):
+                if self.board[(x, y)] != HexBoard.EMPTY:
+                    return False
+        
+        return True
 
     def get_source_coordinates(self, color):
         """Returns the coordinates of the left border (for blue) or the top border (for red)"""
