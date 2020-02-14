@@ -65,10 +65,10 @@ class Minimax:
 
         if self.live_play:
             cls()
-            print("Searched %d nodes and experienced %d cutoffs" % (nodes_searched, cutoffs))
+            print("Searched %d nodes and experienced %d cutoffs." % (nodes_searched, cutoffs))
 
-        elapsed_time = time.time() - start_time
-        print("Generation of this next move took %f seconds." % elapsed_time)
+            elapsed_time = time.time() - start_time
+            print("Generation of this next move took %f seconds." % elapsed_time)
         return move
 
     def get_possible_moves(self, board):
