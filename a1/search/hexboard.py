@@ -133,7 +133,7 @@ class HexBoard:
             return [(i, 0) for i in range(self.size)]
             
     def get_target_coordinates(self, color):
-        """Returns the coordinates of the left border (for blue) or the top border (for red)"""
+        """Returns the coordinates of the right border (for blue) or the left border (for red)"""
         if color == HexBoard.BLUE:
             return [(self.size - 1, i) for i in range(self.size)]
         else:
@@ -157,9 +157,9 @@ class HexBoard:
             for x in range(self.size):
                 piece = self.board[x, y]
                 if piece == HexBoard.BLUE:
-                    print("b ", end="")
+                    print("\u001b[36mb\u001b[0m ", end="")
                 elif piece == HexBoard.RED:
-                    print("r ", end="")
+                    print("\u001b[31mr\u001b[0m ", end="")
                 else:
                     if x == self.size:
                         print("-", end="")
