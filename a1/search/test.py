@@ -76,8 +76,9 @@ class TestHexMinimax(unittest.TestCase):
 
         self.assertFalse(board.game_over)
 
-        # minimax = Minimax(3, 3, evaluate)
-        # move = minimax.get_next_move(board, HexBoard.RED)
+        minimax = Minimax(3, 3, evaluate, False)
+        move = minimax.get_next_move(board, HexBoard.RED)
+        self.assertEqual(move, (0, 2))
 
     def test_board_evaluation(self):
         evaluate = Evaluate('Dijkstra')
