@@ -120,7 +120,7 @@ class HexBoard:
     def check_draw(self):
         for x in range(self.size):
             for y in range(self.size):
-                if self.board[(x, y)] != HexBoard.EMPTY:
+                if self.board[(x, y)] == HexBoard.EMPTY:
                     return False
         
         return True

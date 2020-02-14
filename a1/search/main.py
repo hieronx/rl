@@ -26,10 +26,15 @@ def evaluate():
                 # TODO: reverse starting positions each game
 
                 p1_move = m1.get_next_move(board, p1['depth'], HexBoard.RED)
-                board = board.make_move(p1_move, HexBoard.RED)
+                board.place(p1_move, HexBoard.RED)
 
-                p2_move = m2.get_next_move(board, p2['depth'], HexBoard.BLUE)
-                board = board.make_move(p2_move, HexBoard.BLUE)
+                if not board.game_over:
+                    p2_move = m2.get_next_move(board, p2['depth'], HexBoard.BLUE)
+
+                    if not p2_move:
+                        board.print()
+                    else:
+                        board.place(p2_move, HexBoard.BLUE)
             
             winner = r1 if board.check_win(HexBoard.RED) else r2
             loser = r1 if board.check_win(HexBoard.BLUE) else r2
