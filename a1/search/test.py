@@ -86,8 +86,6 @@ class TestHexMinimax(unittest.TestCase):
         board = HexBoard(3)
 
         board.place((0, 0), HexBoard.BLUE)
-        board.place((0, 2), HexBoard.RED)
-        board.place((1, 0), HexBoard.BLUE)
         board.print()
 
         self.assertTrue(evaluate.evaluate_board(board, HexBoard.BLUE) > evaluate.evaluate_board(board, HexBoard.RED))
