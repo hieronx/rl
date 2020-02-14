@@ -111,6 +111,8 @@ class HexMinimax:
 
     def find_shortest_path_to_border(self, board, color):
         source_coords = board.get_source_coordinates(color)
+        target_coords = board.get_target_coordinates(color)
+        
         min_score = math.inf
         for from_coord in source_coords:
             # Only count nodes without placed positions of this color
@@ -124,7 +126,7 @@ class HexMinimax:
     def evaluate_board(self, board, color):
         if self.eval_method == 'dijkstra':
             player_sp = self.find_shortest_path_to_border(board, color)
-            opponent_sp = self.find_shortest_path_to_border(board, color)
+            opponent_sp = self.find_shortest_path_to_border(board, board.get_opposite_color(color))
 
             return player_sp - opponent_sp
         else:

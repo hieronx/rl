@@ -119,6 +119,13 @@ class HexBoard:
             return [(0, i) for i in range(self.size)]
         else:
             return [(i, 0) for i in range(self.size)]
+            
+    def get_target_coordinates(self, color):
+        """Returns the coordinates of the left border (for blue) or the top border (for red)"""
+        if color == HexBoard.BLUE:
+            return [(self.size - 1, i) for i in range(self.size)]
+        else:
+            return [(i, self.size - 1) for i in range(self.size)]
 
     def print(self):
         """Outputs the board pieces to the console"""

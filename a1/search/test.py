@@ -47,6 +47,16 @@ class TestHexMinimax(unittest.TestCase):
         self.assertEqual(len(source_coordinates),
                          source_coordinates_correct_len)
 
+    def test_target_coordinates(self):
+        board_size = np.random.randint(2, 8)
+
+        board = HexBoard(board_size)
+        target_coordinates = board.get_target_coordinates(HexBoard.BLUE)
+
+        target_coordinates_correct_len = board_size
+        self.assertEqual(len(target_coordinates),
+                         target_coordinates_correct_len)
+
     def test_possible_moves(self):
         hex_minimax = HexMinimax(2, 1, 'random')
 
