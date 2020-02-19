@@ -51,9 +51,6 @@ class Evaluate:
             node = min(q, key=lambda x: dist[x])
             q.remove(node)
 
-            if node == to_coord:
-                return (dist, prev)
-
             for neighbor in board.get_neighbors(node):
                 new_dist = dist[node] + self.distance_between(board, node, neighbor, opposite_color)
                 if new_dist < dist[neighbor]:
@@ -77,14 +74,13 @@ class Evaluate:
 
     def evaluate_board(self, board, color):
         if board.check_draw(): return 0
-        if board.check_win(color): return math.inf
-        if board.check_win(board.get_opposite_color(color)): return -math.inf
+        if board.check_win(color): return -math.inf
+        if board.check_win(board.get_opposite_color(color)): return math.inf
 
         if self.eval_method == 'Dijkstra':
             player_sp = self.find_shortest_path_to_border(board, color)
             opponent_sp = self.find_shortest_path_to_border(board, board.get_opposite_color(color))
 
-            print("Found %d for player and %d for opponent" % (player_sp, opponent_sp))
             return player_sp - opponent_sp
         else:
             return np.random.uniform(0, 1)
