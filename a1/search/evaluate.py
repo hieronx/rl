@@ -33,14 +33,7 @@ class Evaluate:
 
     def get_path_length_between(self, board, from_coord, to_coord, color):
         dist, prev = self.dijkstra(board, from_coord, to_coord, color)
-        path = []
-        node = to_coord
-
-        while node != None:
-            path.append(node)
-            node = prev[node]
-
-        return len(path)
+        return dist[to_coord]
 
     def dijkstra(self, board, from_coord, to_coord, color):
         opposite_color = board.get_opposite_color(color)
