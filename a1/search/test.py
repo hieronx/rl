@@ -114,6 +114,14 @@ class TestHexMinimax(unittest.TestCase):
 
         self.assertTrue(evaluate.evaluate_board(board, HexBoard.RED) > evaluate.evaluate_board(board, HexBoard.BLUE))
 
+    def test_hash_code(self):
+        board = HexBoard(3)
+
+        board.place((0, 0), HexBoard.RED)
+        board.place((1, 2), HexBoard.BLUE)
+
+        self.assertEqual(board.hash_code(), 233331333)
+
 
 if __name__ == '__main__':
     unittest.main()
