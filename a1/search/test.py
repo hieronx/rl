@@ -89,22 +89,13 @@ class TestHexMinimax(unittest.TestCase):
         board.place((0, 0), HexBoard.BLUE)
         print("First move by blue:")
         evaluate.evaluate_board(board, HexBoard.BLUE)
-        board.place((0, 1), HexBoard.BLUE)
+        board.place((1, 0), HexBoard.BLUE)
         print("Second move from blue:")
         evaluate.evaluate_board(board, HexBoard.BLUE)
         print("Final outcome")
         board.print()
 
-
-        self.assertTrue(evaluate.evaluate_board(board, HexBoard.BLUE) > evaluate.evaluate_board(board, HexBoard.RED))
-        self.assertTrue(evaluate.evaluate_board(board, HexBoard.BLUE) == 1)
-
-        board = HexBoard(3)
-
-        board.place((0, 0), HexBoard.BLUE)
-        board.place((0, 1), HexBoard.BLUE)
-
-        self.assertTrue(evaluate.evaluate_board(board, HexBoard.BLUE) > evaluate.evaluate_board(board, HexBoard.RED))
+        self.assertTrue(evaluate.evaluate_board(board, HexBoard.BLUE) < evaluate.evaluate_board(board, HexBoard.RED))
 
         board = HexBoard(3)
 
@@ -112,7 +103,7 @@ class TestHexMinimax(unittest.TestCase):
         board.place((0, 1), HexBoard.RED)
         board.place((0, 2), HexBoard.RED)
 
-        self.assertTrue(evaluate.evaluate_board(board, HexBoard.RED) > evaluate.evaluate_board(board, HexBoard.BLUE))
+        self.assertTrue(evaluate.evaluate_board(board, HexBoard.RED) < evaluate.evaluate_board(board, HexBoard.BLUE))
 
     def test_hash_code(self):
         board = HexBoard(3)
