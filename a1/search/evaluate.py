@@ -51,6 +51,9 @@ class Evaluate:
             node = min(q, key=lambda x: dist[x])
             q.remove(node)
 
+            if node == to_coord:
+                return (dist, prev)
+
             for neighbor in board.get_neighbors(node):
                 new_dist = dist[node] + self.distance_between(board, node, neighbor, opposite_color)
                 if new_dist < dist[neighbor]:
