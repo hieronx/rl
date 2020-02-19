@@ -122,6 +122,18 @@ class TestHexMinimax(unittest.TestCase):
 
         self.assertEqual(board.hash_code(), 233331333)
 
+    def test_tp_table(self):
+        evaluate = Evaluate('Dijkstra')
+        board = HexBoard(3)
+        minimax = Minimax(3, 3, evaluate, False)
+
+        board.place((0, 0), HexBoard.RED)
+        board.place((0, 1), HexBoard.RED)
+        self.assertEqual(minimax.tp_table, {})
+        
+        move = minimax.get_next_move(board, HexBoard.RED)
+        self.assertTrue(len(minimax.tp_table) > 0)
+
 
 if __name__ == '__main__':
     unittest.main()
