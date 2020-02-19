@@ -42,10 +42,6 @@ class Evaluate:
         prev = {}
         
         for node in board.board:
-            # don't add this node to the list, since we can basically see it as a wall
-            if board.get_color(node) == opposite_color:
-                continue
-            # otherwise initialize node as normal
             dist[node] = math.inf
             prev[node] = None
             q.append(node)
@@ -55,22 +51,22 @@ class Evaluate:
             node = min(q, key=lambda x: dist[x])
             q.remove(node)
 
-            for neighbor in board.get_traversable_neighbors(node, color):
-                if neighbor not in dist: continue
-                
-                new_dist = dist[node] + self.distance_between(board, node, neighbor)
+            for neighbor in board.get_neighbors(node, color):
+                new_dist = dist[node] + self.distance_between(board, node, neighbor, opposite_color)
                 if new_dist < dist[neighbor]:
                     dist[neighbor] = new_dist
                     prev[neighbor] = node
         
         return (dist, prev)
 
-    def distance_between(self, board, coord_a, coord_b):
+    def distance_between(self, board, coord_a, coord_b, opposite_color):
         color_a = board.get_color(coord_a)
         color_b = board.get_color(coord_b)
         is_identical = color_a == color_b
 
-        if color_a != board.EMPTY and is_identical:
+        if color_a == opposite_color or color_b == opposite_color:
+            return 100
+        elif color_a != board.EMPTY and is_identical:
             return 0
         else:
             return 1
