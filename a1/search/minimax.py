@@ -79,7 +79,7 @@ class Minimax:
         lower_bound_a = -math.inf
         upper_bound_b = math.inf
         
-        move, _, nodes_searched, cutoffs = self.alpha_beta_search(board, self.search_depth, color, lower_bound_a, upper_bound_b, True)
+        move, _, nodes_searched, cutoffs = self.alpha_beta_search(board, self.search_depth, color, lower_bound_a, upper_bound_b, False)
 
         if self.live_play:
             cls()
