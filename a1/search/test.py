@@ -89,7 +89,32 @@ class TestHexMinimax(unittest.TestCase):
 
         self.assertEqual(evaluate.get_path_length_between(board, (0,0), (2,0), HexBoard.BLUE), 1)
 
-        print(evaluate.get_path_length_between(board, (2,2), (2,0), HexBoard.RED))
+    def test_dijkstra_second_row(self):
+        evaluate = Evaluate('Dijkstra')
+        board = HexBoard(4)
+
+        board.place((1, 0), HexBoard.RED)
+        board.place((2, 0), HexBoard.RED)
+        board.place((3, 0), HexBoard.RED)
+
+        board.place((1, 1), HexBoard.BLUE)
+        board.place((2, 1), HexBoard.BLUE)
+        board.place((3, 1), HexBoard.BLUE)
+
+        # board.print()
+
+        # print('Path lenght: ' + str(evaluate.get_path_length_between(board, (0, 1), (3, 1), HexBoard.BLUE)))
+
+        # print(evaluate.evaluate_board(board, HexBoard.RED))
+        # print(evaluate.evaluate_board(board, HexBoard.BLUE))
+
+        # minimax = Minimax(3, 3, evaluate, False)
+        # move = minimax.get_next_move(board, HexBoard.RED)
+
+        # new_board = board.make_move((0, 1), HexBoard.RED)
+        # print(evaluate.evaluate_board(new_board, HexBoard.RED))
+
+        self.assertEqual(evaluate.get_path_length_between(board, (0, 1), (3, 1), HexBoard.BLUE), 1)
 
     def test_board_evaluation(self):
         evaluate = Evaluate('Dijkstra')

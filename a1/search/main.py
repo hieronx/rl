@@ -48,6 +48,9 @@ def play_game(game_input):
 
         r1, r2 = rate_1vs1(winner, loser, drawn)
         save_result(start_time, (p1['depth'], p1['eval'], p2['depth'], p2['eval'], game_id, r1.mu, r1.sigma, r2.mu, r2.sigma))
+
+    print(r1)
+    print(r2)
     
 
 def evaluate():
@@ -55,7 +58,8 @@ def evaluate():
 
     board_size = 3
     game_cnt = 100
-    players = [{ 'depth': 3, 'eval': 'random' }, { 'depth': 3, 'eval': 'Dijkstra' }, { 'depth': 4, 'eval': 'Dijkstra' }]
+    # players = [{ 'depth': 3, 'eval': 'random' }, { 'depth': 3, 'eval': 'Dijkstra' }, { 'depth': 4, 'eval': 'Dijkstra' }]
+    players = [{ 'depth': 3, 'eval': 'random' }, { 'depth': 3, 'eval': 'Dijkstra' }]
 
     start_time = str(int(time.time()))
     save_result(start_time, ('p1_depth', 'p1_eval', 'p2_depth', 'p2_eval', 'game_id', 'r1_mu', 'r1_sigma', 'r2_mu', 'r2_sigma'))
