@@ -15,7 +15,7 @@ class Evaluate:
         target_coords = board.get_target_coordinates(color)
         opposite_color = board.get_opposite_color(color)
         
-        min_score = math.inf
+        min_score = board.size**2
 
         #For every combination of target and source coord
         for from_coord in source_coords:

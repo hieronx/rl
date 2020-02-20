@@ -17,7 +17,22 @@ class Minimax:
         self.live_play = live_play
         self.tp_table = {}
 
-    def alpha_beta_search(self, board, depth, color, lower_bound_a, upper_bound_b, maximizing = True):
+    def get_next_move(self, board, color):
+        start_time = time.time()
+        lower_bound_a = -math.inf
+        upper_bound_b = math.inf
+        
+        move, _, nodes_searched, cutoffs = self.alpha_beta_search(board, self.search_depth, color, lower_bound_a, upper_bound_b, False)
+
+        if self.live_play:
+            cls()
+            print("Searched %d nodes and experienced %d cutoffs." % (nodes_searched, cutoffs))
+
+            elapsed_time = time.time() - start_time
+            print("Generation of this next move took %f seconds." % elapsed_time)
+        return move
+
+    def alpha_beta_search(self, board, depth, color, lower_bound_a, upper_bound_b, maximizing):
         hash_code = board.hash_code()
         if hash_code in self.tp_table:
             return (self.tp_table[hash_code][0], self.tp_table[hash_code][1], 0, 0)
@@ -28,17 +43,20 @@ class Minimax:
 
         moves = self.get_possible_moves(board)
 
-        best_score = math.inf if not maximizing else -math.inf
+        best_score = -math.inf if maximizing else math.inf
         best_move = moves[0] if len(moves) > 0 else None
+
+        assert len(moves) > 0
 
         total_nodes_searched = 0
         total_cutoffs = 0
 
-        current_color = color if maximizing else board.get_opposite_color(color)
+        current_color = color if not maximizing else board.get_opposite_color(color)
 
         for move in moves:
             new_board = board.make_move(move, current_color)
             _, score, nodes_searched, cutoffs = self.alpha_beta_search(new_board, depth - 1, color, lower_bound_a, upper_bound_b, not maximizing)
+
             total_nodes_searched += nodes_searched
             total_cutoffs += cutoffs
 
@@ -68,27 +86,6 @@ class Minimax:
 
         return (best_move, best_score, total_nodes_searched, total_cutoffs)
 
-    def put_in_tp_table(self, board, color, move, score):
-        best_move_board = board.make_move(move, color)
-        hash_code = best_move_board.hash_code()
-        if hash_code not in self.tp_table or (hash_code in self.tp_table and self.tp_table[hash_code][1] > score):
-            self.tp_table[hash_code] = (move, score)
-
-    def get_next_move(self, board, color):
-        start_time = time.time()
-        lower_bound_a = -math.inf
-        upper_bound_b = math.inf
-        
-        move, _, nodes_searched, cutoffs = self.alpha_beta_search(board, self.search_depth, color, lower_bound_a, upper_bound_b, False)
-
-        if self.live_play:
-            cls()
-            print("Searched %d nodes and experienced %d cutoffs." % (nodes_searched, cutoffs))
-
-            elapsed_time = time.time() - start_time
-            print("Generation of this next move took %f seconds." % elapsed_time)
-        return move
-
     def get_possible_moves(self, board):
         empty_coordinates = []
         for x in range(self.board_size):
@@ -97,3 +94,8 @@ class Minimax:
                     empty_coordinates.append((x, y))
 
         return empty_coordinates
+    def put_in_tp_table(self, board, color, move, score):
+        best_move_board = board.make_move(move, color)
+        hash_code = best_move_board.hash_code()
+        if hash_code not in self.tp_table or (hash_code in self.tp_table and self.tp_table[hash_code][1] > score):
+            self.tp_table[hash_code] = (move, score)

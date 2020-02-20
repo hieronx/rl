@@ -76,18 +76,8 @@ class TestHexMinimax(unittest.TestCase):
 
         self.assertFalse(board.game_over)
 
-        minimax = Minimax(3, 3, evaluate, False)
+        minimax = Minimax(3, 1, evaluate, False)
         move = minimax.get_next_move(board, HexBoard.RED)
-
-        # new_board1 = board.make_move((0, 2), HexBoard.RED)
-        # new_board1.print()
-        # print('Eval 0,2: %s' % evaluate.evaluate_board(new_board1, HexBoard.RED))
-        
-        # new_board2 = board.make_move((1, 0), HexBoard.RED)
-        # evaluate.evaluate_board(new_board1, HexBoard.RED)
-        # new_board2.print()
-        # print('Eval 1,0: %s' % evaluate.evaluate_board(new_board2, HexBoard.RED))
-
         self.assertEqual(move, (0, 2))
 
     def test_board_evaluation(self):
