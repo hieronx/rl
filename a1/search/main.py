@@ -54,6 +54,8 @@ def play_game(game_input):
     
 
 def evaluate():
+    freeze_support()  # for Windows support
+    
     board_size = 3
     game_cnt = 100
     players = [{ 'depth': 3, 'eval': 'random' }, { 'depth': 3, 'eval': 'Dijkstra' }, { 'depth': 4, 'eval': 'Dijkstra' }]
@@ -65,13 +67,6 @@ def evaluate():
 
     pool = Pool(len(game_inputs))
     pool.map(play_game, game_inputs)
-
-    # lock = threading.Lock()
-    # for process_id, game_input in enumerate(game_inputs):
-    #     pool.apply_async(play_game, args=(lock, game_input, process_id))
-    
-    # pool.close()
-    # pool.join()
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="Minimax for Hex")
