@@ -86,7 +86,6 @@ class TestHexMinimax(unittest.TestCase):
 
         board.place((0, 0), HexBoard.BLUE)
         board.place((1, 0), HexBoard.BLUE)
-        board.print()
 
         self.assertEqual(evaluate.get_path_length_between(board, (0,0), (2,0), HexBoard.BLUE), 1)
 

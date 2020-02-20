@@ -33,7 +33,9 @@ class Minimax:
         return move
 
     def alpha_beta_search(self, board, depth, color, lower_bound_a, upper_bound_b, maximizing):
-        hash_code = board.hash_code()
+        current_color = color if not maximizing else board.get_opposite_color(color)
+
+        hash_code = board.hash_code(current_color)
         if hash_code in self.tp_table:
             return (self.tp_table[hash_code][0], self.tp_table[hash_code][1], 0, 0)
 
@@ -51,8 +53,6 @@ class Minimax:
         total_nodes_searched = 0
         total_cutoffs = 0
 
-        current_color = color if not maximizing else board.get_opposite_color(color)
-
         for move in moves:
             new_board = board.make_move(move, current_color)
             _, score, nodes_searched, cutoffs = self.alpha_beta_search(new_board, depth - 1, color, lower_bound_a, upper_bound_b, not maximizing)
@@ -68,7 +68,7 @@ class Minimax:
                     lower_bound_a = score
 
                     if lower_bound_a >= upper_bound_b:
-                        self.put_in_tp_table(board, current_color, best_move, best_score)
+                        # self.put_in_tp_table(board, current_color, best_move, best_score)
                         return (best_move, best_score, total_nodes_searched, 1)
 
             elif not maximizing and score < best_score:
@@ -79,7 +79,7 @@ class Minimax:
                     upper_bound_b = score
                     
                     if upper_bound_b <= lower_bound_a:
-                        self.put_in_tp_table(board, current_color, best_move, best_score)
+                        # self.put_in_tp_table(board, current_color, best_move, best_score)
                         return (best_move, best_score, total_nodes_searched, 1)
         
         self.put_in_tp_table(board, current_color, best_move, best_score)
@@ -92,10 +92,11 @@ class Minimax:
             for y in range(self.board_size):
                 if board.is_empty((x, y)):
                     empty_coordinates.append((x, y))
-
+        
         return empty_coordinates
+
     def put_in_tp_table(self, board, color, move, score):
         best_move_board = board.make_move(move, color)
-        hash_code = best_move_board.hash_code()
+        hash_code = best_move_board.hash_code(color)
         if hash_code not in self.tp_table or (hash_code in self.tp_table and self.tp_table[hash_code][1] > score):
             self.tp_table[hash_code] = (move, score)

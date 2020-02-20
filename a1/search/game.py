@@ -20,7 +20,7 @@ class HexGame:
         while not board.game_over:
             print("Waiting for CPU move...")
             move = self.minimax.get_next_move(board, HexBoard.RED)
-            board.place(move, HexBoard.RED)
+            board = board.make_move(move, HexBoard.RED)
             board.print()
             print('\n')
 
@@ -36,7 +36,8 @@ class HexGame:
                         if board.is_empty((char_to_row_idx[x], int(y))):
                             break
 
-            board.place((char_to_row_idx[x], int(y)), HexBoard.BLUE)
+            board = board.make_move((char_to_row_idx[x], int(y)), HexBoard.BLUE)
+            print(board.game_over)
 
         if board.check_win(HexBoard.RED):
             print('The AI won.')

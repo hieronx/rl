@@ -170,8 +170,8 @@ class HexBoard:
         print("   -----------------------")
 
 
-    def hash_code(self):
-        code = ''
+    def hash_code(self, color):
+        code = str(color)
         for x in range(self.size):
             for y in range(self.size):
                 code += str(self.board[x, y])
