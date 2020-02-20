@@ -33,13 +33,12 @@ class Minimax:
         return move
 
     def alpha_beta_search(self, board, depth, color, lower_bound_a, upper_bound_b, maximizing):
-        # hash_code = board.hash_code(current_color)
+        # hash_code = board.hash_code(perspective_player)
         # if hash_code in self.tp_table:
         #     return (self.tp_table[hash_code][0], self.tp_table[hash_code][1], 0, 0)
-        current_color = color if not maximizing else board.get_opposite_color(color)
-
+        
         if depth == 0 or board.game_over:
-            score = self.evaluate.evaluate_board(board, current_color)
+            score = self.evaluate.evaluate_board(board, color)
             return (None, score, 1, 0)
 
         moves = self.get_possible_moves(board)
@@ -47,16 +46,17 @@ class Minimax:
 
         best_score = -math.inf if maximizing else math.inf
         best_move = None
+        perspective_player = color if not maximizing else board.get_opposite_color(color)
 
         total_nodes_searched = 0
         total_cutoffs = 0
 
         for move in moves:
-            new_board = board.make_move(move, current_color)
+            new_board = board.make_move(move, perspective_player)
             _, score, nodes_searched, cutoffs = self.alpha_beta_search(new_board, depth - 1, color, lower_bound_a, upper_bound_b, not maximizing)
 
-            # total_nodes_searched += nodes_searched
-            # total_cutoffs += cutoffs
+            total_nodes_searched += nodes_searched
+            total_cutoffs += cutoffs
 
             if maximizing and score > best_score:
                 best_move = move
@@ -66,7 +66,7 @@ class Minimax:
                 #     lower_bound_a = score
 
                 #     if lower_bound_a >= upper_bound_b:
-                #         # self.put_in_tp_table(board, current_color, best_move, best_score)
+                #         # self.put_in_tp_table(board, perspective_player, best_move, best_score)
                 #         return (best_move, best_score, total_nodes_searched, 1)
 
             elif not maximizing and score < best_score:
