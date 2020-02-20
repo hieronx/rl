@@ -40,7 +40,7 @@ class Minimax:
             return (self.tp_table[hash_code][0], self.tp_table[hash_code][1], 0, 0)
 
         if depth == 0 or board.game_over:
-            score = self.evaluate.evaluate_board(board, color)
+            score = self.evaluate.evaluate_board(board, current_color)
             return (None, score, 1, 0)
 
         moves = self.get_possible_moves(board)

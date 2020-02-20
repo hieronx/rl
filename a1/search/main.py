@@ -10,7 +10,7 @@ from evaluate import Evaluate
 from game import HexGame
 
 def evaluate():
-    board_size = 2
+    board_size = 3
     game_cnt = 100
     players = [{ 'depth': 3, 'eval': 'random' }, { 'depth': 3, 'eval': 'Dijkstra' }, { 'depth': 4, 'eval': 'Dijkstra' }]
 
