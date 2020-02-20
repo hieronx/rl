@@ -23,8 +23,11 @@ class Evaluate:
                 # skip if the target or destination coord is already taken by the enemy team
                 if board.get_color(from_coord) == opposite_color or board.get_color(to_coord) == opposite_color:
                     continue
+
                 # Only count nodes without placed positions of this color
                 score = self.get_path_length_between(board, from_coord, to_coord, color)
+
+                assert score != math.inf
 
                 if score < min_score:
                     min_score = score
@@ -46,6 +49,8 @@ class Evaluate:
             prev[node] = None
             q.append(node)
         dist[from_coord] = 0
+
+        assert dist[min(q, key=lambda x: dist[x])] == 0
 
         while len(q) > 0:
             node = min(q, key=lambda x: dist[x])
@@ -73,9 +78,9 @@ class Evaluate:
         
 
     def evaluate_board(self, board, color):
-        if board.check_draw(): return 0
-        if board.check_win(color): return -math.inf
-        if board.check_win(board.get_opposite_color(color)): return math.inf
+        # if board.check_draw(): return 0
+        # if board.check_win(color): return -math.inf
+        # if board.check_win(board.get_opposite_color(color)): return math.inf
 
         if self.eval_method == 'Dijkstra':
             player_sp = self.find_shortest_path_to_border(board, color)

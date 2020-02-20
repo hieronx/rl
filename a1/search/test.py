@@ -78,21 +78,24 @@ class TestHexMinimax(unittest.TestCase):
 
         minimax = Minimax(3, 3, evaluate, False)
         move = minimax.get_next_move(board, HexBoard.RED)
+
+        # new_board1 = board.make_move((0, 2), HexBoard.RED)
+        # new_board1.print()
+        # print('Eval 0,2: %s' % evaluate.evaluate_board(new_board1, HexBoard.RED))
+        
+        # new_board2 = board.make_move((1, 0), HexBoard.RED)
+        # evaluate.evaluate_board(new_board1, HexBoard.RED)
+        # new_board2.print()
+        # print('Eval 1,0: %s' % evaluate.evaluate_board(new_board2, HexBoard.RED))
+
         self.assertEqual(move, (0, 2))
 
     def test_board_evaluation(self):
         evaluate = Evaluate('Dijkstra')
         board = HexBoard(3)
         
-        # print("Empty board costs:")
-        evaluate.evaluate_board(board, HexBoard.BLUE)
         board.place((0, 0), HexBoard.BLUE)
-        # print("First move by blue:")
-        evaluate.evaluate_board(board, HexBoard.BLUE)
         board.place((1, 0), HexBoard.BLUE)
-        # print("Second move from blue:")
-        evaluate.evaluate_board(board, HexBoard.BLUE)
-        # print("Final outcome")
 
         self.assertTrue(evaluate.evaluate_board(board, HexBoard.BLUE) < evaluate.evaluate_board(board, HexBoard.RED))
 
@@ -100,10 +103,6 @@ class TestHexMinimax(unittest.TestCase):
 
         board.place((0, 0), HexBoard.RED)
         board.place((0, 1), HexBoard.RED)
-        board.place((0, 2), HexBoard.RED)
-        red_val = evaluate.evaluate_board(board, HexBoard.RED)
-        blue_val = evaluate.evaluate_board(board, HexBoard.BLUE)
-        print("Red: %s and Blue: %s" % (str(red_val), str(blue_val)))
 
         self.assertTrue(evaluate.evaluate_board(board, HexBoard.RED) < evaluate.evaluate_board(board, HexBoard.BLUE))
 
