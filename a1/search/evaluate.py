@@ -85,7 +85,7 @@ class Evaluate:
             player_sp = self.find_shortest_path_to_border(board, color)
             opponent_sp = self.find_shortest_path_to_border(board, board.get_opposite_color(color))
 
-            return player_sp - opponent_sp
+            return -(player_sp - opponent_sp)
         else:
             return np.random.uniform(0, 1)
 

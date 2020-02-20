@@ -22,8 +22,8 @@ class Minimax:
         lower_bound_a = -math.inf
         upper_bound_b = math.inf
         
-        move, _, nodes_searched, cutoffs = self.alpha_beta_search(board, self.search_depth, color, lower_bound_a, upper_bound_b, False)
-
+        move, _, nodes_searched, cutoffs = self.alpha_beta_search(board, self.search_depth, color, lower_bound_a, upper_bound_b, True)
+        
         if self.live_play:
             cls()
             print("Searched %d nodes and experienced %d cutoffs." % (nodes_searched, cutoffs))
@@ -46,7 +46,7 @@ class Minimax:
 
         best_score = -math.inf if maximizing else math.inf
         best_move = None
-        perspective_player = color if not maximizing else board.get_opposite_color(color)
+        perspective_player = color if maximizing else board.get_opposite_color(color)
 
         total_nodes_searched = 0
         total_cutoffs = 0
@@ -62,23 +62,23 @@ class Minimax:
                 best_move = move
                 best_score = score
                 
-                # if score >= lower_bound_a:
-                #     lower_bound_a = score
+                if score >= lower_bound_a:
+                    lower_bound_a = score
 
-                #     if lower_bound_a >= upper_bound_b:
-                #         # self.put_in_tp_table(board, perspective_player, best_move, best_score)
-                #         return (best_move, best_score, total_nodes_searched, 1)
+                    if lower_bound_a >= upper_bound_b:
+                        # self.put_in_tp_table(board, perspective_player, best_move, best_score)
+                        return (best_move, best_score, total_nodes_searched, 1)
 
             elif not maximizing and score < best_score:
                 best_move = move
                 best_score = score
 
-                # if score <= upper_bound_b:
-                #     upper_bound_b = score
+                if score <= upper_bound_b:
+                    upper_bound_b = score
                     
-                #     if upper_bound_b <= lower_bound_a:
-                #         # self.put_in_tp_table(board, current_color, best_move, best_score)
-                #         return (best_move, best_score, total_nodes_searched, 1)
+                    if upper_bound_b <= lower_bound_a:
+                        # self.put_in_tp_table(board, current_color, best_move, best_score)
+                        return (best_move, best_score, total_nodes_searched, 1)
         
         # self.put_in_tp_table(board, current_color, best_move, best_score)
 
