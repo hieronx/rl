@@ -3,16 +3,24 @@ import sys
 import itertools
 from tqdm import tqdm
 from trueskill import Rating, rate_1vs1
+import time
 
 from hexboard import HexBoard
 from minimax import Minimax
 from evaluate import Evaluate
 from game import HexGame
 
+def save_result(start_time, data):
+    with open('results/' + start_time + '.csv','a') as fd:
+        fd.write(','.join(map(str, data)) + '\n')
+
 def evaluate():
     board_size = 3
     game_cnt = 100
     players = [{ 'depth': 3, 'eval': 'random' }, { 'depth': 3, 'eval': 'Dijkstra' }, { 'depth': 4, 'eval': 'Dijkstra' }]
+
+    start_time = str(int(time.time()))
+    save_result(start_time, ('p1_depth', 'p1_eval', 'p2_depth', 'p2_eval', 'game_id', 'r1_mu', 'r1_sigma', 'r2_mu', 'r2_sigma'))
 
     for p1, p2 in itertools.permutations(players, 2):
         print('Playing search depth %d and %s evaluation against search depth %d and %s evaluation...' % (p1['depth'], p1['eval'], p2['depth'], p2['eval']))
@@ -20,7 +28,7 @@ def evaluate():
         r1, r2 = Rating(), Rating()
         m1, m2 = Minimax(board_size, p1['depth'], Evaluate(p1['eval']), False), Minimax(board_size, p2['depth'], Evaluate(p2['eval']), False)
 
-        for _ in tqdm(range(game_cnt)):
+        for game_id in tqdm(range(1, game_cnt + 1)):
             board = HexBoard(board_size)
             first_player, second_player = m1, m2
 
@@ -44,6 +52,7 @@ def evaluate():
             drawn = board.check_draw()
 
             r1, r2 = rate_1vs1(winner, loser, drawn)
+            save_result(start_time, (p1['depth'], p1['eval'], p2['depth'], p2['eval'], game_id, r1.mu, r1.sigma, r2.mu, r2.sigma))
         
         print(r1)
         print(r2)

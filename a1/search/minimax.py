@@ -39,7 +39,7 @@ class Minimax:
         current_color = color if not maximizing else board.get_opposite_color(color)
 
         if depth == 0 or board.game_over:
-            score = self.evaluate.evaluate_board(board, current_color)
+            score = self.evaluate.evaluate_board(board, color)
             return (None, score, 1, 0)
 
         moves = self.get_possible_moves(board)
