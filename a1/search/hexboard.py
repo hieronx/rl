@@ -13,6 +13,7 @@ class HexBoard:
         self.board = {}
         self.size = board_size
         self.game_over = False
+        self.move_count = 0
 
         for x in range(board_size):
             for y in range(board_size):
@@ -43,6 +44,7 @@ class HexBoard:
         """Should return the new board without modifying the existing board"""
         new_board = deepcopy(self)
         new_board.place(coordinates, color)
+        new_board.move_count += 1
         return new_board
 
     def get_opposite_color(self, current_color):
