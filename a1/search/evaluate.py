@@ -4,6 +4,7 @@ import numpy as np
 from util import cls
 from hexboard import HexBoard
 from minimax import Minimax
+from heapq import heappop, heappush
 
 class Evaluate:
 
@@ -47,18 +48,18 @@ class Evaluate:
         for node in board.board:
             dist[node] = math.inf
             prev[node] = None
-            q.append(node)
         dist[from_coord] = 0 if board.board[from_coord] == color else 1
+        heappush(q, (dist[from_coord], from_coord))
 
-        while len(q) > 0:
-            node = min(q, key=lambda x: dist[x])
-            q.remove(node)
+        while q:
+            node_dist, node = heappop(q)
 
             for neighbor in board.get_neighbors(node):
-                new_dist = dist[node] + self.distance_between(board, node, neighbor, opposite_color)
+                new_dist = node_dist + self.distance_between(board, node, neighbor, opposite_color)
                 if new_dist < dist[neighbor]:
                     dist[neighbor] = new_dist
                     prev[neighbor] = node
+                    heappush(q, (new_dist, neighbor))
         
         return (dist, prev)
 
