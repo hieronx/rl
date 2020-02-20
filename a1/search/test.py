@@ -90,6 +90,18 @@ class TestHexMinimax(unittest.TestCase):
 
         self.assertEqual(move, (0, 2))
 
+    def test_dijkstra(self):
+        evaluate = Evaluate('Dijkstra')
+        board = HexBoard(3)
+
+        board.place((0, 0), HexBoard.BLUE)
+        board.place((1, 0), HexBoard.BLUE)
+        board.print()
+
+        self.assertEqual(evaluate.get_path_length_between(board, (0,0), (2,0), HexBoard.BLUE), 1)
+
+        print(evaluate.get_path_length_between(board, (2,2), (2,0), HexBoard.RED))
+
     def test_board_evaluation(self):
         evaluate = Evaluate('Dijkstra')
         board = HexBoard(3)

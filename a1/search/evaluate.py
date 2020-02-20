@@ -48,9 +48,7 @@ class Evaluate:
             dist[node] = math.inf
             prev[node] = None
             q.append(node)
-        dist[from_coord] = 0
-
-        assert dist[min(q, key=lambda x: dist[x])] == 0
+        dist[from_coord] = 0 if board.board[from_coord] == color else 1
 
         while len(q) > 0:
             node = min(q, key=lambda x: dist[x])
