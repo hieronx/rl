@@ -113,7 +113,8 @@ class TestHexMinimax(unittest.TestCase):
         board.place((0, 0), HexBoard.RED)
         board.place((1, 2), HexBoard.BLUE)
 
-        self.assertEqual(board.hash_code(), 233331333)
+        self.assertEqual(board.hash_code(HexBoard.BLUE), 1233331333)
+        self.assertEqual(board.hash_code(HexBoard.RED), 2233331333)
 
     def test_tp_table(self):
         evaluate = Evaluate('Dijkstra')
