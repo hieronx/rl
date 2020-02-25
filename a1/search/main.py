@@ -5,6 +5,7 @@ from tqdm import tqdm
 from trueskill import Rating, rate_1vs1
 import time
 from multiprocessing import Pool, freeze_support
+from copy import deepcopy
 
 from hexboard import HexBoard
 from minimax import Minimax
@@ -18,7 +19,8 @@ def save_result(start_time, data):
 def play_game(game_input):
     process_id, board_size, game_cnt, start_time, p1, p2 = game_input
 
-    r1, r2 = Rating(), Rating()
+    r1 = Rating()
+    r2 = Rating()
     m1, m2 = Minimax(board_size, p1['depth'], Evaluate(p1['eval']), False), Minimax(board_size, p2['depth'], Evaluate(p2['eval']), False)
     r1_col, r2_col = HexBoard.RED, HexBoard.BLUE
     r1_first = True
@@ -40,23 +42,20 @@ def play_game(game_input):
             move = (m1 if r1_turn else m2).get_next_move(board, r1_col if r1_turn else r2_col)
             board.place(move, r1_col if r1_turn else r2_col)
             r1_turn = False if r1_turn else True
+
+        if board.check_draw():
+            r1, r2 = rate_1vs1(r1, r2, drawn=True)
+            draws += 1
+        elif board.check_win(r1_col):
+            r1, r2 = rate_1vs1(r1, r2, drawn=False)
+            r1_games_won += 1
+        elif board.check_win(r2_col):
+            r2, r1 = rate_1vs1(r2, r1, drawn=False)
+            r2_games_won += 1
         
-        winner = r1 if board.check_win(r1_col) else r2
-        loser = r1 if board.check_win(r2_col) else r2
-        drawn = board.check_draw()
-
-        if winner == r1 and not drawn: r1_games_won += 1
-        if winner == r2 and not drawn: r2_games_won += 1
-        if drawn: draws += 1
-
-        r1, r2 = rate_1vs1(winner, loser, drawn)
-
-        if (board.check_win(r1_col) and board.check_win(r2_col)) and not drawn:
-            board.print()
-            break
-
         save_result(start_time, (p1['depth'], p1['eval'], p2['depth'], p2['eval'], game_id, r1.mu, r1.sigma, r2.mu, r2.sigma))
 
+    print('Playing r1 = %s against r2 = %s' % (p1['eval'], p2['eval']))
     print(r1)
     print(r2)
     print(r1_games_won)
