@@ -53,8 +53,9 @@ class Minimax:
             best_move = None
 
             for move in moves:
-                new_board = board.make_move(move, color)
-                _, score, nodes_searched, cutoffs = self.alpha_beta_search(new_board, depth - 1, color, opposite_color, alpha, beta, False)
+                board.place(move, color)
+                _, score, nodes_searched, cutoffs = self.alpha_beta_search(board, depth - 1, color, opposite_color, alpha, beta, False)
+                board.unplace(move)
                 
                 total_nodes_searched += nodes_searched
                 total_cutoffs += cutoffs
@@ -76,8 +77,9 @@ class Minimax:
             best_move = None
 
             for move in moves:
-                new_board = board.make_move(move, opposite_color)
-                _, score, nodes_searched, cutoffs = self.alpha_beta_search(new_board, depth - 1, color, opposite_color, alpha, beta, True)
+                board.place(move, opposite_color)
+                _, score, nodes_searched, cutoffs = self.alpha_beta_search(board, depth - 1, color, opposite_color, alpha, beta, True)
+                board.unplace(move)
                 
                 total_nodes_searched += nodes_searched
                 total_cutoffs += cutoffs

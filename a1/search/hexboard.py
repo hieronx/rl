@@ -39,6 +39,10 @@ class HexBoard:
             self.board[coordinates] = color
             if self.check_win(HexBoard.RED) or self.check_win(HexBoard.BLUE) or self.check_draw():
                 self.game_over = True
+    
+    def unplace(self, coordinates):
+        """Sets the provided hex back to empty"""
+        self.board[coordinates] = HexBoard.EMPTY
 
     def make_move(self, coordinates, color):
         """Should return the new board without modifying the existing board"""
