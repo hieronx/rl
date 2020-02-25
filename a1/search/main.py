@@ -20,30 +20,27 @@ def play_game(game_input):
 
     r1, r2 = Rating(), Rating()
     m1, m2 = Minimax(board_size, p1['depth'], Evaluate(p1['eval']), False), Minimax(board_size, p2['depth'], Evaluate(p2['eval']), False)
-    first_color, second_color = HexBoard.RED, HexBoard.BLUE
+    r1_col, r2_col = HexBoard.RED, HexBoard.BLUE
+    r1_first = True
 
     text = "Processor %d" % (process_id)
 
     for game_id in tqdm(range(1, game_cnt + 1), desc=text, position=process_id):
         board = HexBoard(board_size)
 
-        first_color = HexBoard.RED if first_color == HexBoard.BLUE else HexBoard.BLUE
-        second_color = HexBoard.RED if second_color == HexBoard.BLUE else HexBoard.BLUE
+        r1_first = True if not r1_first else False
+        r1_turn = True if r1_first else False
 
-        while not board.game_over:
-            first_move = (m1 if first_color == HexBoard.RED else m2).get_next_move(board, first_color)
-            board.place(first_move, first_color)
-
-            if not board.game_over:
-                second_move = (m1 if second_color == HexBoard.RED else m2).get_next_move(board, second_color)
-
-                if not second_move:
-                    board.print()
-                else:
-                    board.place(second_move, second_color)
+        first_color = r1_col if r1_first else r2_col
+        second_color =  r2_col if r1_first else r1_col
         
-        winner = r1 if board.check_win(first_color) and first_color == HexBoard.RED else r2
-        loser = r1 if board.check_win(second_color) and second_color == HexBoard.RED else r2
+        while not board.game_over:
+            move = (m1 if r1_turn else m2).get_next_move(board, r1_col if r1_turn else r2_col)
+            board.place(move, r1_col if r1_turn else r2_col)
+            r1_turn = False if r1_turn else True
+        
+        winner = r1 if board.check_win(r1_col) else r2
+        loser = r2 if board.check_win(r2_col) else r1
         drawn = board.check_draw()
 
         r1, r2 = rate_1vs1(winner, loser, drawn)
