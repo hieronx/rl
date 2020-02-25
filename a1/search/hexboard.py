@@ -179,5 +179,3 @@ class HexBoard:
             code += value * multiplier
             multiplier *= 10
         return code
-        # code = [str(color)] + [str(value) for _, value in self.board.items()]
-        # return int("".join(code))
