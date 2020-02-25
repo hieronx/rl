@@ -22,7 +22,8 @@ class Minimax:
         lower_bound_a = -math.inf
         upper_bound_b = math.inf
         
-        move, _, nodes_searched, cutoffs = self.alpha_beta_search(board, self.search_depth, color, lower_bound_a, upper_bound_b, True)
+        opposite_color = board.get_opposite_color(color)
+        move, _, = self.alpha_beta_search(board, self.search_depth, color, opposite_color, lower_bound_a, upper_bound_b, True)
         
         if self.live_play:
             cls()
@@ -32,59 +33,38 @@ class Minimax:
             print("Generation of this next move took %f seconds." % elapsed_time)
         return move
 
-    def alpha_beta_search(self, board, depth, color, lower_bound_a, upper_bound_b, maximizing):
+    def alpha_beta_search(self, board, depth, color, opposite_color, lower_bound_a, upper_bound_b, maximizing):
         # hash_code = board.hash_code(perspective_player)
         # if hash_code in self.tp_table:
         #     return (self.tp_table[hash_code][0], self.tp_table[hash_code][1], 0, 0)
         
         if depth == 0 or board.game_over:
             score = self.evaluate.evaluate_board(board, color)
-            return (None, score, 1, 0)
+            return (None, score)
 
         moves = self.get_possible_moves(board)
         assert len(moves) > 0
 
-        best_score = -math.inf if maximizing else math.inf
-        best_move = None
-        perspective_player = color if maximizing else board.get_opposite_color(color)
-
-        total_nodes_searched = 0
-        total_cutoffs = 0
-
-        for move in moves:
-            new_board = board.make_move(move, perspective_player)
-            _, score, nodes_searched, cutoffs = self.alpha_beta_search(new_board, depth - 1, color, lower_bound_a, upper_bound_b, not maximizing)
-
-            total_nodes_searched += nodes_searched
-            total_cutoffs += cutoffs
-
-            if maximizing and score > best_score:
-                best_move = move
-                best_score = score
-                
-                if score >= lower_bound_a:
-                    lower_bound_a = score
-
-                    if lower_bound_a >= upper_bound_b:
-                        # self.put_in_tp_table(board, perspective_player, best_move, best_score)
-                        return (best_move, best_score, total_nodes_searched, 1)
-
-            elif not maximizing and score < best_score:
-                best_move = move
-                best_score = score
-
-                if score <= upper_bound_b:
-                    upper_bound_b = score
-                    
-                    if upper_bound_b <= lower_bound_a:
-                        # self.put_in_tp_table(board, current_color, best_move, best_score)
-                        return (best_move, best_score, total_nodes_searched, 1)
-        
-        # self.put_in_tp_table(board, current_color, best_move, best_score)
-
-        assert best_move is not None
-
-        return (best_move, best_score, total_nodes_searched, total_cutoffs)
+        if maximizing:
+            best_score = -math.inf
+            best_move = None
+            for move in moves:
+                new_board = board.make_move(move, color)
+                _, score = self.alpha_beta_search(new_board, depth - 1, color, opposite_color, lower_bound_a, upper_bound_b, False)
+                if score > best_score:
+                    best_score = score
+                    best_move = move
+            return (best_move, best_score)
+        else:
+            best_score = math.inf
+            best_move = None
+            for move in moves:
+                new_board = board.make_move(move, opposite_color)
+                _, score = self.alpha_beta_search(new_board, depth - 1, color, opposite_color, lower_bound_a, upper_bound_b, True)
+                if score < best_score:
+                    best_score = score
+                    best_move = move
+            return (best_move, best_score)
 
     def get_possible_moves(self, board):
         empty_coordinates = []
