@@ -40,8 +40,16 @@ def play_game(game_input):
             r1_turn = False if r1_turn else True
         
         winner = r1 if board.check_win(r1_col) else r2
-        loser = r2 if board.check_win(r2_col) else r1
+        loser = r1 if board.check_win(r2_col) else r2
         drawn = board.check_draw()
+
+        # assert winner != loser and not drawn
+        # if winner == loser and not drawn:
+        #     print('Processr %d: r1_col = %d, has won = %s' % (process_id, r1_col, str(board.check_win(r1_col))))
+        #     print('Processr %d: r2_col = %d, has won = %s' % (process_id, r2_col, str(board.check_win(r2_col))))
+        #     print('Processr %d: winner = %s, loser = %s' % (process_id, winner, loser))
+        #     board.print()
+        #     break
 
         r1, r2 = rate_1vs1(winner, loser, drawn)
         save_result(start_time, (p1['depth'], p1['eval'], p2['depth'], p2['eval'], game_id, r1.mu, r1.sigma, r2.mu, r2.sigma))

@@ -48,35 +48,30 @@ class Minimax:
         if maximizing:
             best_score = -math.inf
             best_move = None
-            
+
             for move in moves:
                 new_board = board.make_move(move, color)
-                _, score = self.alpha_beta_search(new_board, depth - 1, color, opposite_color, alpha, beta, False)
-                
+                _, score = self.alpha_beta_search(new_board, depth - 1, color, opposite_color, lower_bound_a, upper_bound_b, False)
+
                 if score > best_score:
                     best_score = score
                     best_move = move
 
-                alpha = max(alpha, best_score)
-                if alpha >= beta: break
-            
             return (best_move, best_score)
+            
         else:
             best_score = math.inf
             best_move = None
-            
+
             for move in moves:
                 new_board = board.make_move(move, opposite_color)
-                _, score = self.alpha_beta_search(new_board, depth - 1, color, opposite_color, alpha, beta, True)
-                
+                _, score = self.alpha_beta_search(new_board, depth - 1, color, opposite_color, lower_bound_a, upper_bound_b, True)
+
                 if score < best_score:
                     
                     best_score = score
                     best_move = move
-                
-                beta = min(beta, best_score)
-                if alpha >= beta: break
-            
+                    
             return (best_move, best_score)
 
     def get_possible_moves(self, board):
