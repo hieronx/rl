@@ -75,11 +75,14 @@ class Evaluate:
             return 0
 
     def evaluate_board(self, board, color):
-        if board.check_draw() or (board.check_win(color) and board.check_win(board.get_opposite_color(color))): return 0
-        if board.check_win(color): return 1000
-        if board.check_win(board.get_opposite_color(color)): return -1000
+        if self.eval.method == 'random':
+            return np.random.uniform(0, 1)
 
-        if self.eval_method == 'Dijkstra':
+        elif self.eval_method == 'Dijkstra':
+            if board.check_draw() or (board.check_win(color) and board.check_win(board.get_opposite_color(color))): return 0
+            if board.check_win(color): return 1000
+            if board.check_win(board.get_opposite_color(color)): return -1000
+            
             player_sp = self.find_shortest_path_to_border(board, color)
             opponent_sp = self.find_shortest_path_to_border(board, board.get_opposite_color(color))
             # print('Player = %d vs opponent = %d' % (player_sp, opponent_sp))
@@ -88,9 +91,9 @@ class Evaluate:
             if opponent_sp == math.inf: opponent_sp = 0
 
             return -(player_sp - opponent_sp)
+        
         else:
-            return np.random.uniform(0, 1)
-
+            return 0
 class Node:
     dist = math.inf
     prev = None
