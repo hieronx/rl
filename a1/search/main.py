@@ -20,30 +20,30 @@ def play_game(game_input):
 
     r1, r2 = Rating(), Rating()
     m1, m2 = Minimax(board_size, p1['depth'], Evaluate(p1['eval']), False), Minimax(board_size, p2['depth'], Evaluate(p2['eval']), False)
+    first_color, second_color = HexBoard.RED, HexBoard.BLUE
 
     text = "Processor %d" % (process_id)
 
     for game_id in tqdm(range(1, game_cnt + 1), desc=text, position=process_id):
         board = HexBoard(board_size)
-        first_player, second_player = m1, m2
+
+        first_color = HexBoard.RED if first_color == HexBoard.BLUE else HexBoard.BLUE
+        second_color = HexBoard.RED if second_color == HexBoard.BLUE else HexBoard.BLUE
 
         while not board.game_over:
-            first_player = m2 if first_player == m1 else m1
-            second_player = m2 if second_player == m1 else m1
-
-            first_move = first_player.get_next_move(board, HexBoard.RED)
-            board.place(first_move, HexBoard.RED)
+            first_move = (m1 if first_color == HexBoard.RED else m2).get_next_move(board, first_color)
+            board.place(first_move, first_color)
 
             if not board.game_over:
-                second_move = second_player.get_next_move(board, HexBoard.BLUE)
+                second_move = (m1 if second_color == HexBoard.RED else m2).get_next_move(board, second_color)
 
                 if not second_move:
                     board.print()
                 else:
-                    board.place(second_move, HexBoard.BLUE)
+                    board.place(second_move, second_color)
         
-        winner = r1 if board.check_win(HexBoard.RED) else r2
-        loser = r1 if board.check_win(HexBoard.BLUE) else r2
+        winner = r1 if board.check_win(first_color) and first_color == HexBoard.RED else r2
+        loser = r1 if board.check_win(second_color) and second_color == HexBoard.RED else r2
         drawn = board.check_draw()
 
         r1, r2 = rate_1vs1(winner, loser, drawn)
@@ -57,7 +57,7 @@ def evaluate():
     freeze_support()  # for Windows support
 
     board_size = 3
-    game_cnt = 60
+    game_cnt = 120
     # players = [{ 'depth': 3, 'eval': 'random' }, { 'depth': 3, 'eval': 'Dijkstra' }, { 'depth': 4, 'eval': 'Dijkstra' }]
     players = [{ 'depth': 3, 'eval': 'random' }, { 'depth': 3, 'eval': 'Dijkstra' }]
 

@@ -72,12 +72,12 @@ class TestHexMinimax(unittest.TestCase):
 
         self.assertFalse(board.game_over)
 
-        board.print()
+        # board.print()
         minimax = Minimax(3, 3, evaluate, False)
-        good_move = board.make_move((0, 2), HexBoard.RED)
-        bad_move = board.make_move((1, 0), HexBoard.RED)
-        good_eval = evaluate.evaluate_board(good_move, HexBoard.RED)
-        bad_eval = evaluate.evaluate_board(bad_move, HexBoard.RED)
+        # good_move = board.make_move((0, 2), HexBoard.RED)
+        # bad_move = board.make_move((1, 0), HexBoard.RED)
+        # good_eval = evaluate.evaluate_board(good_move, HexBoard.RED)
+        # bad_eval = evaluate.evaluate_board(bad_move, HexBoard.RED)
 
         move = minimax.get_next_move(board, HexBoard.RED)
         self.assertEqual(move, (0, 2))
