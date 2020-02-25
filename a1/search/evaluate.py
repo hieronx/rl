@@ -32,6 +32,7 @@ class Evaluate:
                     min_score = score
         
         if min_score == board.size**2:
+            print("Set min score to 0")
             return 0
 
         return min_score
@@ -83,6 +84,7 @@ class Evaluate:
             opponent_sp = self.find_shortest_path_to_border(board, board.get_opposite_color(color))
             # print('Player = %d vs opponent = %d' % (player_sp, opponent_sp))
 
+            print("Player sp %d and opponent sp %d" % (player_sp, opponent_sp))
             if player_sp == math.inf: player_sp = 0
             if opponent_sp == math.inf: opponent_sp = 0
 
