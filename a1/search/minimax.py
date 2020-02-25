@@ -19,11 +19,11 @@ class Minimax:
 
     def get_next_move(self, board, color):
         start_time = time.time()
-        lower_bound_a = -math.inf
-        upper_bound_b = math.inf
-        
+        alpha = -math.inf
+        beta = math.inf
         opposite_color = board.get_opposite_color(color)
-        move, _, = self.alpha_beta_search(board, self.search_depth, color, opposite_color, lower_bound_a, upper_bound_b, True)
+        
+        move, _, = self.alpha_beta_search(board, self.search_depth, color, opposite_color, alpha, beta, True)
         
         if self.live_play:
             cls()
@@ -33,7 +33,7 @@ class Minimax:
             print("Generation of this next move took %f seconds." % elapsed_time)
         return move
 
-    def alpha_beta_search(self, board, depth, color, opposite_color, lower_bound_a, upper_bound_b, maximizing):
+    def alpha_beta_search(self, board, depth, color, opposite_color, alpha, beta, maximizing):
         # hash_code = board.hash_code(perspective_player)
         # if hash_code in self.tp_table:
         #     return (self.tp_table[hash_code][0], self.tp_table[hash_code][1], 0, 0)
@@ -48,22 +48,35 @@ class Minimax:
         if maximizing:
             best_score = -math.inf
             best_move = None
+            
             for move in moves:
                 new_board = board.make_move(move, color)
-                _, score = self.alpha_beta_search(new_board, depth - 1, color, opposite_color, lower_bound_a, upper_bound_b, False)
+                _, score = self.alpha_beta_search(new_board, depth - 1, color, opposite_color, alpha, beta, False)
+                
                 if score > best_score:
                     best_score = score
                     best_move = move
+
+                alpha = max(alpha, best_score)
+                if alpha >= beta: break
+            
             return (best_move, best_score)
         else:
             best_score = math.inf
             best_move = None
+            
             for move in moves:
                 new_board = board.make_move(move, opposite_color)
-                _, score = self.alpha_beta_search(new_board, depth - 1, color, opposite_color, lower_bound_a, upper_bound_b, True)
+                _, score = self.alpha_beta_search(new_board, depth - 1, color, opposite_color, alpha, beta, True)
+                
                 if score < best_score:
+                    
                     best_score = score
                     best_move = move
+                
+                beta = min(beta, best_score)
+                if alpha >= beta: break
+            
             return (best_move, best_score)
 
     def get_possible_moves(self, board):
