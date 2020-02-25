@@ -38,7 +38,7 @@ class Minimax:
         if hash_code in self.tp_table:
             return (self.tp_table[hash_code][0], self.tp_table[hash_code][1], 0, 0)
         
-        if depth == 0 or board.game_over:
+        if depth == 0 or board.game_over():
             score = self.evaluate.evaluate_board(board, color)
             return (None, score, 1, 0)
 

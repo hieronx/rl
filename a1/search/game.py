@@ -17,14 +17,14 @@ class HexGame:
         self.minimax = Minimax(size, depth, Evaluate(eval_method))
 
     def run_interactively(self, board):
-        while not board.game_over:
+        while not board.game_over():
             print("Waiting for CPU move...")
             move = self.minimax.get_next_move(board, HexBoard.RED)
             board = board.make_move(move, HexBoard.RED)
             board.print()
             print('\n')
 
-            if board.game_over:
+            if board.game_over():
                 break
 
             while True:
@@ -37,7 +37,7 @@ class HexGame:
                             break
 
             board = board.make_move((char_to_row_idx[x], int(y)), HexBoard.BLUE)
-            print(board.game_over)
+            print(board.game_over())
 
         if board.check_win(HexBoard.RED):
             print('The AI won.')
@@ -45,7 +45,7 @@ class HexGame:
             print('You won.')
 
     def simulate(self, board):
-        while not board.game_over:
+        while not board.game_over():
             board.place(self.minimax.get_next_move(board, HexBoard.RED), HexBoard.RED)
             board.place(self.minimax.get_next_move(board, HexBoard.BLUE), HexBoard.BLUE)
 

@@ -29,11 +29,11 @@ class TestHexMinimax(unittest.TestCase):
     def test_game_end(self):
         endable_board = HexBoard(4)
 
-        while not endable_board.game_over:
+        while not endable_board.game_over():
             endable_board.place(
                 (np.random.randint(0, 4), np.random.randint(0, 4)), HexBoard.RED)
 
-        self.assertEqual(endable_board.game_over, True)
+        self.assertEqual(endable_board.game_over(), True)
         self.assertEqual(endable_board.check_win(HexBoard.RED), True)
         self.assertEqual(endable_board.check_win(HexBoard.BLUE), False)
 
@@ -70,7 +70,7 @@ class TestHexMinimax(unittest.TestCase):
         board.place((0, 0), HexBoard.RED)
         board.place((0, 1), HexBoard.RED)
 
-        self.assertFalse(board.game_over)
+        self.assertFalse(board.game_over())
 
         minimax = Minimax(3, 3, evaluate, False)
         move = minimax.get_next_move(board, HexBoard.RED)

@@ -36,7 +36,7 @@ def play_game(game_input):
         first_color = r1_col if r1_first else r2_col
         second_color =  r2_col if r1_first else r1_col
         
-        while not board.game_over:
+        while not board.game_over():
             move = (m1 if r1_turn else m2).get_next_move(board, r1_col if r1_turn else r2_col)
             board.place(move, r1_col if r1_turn else r2_col)
             r1_turn = False if r1_turn else True

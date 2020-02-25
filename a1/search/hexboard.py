@@ -12,7 +12,6 @@ class HexBoard:
         """Creates a new empty board with the provided size"""
         self.board = {}
         self.size = board_size
-        self.game_over = False
         self.move_count = 0
 
         for x in range(board_size):
@@ -35,10 +34,8 @@ class HexBoard:
 
     def place(self, coordinates, color):
         """Places the provided color at the board coordinate. This modifies the interior board state of this object"""
-        if not self.game_over and self.board[coordinates] == HexBoard.EMPTY:
+        if self.board[coordinates] == HexBoard.EMPTY: # not self.game_over and 
             self.board[coordinates] = color
-            if self.check_win(HexBoard.RED) or self.check_win(HexBoard.BLUE) or self.check_draw():
-                self.game_over = True
     
     def unplace(self, coordinates):
         """Sets the provided hex back to empty"""
@@ -109,6 +106,9 @@ class HexBoard:
                 return True
 		
         return False
+
+    def game_over(self):
+        return self.check_win(HexBoard.RED) or self.check_win(HexBoard.BLUE) or self.check_draw()
 
     def check_win(self, color):
         """Check if we have made a snake from the source side to the opposing side for the provided color"""
