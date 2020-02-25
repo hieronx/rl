@@ -54,7 +54,7 @@ def play_game(game_input):
     print(r2)
 
 def evaluate():
-    freeze_support()  # for Windows support
+    freeze_support() # for Windows support
 
     board_size = 3
     game_cnt = 60

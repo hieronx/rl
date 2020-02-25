@@ -34,7 +34,7 @@ class HexBoard:
 
     def place(self, coordinates, color):
         """Places the provided color at the board coordinate. This modifies the interior board state of this object"""
-        if self.board[coordinates] == HexBoard.EMPTY: # not self.game_over and 
+        if self.board[coordinates] == HexBoard.EMPTY:
             self.board[coordinates] = color
     
     def unplace(self, coordinates):
@@ -108,6 +108,7 @@ class HexBoard:
         return False
 
     def game_over(self):
+        """Check if the game has ended, either by a win or by a draw"""
         return self.check_win(HexBoard.RED) or self.check_win(HexBoard.BLUE) or self.check_draw()
 
     def check_win(self, color):

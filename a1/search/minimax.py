@@ -1,12 +1,9 @@
 import math
 import numpy as np
+import time
 
 from util import cls
 from hexboard import HexBoard
-
-import time
-
-char_to_row_idx = {'a': 0, 'b': 1, 'c': 2, 'd': 3}
 
 class Minimax:
 
@@ -31,6 +28,7 @@ class Minimax:
 
             elapsed_time = time.time() - start_time
             print("Generation of this next move took %f seconds." % elapsed_time)
+        
         return move
 
     def alpha_beta_search(self, board, depth, color, opposite_color, alpha, beta, maximizing):

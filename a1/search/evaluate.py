@@ -18,22 +18,18 @@ class Evaluate:
         
         min_score = board.size**2
 
-        #For every combination of target and source coord
+        # For every combination of target and source coord
         for from_coord in source_coords:
             for to_coord in target_coords:
                 # skip if the target or destination coord is already taken by the enemy team
-                # if board.get_color(from_coord) == opposite_color or board.get_color(to_coord) == opposite_color:
-                #     continue
+                if board.get_color(from_coord) == opposite_color or board.get_color(to_coord) == opposite_color:
+                    continue
 
                 # Only count nodes without placed positions of this color
                 score = self.get_path_length_between(board, from_coord, to_coord, color)
 
                 if score < min_score:
                     min_score = score
-        
-        # if min_score == board.size**2:
-        #     # print("No path was found!")
-        #     return 0
 
         return min_score
 
@@ -85,7 +81,6 @@ class Evaluate:
             
             player_sp = self.find_shortest_path_to_border(board, color)
             opponent_sp = self.find_shortest_path_to_border(board, board.get_opposite_color(color))
-            # print('Player = %d vs opponent = %d' % (player_sp, opponent_sp))
 
             if player_sp == math.inf: player_sp = 0
             if opponent_sp == math.inf: opponent_sp = 0
@@ -95,10 +90,3 @@ class Evaluate:
         else:
             print('This should not have happened')
             return 0
-class Node:
-    dist = math.inf
-    prev = None
-    coord = None
-
-    def __init__(self, coordinate):
-        self.coord = coordinate
