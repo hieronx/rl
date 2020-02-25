@@ -25,8 +25,6 @@ def play_game(game_input):
     r1_col, r2_col = HexBoard.RED, HexBoard.BLUE
     r1_first = True
 
-    r1_games_won, r2_games_won, draws = 0, 0, 0
-
     text = "Processor %d" % (process_id)
 
     for game_id in tqdm(range(1, game_cnt + 1), desc=text, position=process_id):
@@ -45,31 +43,20 @@ def play_game(game_input):
 
         if board.check_draw():
             r1, r2 = rate_1vs1(r1, r2, drawn=True)
-            draws += 1
         elif board.check_win(r1_col):
             r1, r2 = rate_1vs1(r1, r2, drawn=False)
-            r1_games_won += 1
         elif board.check_win(r2_col):
             r2, r1 = rate_1vs1(r2, r1, drawn=False)
-            r2_games_won += 1
         
         save_result(start_time, (p1['depth'], p1['eval'], p2['depth'], p2['eval'], game_id, r1.mu, r1.sigma, r2.mu, r2.sigma))
-
-    print('Playing r1 = %s against r2 = %s' % (p1['eval'], p2['eval']))
-    print(r1)
-    print(r2)
-    print(r1_games_won)
-    print(r2_games_won)
-    print(draws)
-    
 
 def evaluate():
     freeze_support()  # for Windows support
 
     board_size = 3
     game_cnt = 120
-    # players = [{ 'depth': 3, 'eval': 'random' }, { 'depth': 3, 'eval': 'Dijkstra' }, { 'depth': 4, 'eval': 'Dijkstra' }]
-    players = [{ 'depth': 3, 'eval': 'random' }, { 'depth': 3, 'eval': 'Dijkstra' }]
+    players = [{ 'depth': 3, 'eval': 'random' }, { 'depth': 3, 'eval': 'Dijkstra' }, { 'depth': 4, 'eval': 'Dijkstra' }]
+    # players = [{ 'depth': 3, 'eval': 'random' }, { 'depth': 3, 'eval': 'Dijkstra' }]
 
     start_time = str(int(time.time()))
     save_result(start_time, ('p1_depth', 'p1_eval', 'p2_depth', 'p2_eval', 'game_id', 'r1_mu', 'r1_sigma', 'r2_mu', 'r2_sigma'))
