@@ -23,7 +23,7 @@ class Minimax:
         beta = math.inf
         opposite_color = board.get_opposite_color(color)
         
-        move, _, = self.alpha_beta_search(board, self.search_depth, color, opposite_color, alpha, beta, True)
+        move, _, nodes_searched, cutoffs = self.alpha_beta_search(board, self.search_depth, color, opposite_color, alpha, beta, True)
         
         if self.live_play:
             cls()
@@ -34,16 +34,19 @@ class Minimax:
         return move
 
     def alpha_beta_search(self, board, depth, color, opposite_color, alpha, beta, maximizing):
-        # hash_code = board.hash_code(perspective_player)
-        # if hash_code in self.tp_table:
-        #     return (self.tp_table[hash_code][0], self.tp_table[hash_code][1], 0, 0)
+        hash_code = board.hash_code(color if maximizing else opposite_color)
+        if hash_code in self.tp_table:
+            return (self.tp_table[hash_code][0], self.tp_table[hash_code][1], 0, 0)
         
         if depth == 0 or board.game_over:
             score = self.evaluate.evaluate_board(board, color)
-            return (None, score)
+            return (None, score, 1, 0)
 
         moves = self.get_possible_moves(board)
         assert len(moves) > 0
+
+        total_nodes_searched = 0
+        total_cutoffs = 0
 
         if maximizing:
             best_score = -math.inf
@@ -51,16 +54,22 @@ class Minimax:
 
             for move in moves:
                 new_board = board.make_move(move, color)
-                _, score = self.alpha_beta_search(new_board, depth - 1, color, opposite_color, alpha, beta, False)
+                _, score, nodes_searched, cutoffs = self.alpha_beta_search(new_board, depth - 1, color, opposite_color, alpha, beta, False)
+                
+                total_nodes_searched += nodes_searched
+                total_cutoffs += cutoffs
 
                 if score > best_score:
                     best_score = score
                     best_move = move
 
                 alpha = max(best_score, alpha)
-                if alpha >= beta: break
+                if alpha >= beta:
+                    total_cutoffs += 1
+                    break
 
-            return (best_move, best_score)
+            self.put_in_tp_table(board, color, best_move, best_score)
+            return (best_move, best_score, total_nodes_searched, total_cutoffs)
             
         else:
             best_score = math.inf
@@ -68,16 +77,22 @@ class Minimax:
 
             for move in moves:
                 new_board = board.make_move(move, opposite_color)
-                _, score = self.alpha_beta_search(new_board, depth - 1, color, opposite_color, alpha, beta, True)
+                _, score, nodes_searched, cutoffs = self.alpha_beta_search(new_board, depth - 1, color, opposite_color, alpha, beta, True)
+                
+                total_nodes_searched += nodes_searched
+                total_cutoffs += cutoffs
 
                 if score < best_score:
                     best_score = score
                     best_move = move
                 
                 beta = min(best_score, beta)
-                if alpha >= beta: break
+                if alpha >= beta:
+                    total_cutoffs += 1
+                    break
                     
-            return (best_move, best_score)
+            self.put_in_tp_table(board, opposite_color, best_move, best_score)
+            return (best_move, best_score, total_nodes_searched, total_cutoffs)
 
     def get_possible_moves(self, board):
         empty_coordinates = []
@@ -91,5 +106,6 @@ class Minimax:
     def put_in_tp_table(self, board, color, move, score):
         best_move_board = board.make_move(move, color)
         hash_code = best_move_board.hash_code(color)
-        if hash_code not in self.tp_table or (hash_code in self.tp_table and self.tp_table[hash_code][1] > score):
+
+        if hash_code not in self.tp_table:
             self.tp_table[hash_code] = (move, score)

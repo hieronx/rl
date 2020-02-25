@@ -21,13 +21,13 @@ def play_game(game_input):
 
     r1 = Rating()
     r2 = Rating()
-    m1, m2 = Minimax(board_size, p1['depth'], Evaluate(p1['eval']), False), Minimax(board_size, p2['depth'], Evaluate(p2['eval']), False)
     r1_col, r2_col = HexBoard.RED, HexBoard.BLUE
     r1_first = True
 
     text = "Processor %d" % (process_id)
 
     for game_id in tqdm(range(1, game_cnt + 1), desc=text, position=process_id):
+        m1, m2 = Minimax(board_size, p1['depth'], Evaluate(p1['eval']), False), Minimax(board_size, p2['depth'], Evaluate(p2['eval']), False)
         board = HexBoard(board_size)
 
         r1_first = True if not r1_first else False
@@ -49,14 +49,17 @@ def play_game(game_input):
             r2, r1 = rate_1vs1(r2, r1, drawn=False)
         
         save_result(start_time, (p1['depth'], p1['eval'], p2['depth'], p2['eval'], game_id, r1.mu, r1.sigma, r2.mu, r2.sigma))
+        
+    print(r1)
+    print(r2)
 
 def evaluate():
     freeze_support()  # for Windows support
 
     board_size = 3
-    game_cnt = 120
-    players = [{ 'depth': 3, 'eval': 'random' }, { 'depth': 3, 'eval': 'Dijkstra' }, { 'depth': 4, 'eval': 'Dijkstra' }]
-    # players = [{ 'depth': 3, 'eval': 'random' }, { 'depth': 3, 'eval': 'Dijkstra' }]
+    game_cnt = 60
+    # players = [{ 'depth': 3, 'eval': 'random' }, { 'depth': 3, 'eval': 'Dijkstra' }, { 'depth': 4, 'eval': 'Dijkstra' }]
+    players = [{ 'depth': 3, 'eval': 'random' }, { 'depth': 3, 'eval': 'Dijkstra' }]
 
     start_time = str(int(time.time()))
     save_result(start_time, ('p1_depth', 'p1_eval', 'p2_depth', 'p2_eval', 'game_id', 'r1_mu', 'r1_sigma', 'r2_mu', 'r2_sigma'))
