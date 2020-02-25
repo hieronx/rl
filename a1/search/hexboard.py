@@ -173,9 +173,11 @@ class HexBoard:
 
 
     def hash_code(self, color):
-        code = str(color)
-        for x in range(self.size):
-            for y in range(self.size):
-                code += str(self.board[x, y])
-        
-        return int(code)
+        multiplier = 10
+        code = color
+        for _, value in self.board.items():
+            code += value * multiplier
+            multiplier *= 10
+        return code
+        # code = [str(color)] + [str(value) for _, value in self.board.items()]
+        # return int("".join(code))
