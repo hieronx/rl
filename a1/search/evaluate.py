@@ -22,8 +22,8 @@ class Evaluate:
         for from_coord in source_coords:
             for to_coord in target_coords:
                 # skip if the target or destination coord is already taken by the enemy team
-                if board.get_color(from_coord) == opposite_color or board.get_color(to_coord) == opposite_color:
-                    continue
+                # if board.get_color(from_coord) == opposite_color or board.get_color(to_coord) == opposite_color:
+                #     continue
 
                 # Only count nodes without placed positions of this color
                 score = self.get_path_length_between(board, from_coord, to_coord, color)
