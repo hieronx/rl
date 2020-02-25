@@ -31,9 +31,9 @@ class Evaluate:
                 if score < min_score:
                     min_score = score
         
-        if min_score == board.size**2:
-            # print("No path was found!")
-            return 0
+        # if min_score == board.size**2:
+        #     # print("No path was found!")
+        #     return 0
 
         return min_score
 
@@ -76,8 +76,8 @@ class Evaluate:
 
     def evaluate_board(self, board, color):
         if board.check_draw() or (board.check_win(color) and board.check_win(board.get_opposite_color(color))): return 0
-        # if board.check_win(color): return 1000
-        # if board.check_win(board.get_opposite_color(color)): return -1000
+        if board.check_win(color): return 1000
+        if board.check_win(board.get_opposite_color(color)): return -1000
 
         if self.eval_method == 'Dijkstra':
             player_sp = self.find_shortest_path_to_border(board, color)
