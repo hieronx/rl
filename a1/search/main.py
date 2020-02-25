@@ -21,7 +21,7 @@ def play_game(game_input):
     r1, r2 = Rating(), Rating()
     m1, m2 = Minimax(board_size, p1['depth'], Evaluate(p1['eval']), False), Minimax(board_size, p2['depth'], Evaluate(p2['eval']), False)
 
-    text = "Processor #{}".format(process_id)
+    text = "Processor %d" % (process_id)
 
     for game_id in tqdm(range(1, game_cnt + 1), desc=text, position=process_id):
         board = HexBoard(board_size)
@@ -56,8 +56,8 @@ def play_game(game_input):
 def evaluate():
     freeze_support()  # for Windows support
 
-    board_size = 3
-    game_cnt = 100
+    board_size = 4
+    game_cnt = 30
     # players = [{ 'depth': 3, 'eval': 'random' }, { 'depth': 3, 'eval': 'Dijkstra' }, { 'depth': 4, 'eval': 'Dijkstra' }]
     players = [{ 'depth': 3, 'eval': 'random' }, { 'depth': 3, 'eval': 'Dijkstra' }]
 

@@ -76,7 +76,7 @@ class TestHexMinimax(unittest.TestCase):
 
         self.assertFalse(board.game_over)
 
-        minimax = Minimax(3, 1, evaluate, False)
+        minimax = Minimax(3, 3, evaluate, False)
         move = minimax.get_next_move(board, HexBoard.RED)
         self.assertEqual(move, (0, 2))
 
@@ -101,20 +101,20 @@ class TestHexMinimax(unittest.TestCase):
         board.place((2, 1), HexBoard.BLUE)
         board.place((3, 1), HexBoard.BLUE)
 
-        # board.print()
+        self.assertEqual(evaluate.get_path_length_between(board, (0, 1), (3, 1), HexBoard.BLUE), 1)
 
-        # print('Path lenght: ' + str(evaluate.get_path_length_between(board, (0, 1), (3, 1), HexBoard.BLUE)))
-
-        # print(evaluate.evaluate_board(board, HexBoard.RED))
-        # print(evaluate.evaluate_board(board, HexBoard.BLUE))
-
-        # minimax = Minimax(3, 3, evaluate, False)
-        # move = minimax.get_next_move(board, HexBoard.RED)
-
-        # new_board = board.make_move((0, 1), HexBoard.RED)
+        # new_board = board.make_move((0, 0), HexBoard.RED)
+        # new_board.print()
         # print(evaluate.evaluate_board(new_board, HexBoard.RED))
 
-        self.assertEqual(evaluate.get_path_length_between(board, (0, 1), (3, 1), HexBoard.BLUE), 1)
+        # new_board = board.make_move((0, 1), HexBoard.RED)
+        # new_board.print()
+        # print(evaluate.evaluate_board(new_board, HexBoard.RED))
+
+        minimax = Minimax(3, 3, evaluate, False)
+        move = minimax.get_next_move(board, HexBoard.RED)
+        self.assertEqual(move, (0, 1))
+
 
     def test_board_evaluation(self):
         evaluate = Evaluate('Dijkstra')

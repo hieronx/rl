@@ -28,10 +28,11 @@ class Evaluate:
                 # Only count nodes without placed positions of this color
                 score = self.get_path_length_between(board, from_coord, to_coord, color)
 
-                assert score != math.inf
-
                 if score < min_score:
                     min_score = score
+        
+        if min_score == board.size**2:
+            return 0
 
         return min_score
 
@@ -48,7 +49,8 @@ class Evaluate:
         for node in board.board:
             dist[node] = math.inf
             prev[node] = None
-        dist[from_coord] = 0 if board.board[from_coord] == color else 1
+            
+        dist[from_coord] = 1 if board.get_color(from_coord) == board.EMPTY else 0
         heappush(q, (dist[from_coord], from_coord))
 
         while q:
@@ -64,20 +66,15 @@ class Evaluate:
         return (dist, prev)
 
     def distance_between(self, board, coord_a, coord_b, opposite_color):
-        color_a = board.get_color(coord_a)
-        color_b = board.get_color(coord_b)
-        is_identical = color_a == color_b
-
-        if color_a == opposite_color or color_b == opposite_color:
-            return 100
-        elif color_a != board.EMPTY and is_identical:
-            return 0
-        else:
+        if board.get_color(coord_b) == opposite_color:
+            return math.inf
+        elif board.get_color(coord_b) == board.EMPTY:
             return 1
-        
+        else:
+            return 0
 
     def evaluate_board(self, board, color):
-        # if board.check_draw(): return 0
+        if board.check_draw() or (board.check_win(color) and board.check_win(board.get_opposite_color(color))): return 0
         # if board.check_win(color): return -math.inf
         # if board.check_win(board.get_opposite_color(color)): return math.inf
 
@@ -85,6 +82,9 @@ class Evaluate:
             player_sp = self.find_shortest_path_to_border(board, color)
             opponent_sp = self.find_shortest_path_to_border(board, board.get_opposite_color(color))
             # print('Player = %d vs opponent = %d' % (player_sp, opponent_sp))
+
+            if player_sp == math.inf: player_sp = 0
+            if opponent_sp == math.inf: opponent_sp = 0
 
             return -(player_sp - opponent_sp)
         else:
