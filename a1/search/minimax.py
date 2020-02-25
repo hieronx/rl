@@ -22,8 +22,13 @@ class Minimax:
         alpha = -math.inf
         beta = math.inf
         opposite_color = board.get_opposite_color(color)
+
+        time_limit = 0.1 # in seconds
         
-        move, _, nodes_searched, cutoffs = self.alpha_beta_search(board, self.search_depth, color, opposite_color, alpha, beta, True)
+        depth = 1
+        while (time.time() - start_time) < time_limit:
+            move, _, nodes_searched, cutoffs = self.alpha_beta_search(board, depth, color, opposite_color, alpha, beta, True)
+            depth += 1
         
         if self.live_play:
             cls()
