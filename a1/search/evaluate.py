@@ -75,7 +75,7 @@ class Evaluate:
             return 0
 
     def evaluate_board(self, board, color):
-        if self.eval.method == 'random':
+        if self.eval_method == 'random':
             return np.random.uniform(0, 1)
 
         elif self.eval_method == 'Dijkstra':
@@ -93,6 +93,7 @@ class Evaluate:
             return -(player_sp - opponent_sp)
         
         else:
+            print('This should not have happened')
             return 0
 class Node:
     dist = math.inf

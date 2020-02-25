@@ -23,6 +23,8 @@ def play_game(game_input):
     r1_col, r2_col = HexBoard.RED, HexBoard.BLUE
     r1_first = True
 
+    r1_games_won, r2_games_won, draws = 0, 0, 0
+
     text = "Processor %d" % (process_id)
 
     for game_id in tqdm(range(1, game_cnt + 1), desc=text, position=process_id):
@@ -43,19 +45,23 @@ def play_game(game_input):
         loser = r1 if board.check_win(r2_col) else r2
         drawn = board.check_draw()
 
-        # assert winner != loser and not drawn
-        # if winner == loser and not drawn:
-        #     print('Processr %d: r1_col = %d, has won = %s' % (process_id, r1_col, str(board.check_win(r1_col))))
-        #     print('Processr %d: r2_col = %d, has won = %s' % (process_id, r2_col, str(board.check_win(r2_col))))
-        #     print('Processr %d: winner = %s, loser = %s' % (process_id, winner, loser))
-        #     board.print()
-        #     break
+        if winner == r1 and not drawn: r1_games_won += 1
+        if winner == r2 and not drawn: r2_games_won += 1
+        if drawn: draws += 1
 
         r1, r2 = rate_1vs1(winner, loser, drawn)
+
+        if (board.check_win(r1_col) and board.check_win(r2_col)) and not drawn:
+            board.print()
+            break
+
         save_result(start_time, (p1['depth'], p1['eval'], p2['depth'], p2['eval'], game_id, r1.mu, r1.sigma, r2.mu, r2.sigma))
 
     print(r1)
     print(r2)
+    print(r1_games_won)
+    print(r2_games_won)
+    print(draws)
     
 
 def evaluate():
