@@ -9,6 +9,8 @@ class HexBoard:
     RED = 2
     EMPTY = 3
 
+    possible_moves = []
+
     def __init__(self, board_size):
         """Creates a new empty board with the provided size"""
         self.board = {}
@@ -17,10 +19,11 @@ class HexBoard:
         for x in range(board_size):
             for y in range(board_size):
                 self.board[x, y] = HexBoard.EMPTY
+                self.possible_moves.append((x, y))
 
     def is_empty(self, coordinates):
         """Returns if the board is empty at the provided coordinate"""
-        return self.board[coordinates] == HexBoard.EMPTY
+        return coordinates in self.possible_moves
 
     def is_color(self, coordinates, color):
         """Returns if the board is a certain color at the provided coordinate"""
@@ -30,14 +33,20 @@ class HexBoard:
         """Returns the color at the provided board coordinate"""
         return self.board[coordinates]
 
+    def get_possible_moves(self):
+        """Returns a copy of the possible moves list"""
+        return self.possible_moves.copy()
+
     def place(self, coordinates, color):
         """Places the provided color at the board coordinate. This modifies the interior board state of this object"""
-        if self.board[coordinates] == HexBoard.EMPTY:
+        if coordinates in self.possible_moves:
             self.board[coordinates] = color
+            self.possible_moves.remove(coordinates)
     
     def unplace(self, coordinates):
         """Sets the provided hex back to empty"""
         self.board[coordinates] = HexBoard.EMPTY
+        self.possible_moves.append(coordinates)
 
     def make_move(self, coordinates, color):
         """Should return the new board without modifying the existing board"""
