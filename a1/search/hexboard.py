@@ -184,3 +184,6 @@ class HexBoard:
             code += value * multiplier
             multiplier *= 10
         return code
+
+    def hash_code_internal(self, color):
+        return color + hash(self)

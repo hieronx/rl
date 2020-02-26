@@ -7,9 +7,9 @@ from hexboard import HexBoard
 
 class Minimax:
 
-    def __init__(self, size, depth, evaluate_class, live_play = True):
+    def __init__(self, size, search_depth, evaluate_class, live_play = True):
         self.board_size = size
-        self.search_depth = depth
+        self.depth = search_depth
         self.evaluate = evaluate_class
         self.live_play = live_play
         self.tp_table = {}
@@ -20,7 +20,7 @@ class Minimax:
         beta = math.inf
         opposite_color = board.get_opposite_color(color)
         
-        move, _, nodes_searched, cutoffs = self.alpha_beta_search(board, self.search_depth, color, opposite_color, alpha, beta, True)
+        move, _, nodes_searched, cutoffs = self.alpha_beta_search(board, self.depth, color, opposite_color, alpha, beta, True)
         
         if self.live_play:
             cls()
