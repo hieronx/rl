@@ -7,31 +7,39 @@ from hexboard import HexBoard
 
 class Minimax:
 
-    def __init__(self, size, search_depth, evaluate_class, live_play = True):
+    def __init__(self, size, depth, time_limit, evaluate_class, live_play = True):
         self.board_size = size
-        self.depth = search_depth
+        self.depth = depth
+        self.time_limit = time_limit
         self.evaluate = evaluate_class
         self.live_play = live_play
         self.tp_table = {}
-        self.stats = { 'nodes_searched': 0, 'cutoffs': 0, 'max_depth': 0, 'tt_lookups': 0 }
+        self.stats = { 'nodes_searched': 0, 'cutoffs': 0, 'tt_lookups': 0 }
 
-    def get_next_move(self, board, color):
+    def get_next_move(self, board, color, fixed_max_depth = None):
         start_time = time.time()
         alpha = -math.inf
         beta = math.inf
         opposite_color = board.get_opposite_color(color)
-        
-        for i in range(1, self.depth):
-            move, _ = self.alpha_beta_search(board, i, color, opposite_color, alpha, beta, True)
+
+        assert self.depth is not None or self.time_limit is not None
+
+        if self.depth:
+            move, _ = self.alpha_beta_search(board, self.depth, color, opposite_color, alpha, beta, True)
+        elif self.time_limit:
+            max_depth = 1
+            while (time.time() - start_time) < self.time_limit:
+                move, _ = self.alpha_beta_search(board, max_depth, color, opposite_color, alpha, beta, True)
+                max_depth += 1
         
         if self.live_play:
             elapsed_time = time.time() - start_time
 
             cls()
-            print("Searched %d nodes, experienced %d cutoffs, and used %d transposition table lookups." % (self.stats['nodes_searched'], self.stats['cutoffs'], self.stats['tt_lookups']))
+            print("Searched to depth %d, evaluated %d nodes, experienced %d cutoffs, and used %d TT lookups." % (max_depth, self.stats['nodes_searched'], self.stats['cutoffs'], self.stats['tt_lookups']))
             print("Generation of this next move took %f seconds." % elapsed_time)
         
-        self.stats = { 'nodes_searched': 0, 'cutoffs': 0, 'max_depth': 0, 'tt_lookups': 0 }
+        self.stats = { 'nodes_searched': 0, 'cutoffs': 0, 'tt_lookups': 0 }
 
         return move
 
