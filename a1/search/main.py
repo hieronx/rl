@@ -57,7 +57,7 @@ def evaluate():
     freeze_support() # for Windows support
 
     board_size = 3
-    game_cnt = 60
+    game_cnt = 200
     # players = [{ 'depth': 3, 'eval': 'random' }, { 'depth': 3, 'eval': 'Dijkstra' }, { 'depth': 4, 'eval': 'Dijkstra' }]
     players = [{ 'depth': 3, 'eval': 'random' }, { 'depth': 3, 'eval': 'Dijkstra' }]
 

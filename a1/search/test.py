@@ -166,6 +166,26 @@ class TestHexMinimax(unittest.TestCase):
         
         move = minimax.get_next_move(board, HexBoard.RED)
         self.assertTrue(len(minimax.tp_table) > 0)
+    
+    def benchmark(self):
+        game_count = 1000
+        game_times = []
+
+        for i in range(game_count):
+            start_time = time.time()
+            board_size = 3 if i < (0.5 * game_count) else 4
+            evaluate = Evaluate('Dijkstra')
+            board = HexBoard(board_size)
+            minimax = Minimax(board_size, 3, evaluate, False)
+
+            while not board.game_over():
+                board.place(minimax.get_next_move(board, HexBoard.RED), HexBoard.RED)
+                board.place(minimax.get_next_move(board, HexBoard.BLUE), HexBoard.BLUE)
+            
+            game_times.append(time.time() - start_time)
+        
+        print('Benchmark %d games, mean=%f, std-dev=%f' % (game_count, np.mean(game_times, axis=0), np.std(game_times, axis=0)))
+
 
 
 if __name__ == '__main__':
