@@ -34,7 +34,7 @@ class Evaluate:
         return min_score
 
     def get_path_length_between(self, board, from_coord, to_coord, color):
-        dist, prev = self.dijkstra(board, from_coord, to_coord, color)
+        dist, _ = self.dijkstra(board, from_coord, to_coord, color)
         return dist[to_coord]
 
     def dijkstra(self, board, from_coord, to_coord, color):

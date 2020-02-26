@@ -132,6 +132,7 @@ class HexBoard:
         
         return True
 
+    @lru_cache(maxsize=2)
     def get_source_coordinates(self, color):
         """Returns the coordinates of the left border (for blue) or the top border (for red)"""
         if color == HexBoard.BLUE:
@@ -139,6 +140,7 @@ class HexBoard:
         else:
             return [(i, 0) for i in range(self.size)]
             
+    @lru_cache(maxsize=2)
     def get_target_coordinates(self, color):
         """Returns the coordinates of the right border (for blue) or the left border (for red)"""
         if color == HexBoard.BLUE:
