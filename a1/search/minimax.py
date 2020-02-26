@@ -8,6 +8,8 @@ from hexboard import HexBoard
 class Minimax:
 
     def __init__(self, size, depth, time_limit, evaluate_class, live_play = True):
+        assert depth is not None or time_limit is not None
+
         self.board_size = size
         self.depth = depth
         self.time_limit = time_limit
@@ -22,12 +24,10 @@ class Minimax:
         beta = math.inf
         opposite_color = board.get_opposite_color(color)
 
-        assert self.depth is not None or self.time_limit is not None
-
+        max_depth = self.depth or 1
         if self.depth:
             move, _ = self.alpha_beta_search(board, self.depth, color, opposite_color, alpha, beta, True)
         elif self.time_limit:
-            max_depth = 1
             while (time.time() - start_time) < self.time_limit:
                 move, _ = self.alpha_beta_search(board, max_depth, color, opposite_color, alpha, beta, True)
                 max_depth += 1
