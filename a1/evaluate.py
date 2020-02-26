@@ -43,27 +43,25 @@ class Evaluate:
     def astar(self, board, from_coord, to_coord, color, opposite_color, h):
         """Runs the AStar pathfinding algorithm and returns the length of the shortest path to the target coordinate"""
         q = []
-        g = {}
+        checked = set()
 
+        checked.add(from_coord)
         f = h(from_coord, to_coord)
-        g[from_coord] = 0
-        heappush(q, (f, from_coord))
+        heappush(q, (f, 0, from_coord))
 
         while q:
-            node_dist, node = heappop(q)
+            node_f, node_g, node = heappop(q)
 
             if node == to_coord:
-                return node_dist
+                return node_f
 
             for neighbor in board.get_neighbors(node):
-                new_g = g[node] + self.distance_to(board.board[neighbor], opposite_color)
+                new_g = node_g + self.distance_to(board.board[neighbor], opposite_color)
 
-                if neighbor not in g or new_g < g[neighbor]:
-                    g[neighbor] = new_g
+                if neighbor not in checked:
+                    checked.add(neighbor)
                     f = new_g + h(neighbor, to_coord)
-
-                    if neighbor not in q:
-                        heappush(q, (f, neighbor))
+                    heappush(q, (f, new_g, neighbor))
         
         return math.inf
 
