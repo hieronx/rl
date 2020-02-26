@@ -10,11 +10,6 @@ To run the unit tests:
 
 ```python test.py```
 
-To run a benchmark script:
-
-```python benchmark.py```
-
-
 ## Section 3 - Search
 ```python main.py --eval random --depth 3 --disable-tt```
 

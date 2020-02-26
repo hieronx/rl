@@ -8,7 +8,7 @@ from hexboard import HexBoard
 class Minimax:
     """This object houses all the code necessary for the minimax implementation"""
 
-    def __init__(self, size, depth, time_limit, evaluate_class, live_play = True):
+    def __init__(self, size, depth, time_limit, evaluate_class, live_play = True, disable_tt = False):
         """Initializes a new minimax object that is either depth-bound or time-limit bound"""
         assert depth is not None or time_limit is not None
 
@@ -17,6 +17,8 @@ class Minimax:
         self.time_limit = time_limit
         self.evaluate = evaluate_class
         self.live_play = live_play
+        self.disable_tt = disable_tt
+
         self.tp_table = {}
         self.stats = { 'nodes_searched': 0, 'cutoffs': 0, 'tt_lookups': 0 }
 
@@ -48,15 +50,17 @@ class Minimax:
 
     def alpha_beta_search(self, board, depth, color, opposite_color, alpha, beta, maximizing):
         """Handles minimax search using alpha beta pruning and good use of move-ordering and transposition tables"""
-        hash_code = board.hash_code(color if maximizing else opposite_color)
         cached_best_move = None
+        
+        if not self.disable_tt:
+            hash_code = board.hash_code(color if maximizing else opposite_color)
 
-        if hash_code in self.tp_table:
-            if self.tp_table[hash_code][0] == depth:
-                self.stats['tt_lookups'] += 1
-                return (self.tp_table[hash_code][1], self.tp_table[hash_code][2])
-            else:
-                cached_best_move = self.tp_table[hash_code][1]
+            if hash_code in self.tp_table:
+                if self.tp_table[hash_code][0] == depth:
+                    self.stats['tt_lookups'] += 1
+                    return (self.tp_table[hash_code][1], self.tp_table[hash_code][2])
+                else:
+                    cached_best_move = self.tp_table[hash_code][1]
         
         if depth == 0 or board.game_over():
             score = self.evaluate.evaluate_board(board, color)
@@ -86,7 +90,7 @@ class Minimax:
                         self.stats['cutoffs'] += 1
                         break
 
-            self.tp_table[board.hash_code(color)] = (depth, best_move, best_score)
+            if not self.disable_tt: self.tp_table[board.hash_code(color)] = (depth, best_move, best_score)
             return (best_move, best_score)
             
         else:
@@ -107,7 +111,7 @@ class Minimax:
                         self.stats['cutoffs'] += 1
                         break
                     
-            self.tp_table[board.hash_code(opposite_color)] = (depth, best_move, best_score)
+            if not self.disable_tt: self.tp_table[board.hash_code(opposite_color)] = (depth, best_move, best_score)
             return (best_move, best_score)
 
     def get_possible_moves(self, board):
