@@ -21,10 +21,9 @@ if __name__ == '__main__':
         print('Depth and time limit cannot both be set.')
         exit()
 
-    game = HexGame(args.size, args.depth, args.time_limit, args.eval, args.disable_tt)
-    board = HexBoard(args.size)
-
     if args.trueskill:
         run_trueskill(args)
     else:
+        game = HexGame(args.size, args.depth, args.time_limit, args.eval, args.disable_tt)
+        board = HexBoard(args.size)
         game.run_interactively(board)
