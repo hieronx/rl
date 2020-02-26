@@ -8,8 +8,10 @@ from minimax import Minimax
 from evaluate import Evaluate
 
 class BenchmarkHexMinimax(unittest.TestCase):
+    """Contains the benchmarking code to test efficiency of different algorithmic implementations"""
 
     def test_games(self):
+        """Runs a certain amount of games to test performance. Afterwards the results will be printed"""
         game_count = 100
         game_times = []
 
