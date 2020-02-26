@@ -63,10 +63,10 @@ class Minimax:
                     best_score = score
                     best_move = move
 
-                alpha = max(best_score, alpha)
-                if alpha >= beta:
-                    total_cutoffs += 1
-                    break
+                    alpha = max(best_score, alpha)
+                    if alpha >= beta:
+                        total_cutoffs += 1
+                        break
 
             self.put_in_tp_table(board, color, best_move, best_score)
             return (best_move, best_score, total_nodes_searched, total_cutoffs)
@@ -86,11 +86,11 @@ class Minimax:
                 if score < best_score:
                     best_score = score
                     best_move = move
-                
-                beta = min(best_score, beta)
-                if alpha >= beta:
-                    total_cutoffs += 1
-                    break
+                    
+                    beta = min(best_score, beta)
+                    if alpha >= beta:
+                        total_cutoffs += 1
+                        break
                     
             self.put_in_tp_table(board, opposite_color, best_move, best_score)
             return (best_move, best_score, total_nodes_searched, total_cutoffs)
