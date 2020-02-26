@@ -54,16 +54,6 @@ class TestHexMinimax(unittest.TestCase):
         for actual_target in actual_targets:
             self.assertTrue(actual_target in target_coordinates)
 
-    def test_possible_moves(self):
-        evaluate = Evaluate('random')
-        minimax = Minimax(2, 1, None, evaluate)
-
-        board = HexBoard(2)
-        possible_moves = minimax.get_possible_moves(board)
-        possible_moves_correct_len = 4
-
-        self.assertEqual(len(possible_moves), possible_moves_correct_len)
-
     def test_minimax(self):
         evaluate = Evaluate('Dijkstra')
         board = HexBoard(3)
