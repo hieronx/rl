@@ -56,7 +56,7 @@ class Minimax:
         """Handles minimax search using alpha beta pruning and good use of move-ordering and transposition tables"""
         cached_best_move = None
 
-        # stop handling any code and immediately drop all your responsibilites if times has passed
+        # stop handling any code and immediately drop all your responsibilities if times has passed
         if self.time_limit is not None and time.time() - self.start_time >= self.time_limit: 
             return (None, 0)
         
