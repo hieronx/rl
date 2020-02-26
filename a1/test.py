@@ -16,15 +16,15 @@ class TestHexMinimax(unittest.TestCase):
             looser = HexBoard.BLUE if i == 0 else HexBoard.RED
             board = HexBoard(3)
 
-            board.place((1, 1), looser)
-            board.place((2, 1), looser)
-            board.place((1, 2), looser)
-            board.place((2, 2), looser)
-            board.place((0, 0), winner)
-            board.place((1, 0), winner)
-            board.place((2, 0), winner)
-            board.place((0, 1), winner)
-            board.place((0, 2), winner)
+            board.board[(1, 1)] = looser
+            board.board[(2, 1)] = looser
+            board.board[(1, 2)] = looser
+            board.board[(2, 2)] = looser
+            board.board[(0, 0)] = winner
+            board.board[(1, 0)] = winner
+            board.board[(2, 0)] = winner
+            board.board[(0, 1)] = winner
+            board.board[(0, 2)] = winner
 
             self.assertEqual(board.check_win(winner), True)
             self.assertEqual(board.check_win(looser), False)
@@ -34,8 +34,7 @@ class TestHexMinimax(unittest.TestCase):
         endable_board = HexBoard(4)
 
         while not endable_board.game_over():
-            endable_board.place(
-                (random.randint(0, 4), random.randint(0, 4)), HexBoard.RED)
+            endable_board.board[(random.randint(0, 4), random.randint(0, 4))] = HexBoard.RED
 
         self.assertEqual(endable_board.game_over(), True)
         self.assertEqual(endable_board.check_win(HexBoard.RED), True)
@@ -64,8 +63,8 @@ class TestHexMinimax(unittest.TestCase):
         evaluate = Evaluate('Dijkstra')
         board = HexBoard(3)
 
-        board.place((0, 0), HexBoard.RED)
-        board.place((0, 1), HexBoard.RED)
+        board.board[(0, 0)] = HexBoard.RED
+        board.board[(0, 1)] = HexBoard.RED
 
         self.assertFalse(board.game_over())
 
@@ -78,12 +77,12 @@ class TestHexMinimax(unittest.TestCase):
         evaluate = Evaluate('Dijkstra')
         board = HexBoard(4)
 
-        board.place((1, 0), HexBoard.RED)
-        board.place((1, 1), HexBoard.RED)
-        board.place((1, 2), HexBoard.RED)
-        board.place((0, 1), HexBoard.BLUE)
-        board.place((0, 2), HexBoard.BLUE)
-        board.place((0, 3), HexBoard.BLUE)
+        board.board[(1, 0)] = HexBoard.RED
+        board.board[(1, 1)] = HexBoard.RED
+        board.board[(1, 2)] = HexBoard.RED
+        board.board[(0, 1)] = HexBoard.BLUE
+        board.board[(0, 2)] = HexBoard.BLUE
+        board.board[(0, 3)] = HexBoard.BLUE
 
         good_board = board.make_move((1, 3), HexBoard.RED)
         eval_good_board = evaluate.evaluate_board(good_board, HexBoard.RED)
@@ -102,8 +101,8 @@ class TestHexMinimax(unittest.TestCase):
         evaluate = Evaluate('Dijkstra')
         board = HexBoard(3)
 
-        board.place((0, 0), HexBoard.BLUE)
-        board.place((1, 0), HexBoard.BLUE)
+        board.board[(0, 0)] = HexBoard.BLUE
+        board.board[(1, 0)] = HexBoard.BLUE
 
         self.assertEqual(evaluate.get_path_length_between(board, (0,0), (2,0), HexBoard.BLUE), 1)
 
@@ -112,14 +111,14 @@ class TestHexMinimax(unittest.TestCase):
         evaluate = Evaluate('Dijkstra')
         board = HexBoard(4)
 
-        board.place((1, 0), HexBoard.RED)
-        board.place((2, 0), HexBoard.RED)
-        board.place((3, 0), HexBoard.RED)
-        board.place((0, 2), HexBoard.RED)
+        board.board[(1, 0)] = HexBoard.RED
+        board.board[(2, 0)] = HexBoard.RED
+        board.board[(3, 0)] = HexBoard.RED
+        board.board[(0, 2)] = HexBoard.RED
 
-        board.place((1, 1), HexBoard.BLUE)
-        board.place((2, 1), HexBoard.BLUE)
-        board.place((3, 1), HexBoard.BLUE)
+        board.board[(1, 1)] = HexBoard.BLUE
+        board.board[(2, 1)] = HexBoard.BLUE
+        board.board[(3, 1)] = HexBoard.BLUE
 
         self.assertEqual(evaluate.get_path_length_between(board, (0, 1), (3, 1), HexBoard.BLUE), 1)
         self.assertEqual(evaluate.get_path_length_between(board, (0, 0), (0, 3), HexBoard.RED), 3)
@@ -134,15 +133,15 @@ class TestHexMinimax(unittest.TestCase):
         evaluate = Evaluate('Dijkstra')
         board = HexBoard(3)
         
-        board.place((0, 0), HexBoard.BLUE)
-        board.place((1, 0), HexBoard.BLUE)
+        board.board[(0, 0)] = HexBoard.BLUE
+        board.board[(1, 0)] = HexBoard.BLUE
 
         self.assertTrue(evaluate.evaluate_board(board, HexBoard.BLUE) > evaluate.evaluate_board(board, HexBoard.RED))
 
         board = HexBoard(3)
 
-        board.place((0, 0), HexBoard.RED)
-        board.place((0, 1), HexBoard.RED)
+        board.board[(0, 0)] = HexBoard.RED
+        board.board[(0, 1)] = HexBoard.RED
 
         self.assertTrue(evaluate.evaluate_board(board, HexBoard.RED) > evaluate.evaluate_board(board, HexBoard.BLUE))
 
@@ -150,8 +149,8 @@ class TestHexMinimax(unittest.TestCase):
         """Makes sure the hashcode that we're generating is indeed what we expect it to be"""
         board = HexBoard(3)
 
-        board.place((0, 0), HexBoard.RED)
-        board.place((1, 2), HexBoard.BLUE)
+        board.board[(0, 0)] = HexBoard.RED
+        board.board[(1, 2)] = HexBoard.BLUE
 
         self.assertEqual(board.hash_code(HexBoard.BLUE), 3331333321)
         self.assertEqual(board.hash_code(HexBoard.RED), 3331333322)
@@ -162,8 +161,8 @@ class TestHexMinimax(unittest.TestCase):
         board = HexBoard(3)
         minimax = Minimax(3, 3, None, evaluate, False)
 
-        board.place((0, 0), HexBoard.RED)
-        board.place((0, 1), HexBoard.RED)
+        board.board[(0, 0)] = HexBoard.RED
+        board.board[(0, 1)] = HexBoard.RED
         self.assertEqual(minimax.tp_table, {})
         
         move = minimax.get_next_move(board, HexBoard.RED)

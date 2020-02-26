@@ -59,7 +59,7 @@ def play_game(game_input):
         
         while not board.game_over():
             move = (m1 if r1_turn else m2).get_next_move(board, r1_col if r1_turn else r2_col)
-            board.place(move, r1_col if r1_turn else r2_col)
+            board.board[move] = r1_col if r1_turn else r2_col
             r1_turn = False if r1_turn else True
 
         if board.check_draw():

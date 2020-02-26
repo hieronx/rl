@@ -31,19 +31,10 @@ class HexBoard:
         """Returns the color at the provided board coordinate"""
         return self.board[coordinates]
 
-    def place(self, coordinates, color):
-        """Places the provided color at the board coordinate. This modifies the interior board state of this object"""
-        if self.board[coordinates] == HexBoard.EMPTY:
-            self.board[coordinates] = color
-    
-    def unplace(self, coordinates):
-        """Sets the provided hex back to empty"""
-        self.board[coordinates] = HexBoard.EMPTY
-
     def make_move(self, coordinates, color):
         """Should return the new board without modifying the existing board"""
         new_board = deepcopy(self)
-        new_board.place(coordinates, color)
+        new_board.board[coordinates] = color
         return new_board
 
     @lru_cache(maxsize=4)
@@ -51,7 +42,7 @@ class HexBoard:
         """Returns the opposite color of the provided color. Returns BLUE if the color is not recognized"""
         return HexBoard.RED if current_color == HexBoard.BLUE else HexBoard.BLUE
 
-    @lru_cache(maxsize=256) # caching this to create lower lookup times, technically can't have more than board.size ** 2 options
+    @lru_cache(maxsize=512) # caching this to create lower lookup times, technically can't have more than board.size ** 2 options
     def get_neighbors(self, coordinates):
         """Returns a list with the coordinates of every possible/valid neighbor."""
         (cx, cy) = coordinates
@@ -84,7 +75,7 @@ class HexBoard:
         If we did not reach the end we recursively check each of the neighbors,
         and if we reach the otherside that way we return true as well.
         """
-        if not self.is_color(move, color) or (move in visited and visited[move]):
+        if not self.board[move] == color or (move in visited):
             return False
 
         if self.border(color, move):
