@@ -3,6 +3,7 @@ from multiprocessing import Pool, freeze_support
 from copy import deepcopy
 from tqdm import tqdm
 import time
+import os
 
 from hexboard import HexBoard
 from minimax import Minimax
@@ -70,5 +71,7 @@ def play_game(game_input):
 
 def save_result(start_time, data):
     """Saves the provided data to the disk using the provided start_time as .csv"""
+    if not os.path.exists('results'): os.makedirs('results')
+
     with open('results/' + start_time + '.csv','a') as fd:
         fd.write(','.join(map(str, data)) + '\n')
