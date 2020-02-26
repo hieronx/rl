@@ -1,6 +1,7 @@
 import math
 import numpy as np
 
+from functools import lru_cache
 from util import cls
 from hexboard import HexBoard
 from minimax import Minimax
@@ -39,6 +40,7 @@ class Evaluate:
 
     def dijkstra(self, board, from_coord, to_coord, color):
         opposite_color = board.get_opposite_color(color)
+        get_color = board.get_color
         q = []
         dist = {}
         prev = {}
@@ -54,7 +56,7 @@ class Evaluate:
             node_dist, node = heappop(q)
 
             for neighbor in board.get_neighbors(node):
-                new_dist = node_dist + self.distance_between(board, node, neighbor, opposite_color)
+                new_dist = node_dist + self.distance_between(get_color(node), get_color(neighbor), opposite_color)
                 if new_dist < dist[neighbor]:
                     dist[neighbor] = new_dist
                     prev[neighbor] = node
@@ -62,10 +64,11 @@ class Evaluate:
         
         return (dist, prev)
 
-    def distance_between(self, board, coord_a, coord_b, opposite_color):
-        if board.get_color(coord_b) == opposite_color:
+    @lru_cache(maxsize=32)
+    def distance_between(self, color_a, color_b, opposite_color):
+        if color_b == opposite_color:
             return math.inf
-        elif board.get_color(coord_b) == board.EMPTY:
+        elif color_b == HexBoard.EMPTY:
             return 1
         else:
             return 0
