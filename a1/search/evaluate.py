@@ -40,8 +40,6 @@ class Evaluate:
 
     def dijkstra(self, board, from_coord, to_coord, color):
         opposite_color = board.get_opposite_color(color)
-        get_color = board.get_color
-        get_neighbors = board.get_neighbors
         q = []
         dist = {}
         prev = {}
@@ -50,14 +48,14 @@ class Evaluate:
             dist[node] = math.inf
             prev[node] = None
             
-        dist[from_coord] = 1 if get_color(from_coord) == board.EMPTY else 0
+        dist[from_coord] = 1 if board.board[from_coord] == board.EMPTY else 0
         heappush(q, (dist[from_coord], from_coord))
 
         while q:
             node_dist, node = heappop(q)
 
-            for neighbor in get_neighbors(node):
-                new_dist = node_dist + self.distance_between(get_color(node), get_color(neighbor), opposite_color)
+            for neighbor in board.get_neighbors(node):
+                new_dist = node_dist + self.distance_between(board.board[node], board.board[neighbor], opposite_color)
                 if new_dist < dist[neighbor]:
                     dist[neighbor] = new_dist
                     prev[neighbor] = node
