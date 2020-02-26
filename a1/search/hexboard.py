@@ -62,7 +62,7 @@ class HexBoard:
         return traversable
 
     @lru_cache(maxsize=256) # caching this to create lower lookup times, technically can't have more than board.size ** 2 options
-    def get_neighbors_cached(self, coordinates):
+    def get_neighbors(self, coordinates):
         """Returns a list with the coordinates of every possible/valid neighbor."""
         (cx, cy) = coordinates
         neighbors = []
