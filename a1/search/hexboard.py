@@ -29,8 +29,6 @@ class HexBoard:
 
     def get_color(self, coordinates):
         """Returns the color at the provided board coordinate"""
-        if coordinates == (-1, -1):
-            return HexBoard.EMPTY
         return self.board[coordinates]
 
     def place(self, coordinates, color):
