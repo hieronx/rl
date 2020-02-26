@@ -13,7 +13,6 @@ class HexBoard:
         """Creates a new empty board with the provided size"""
         self.board = {}
         self.size = board_size
-        self.move_count = 0
 
         for x in range(board_size):
             for y in range(board_size):
@@ -44,7 +43,6 @@ class HexBoard:
         """Should return the new board without modifying the existing board"""
         new_board = deepcopy(self)
         new_board.place(coordinates, color)
-        new_board.move_count += 1
         return new_board
 
     @lru_cache(maxsize=4)
