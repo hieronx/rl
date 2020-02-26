@@ -59,7 +59,7 @@ class Minimax:
             self.stats['nodes_searched'] += 1
             return (None, score)
 
-        moves = board.get_possible_moves()
+        moves = self.get_possible_moves(board)
         
         if cached_best_move is not None:
             moves.insert(0, cached_best_move)
