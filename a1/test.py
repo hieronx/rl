@@ -7,8 +7,10 @@ from minimax import Minimax
 from evaluate import Evaluate
 
 class TestHexMinimax(unittest.TestCase):
+    """All unit tests used to determine if the code we wrote is still running as intended"""
 
     def test_win_detection(self):
+        """Checks if the detection for win states is working as expected by creating a win scenario"""
         for i in range(0, 2):
             winner = HexBoard.RED if i == 0 else HexBoard.BLUE
             looser = HexBoard.BLUE if i == 0 else HexBoard.RED
@@ -28,6 +30,7 @@ class TestHexMinimax(unittest.TestCase):
             self.assertEqual(board.check_win(looser), False)
 
     def test_game_end(self):
+        """Checks if the detection for gameover states is working as expected by filling all hexes with one color"""
         endable_board = HexBoard(4)
 
         while not endable_board.game_over():
@@ -39,6 +42,7 @@ class TestHexMinimax(unittest.TestCase):
         self.assertEqual(endable_board.check_win(HexBoard.BLUE), False)
 
     def test_source_coordinates(self):
+        """Let's see if the source coordinates are all correct and as we think they should be"""
         board = HexBoard(4)
         source_coordinates = board.get_source_coordinates(HexBoard.RED)
         actual_sources = [(0, 0), (1, 0), (2, 0), (3, 0)]
@@ -47,6 +51,7 @@ class TestHexMinimax(unittest.TestCase):
             self.assertTrue(actual_source in source_coordinates)
 
     def test_target_coordinates(self):
+        """Does the same thing as test_source coordinates, only checks for the target coordinates"""
         board = HexBoard(4)
         target_coordinates = board.get_target_coordinates(HexBoard.RED)
         actual_targets = [(0, 3), (1, 3), (2, 3), (3,3)]
@@ -55,6 +60,7 @@ class TestHexMinimax(unittest.TestCase):
             self.assertTrue(actual_target in target_coordinates)
 
     def test_minimax(self):
+        """"Tests to see if minimax returns the expected best moves for specific board states"""
         evaluate = Evaluate('Dijkstra')
         board = HexBoard(3)
 
@@ -68,6 +74,7 @@ class TestHexMinimax(unittest.TestCase):
         self.assertEqual(move, (0, 2))
 
     def test_minimax_top_left(self):
+        """"Another scenario which tests a specific minimax scenario"""
         evaluate = Evaluate('Dijkstra')
         board = HexBoard(4)
 
@@ -91,6 +98,7 @@ class TestHexMinimax(unittest.TestCase):
         self.assertEqual(move, (1, 3))
 
     def test_dijkstra(self):
+        """First scenario to see if dijkstra returns sane data"""
         evaluate = Evaluate('Dijkstra')
         board = HexBoard(3)
 
@@ -100,6 +108,7 @@ class TestHexMinimax(unittest.TestCase):
         self.assertEqual(evaluate.get_path_length_between(board, (0,0), (2,0), HexBoard.BLUE), 1)
 
     def test_dijkstra_second_row(self):
+        """Another test scenario to see if dijkstra returns the correct path length"""
         evaluate = Evaluate('Dijkstra')
         board = HexBoard(4)
 
@@ -121,6 +130,7 @@ class TestHexMinimax(unittest.TestCase):
         self.assertEqual(move, (0, 1))
 
     def test_board_evaluation(self):
+        """Checks to see if the board evaluation returns the expected result in several synthetic board states"""
         evaluate = Evaluate('Dijkstra')
         board = HexBoard(3)
         
@@ -137,6 +147,7 @@ class TestHexMinimax(unittest.TestCase):
         self.assertTrue(evaluate.evaluate_board(board, HexBoard.RED) > evaluate.evaluate_board(board, HexBoard.BLUE))
 
     def test_hash_code(self):
+        """Makes sure the hashcode that we're generating is indeed what we expect it to be"""
         board = HexBoard(3)
 
         board.place((0, 0), HexBoard.RED)
@@ -146,6 +157,7 @@ class TestHexMinimax(unittest.TestCase):
         self.assertEqual(board.hash_code(HexBoard.RED), 3331333322)
 
     def test_tp_table(self):
+        """Tests if the transposition table is working as intended"""
         evaluate = Evaluate('Dijkstra')
         board = HexBoard(3)
         minimax = Minimax(3, 3, None, evaluate, False)
