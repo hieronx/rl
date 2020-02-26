@@ -63,7 +63,7 @@ class TestHexMinimax(unittest.TestCase):
 
         self.assertFalse(board.game_over())
 
-        minimax = Minimax(3, 3, None, evaluate, False)
+        minimax = Minimax(3, 3, evaluate, False)
         move = minimax.get_next_move(board, HexBoard.RED)
         self.assertEqual(move, (0, 2))
 
@@ -86,7 +86,7 @@ class TestHexMinimax(unittest.TestCase):
 
         self.assertTrue(eval_good_board > eval_bad_board)
 
-        minimax = Minimax(4, 3, None, evaluate, False)
+        minimax = Minimax(4, 3, evaluate, False)
         move = minimax.get_next_move(board, HexBoard.RED)
         self.assertEqual(move, (1, 3))
 
@@ -116,7 +116,7 @@ class TestHexMinimax(unittest.TestCase):
         self.assertEqual(evaluate.get_path_length_between(board, (0, 0), (0, 3), HexBoard.RED), 3)
         self.assertEqual(evaluate.get_path_length_between(board, (3, 0), (0, 3), HexBoard.RED), 2)
 
-        minimax = Minimax(3, 2, None, evaluate, False)
+        minimax = Minimax(3, 2, evaluate, False)
         move = minimax.get_next_move(board, HexBoard.RED)
         self.assertEqual(move, (0, 1))
 
@@ -144,37 +144,6 @@ class TestHexMinimax(unittest.TestCase):
 
         self.assertEqual(board.hash_code(HexBoard.BLUE), 3331333321)
         self.assertEqual(board.hash_code(HexBoard.RED), 3331333322)
-
-    def test_tp_table(self):
-        evaluate = Evaluate('Dijkstra')
-        board = HexBoard(3)
-        minimax = Minimax(3, 3, None, evaluate, False)
-
-        board.place((0, 0), HexBoard.RED)
-        board.place((0, 1), HexBoard.RED)
-        self.assertEqual(minimax.tp_table, {})
-        
-        move = minimax.get_next_move(board, HexBoard.RED)
-        self.assertTrue(len(minimax.tp_table) > 0)
-    
-    def benchmark(self):
-        game_count = 1000
-        game_times = []
-
-        for i in range(game_count):
-            start_time = time.time()
-            board_size = 3 if i < (0.5 * game_count) else 4
-            evaluate = Evaluate('Dijkstra')
-            board = HexBoard(board_size)
-            minimax = Minimax(board_size, 3, None, evaluate, False)
-
-            while not board.game_over():
-                board.place(minimax.get_next_move(board, HexBoard.RED), HexBoard.RED)
-                board.place(minimax.get_next_move(board, HexBoard.BLUE), HexBoard.BLUE)
-            
-            game_times.append(time.time() - start_time)
-        
-        print('Benchmark %d games, mean=%f, std-dev=%f' % (game_count, np.mean(game_times, axis=0), np.std(game_times, axis=0)))
 
 
 

@@ -14,7 +14,7 @@ class HexGame:
     def __init__(self, size, depth, eval_method):
         self.board_size = size
         self.search_depth = depth
-        self.minimax = Minimax(size, depth, None, Evaluate(eval_method))
+        self.minimax = Minimax(size, depth, Evaluate(eval_method))
 
     def run_interactively(self, board):
         while not board.game_over():
