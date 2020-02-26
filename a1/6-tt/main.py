@@ -12,10 +12,12 @@ from evaluate import Evaluate
 from game import HexGame
 
 def save_result(start_time, data):
+    """Saves the provided data to the disk using the provided start_time as .csv"""
     with open('results/' + start_time + '.csv','a') as fd:
         fd.write(','.join(map(str, data)) + '\n')
 
 def play_game(game_input):
+    """Plays a series of games according to the provided game input object which packs all the settings into one object"""
     process_id, board_size, game_cnt, start_time, p1, p2 = game_input
 
     r1 = Rating()
@@ -53,6 +55,7 @@ def play_game(game_input):
     print(r2)
 
 def run_trueskill():
+    """Surprise, starts a trueskill comparison for each of the possible permutations of the input players"""
     freeze_support() # for Windows support
 
     board_size = 4
