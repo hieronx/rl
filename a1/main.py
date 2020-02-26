@@ -14,7 +14,7 @@ if __name__ == '__main__':
     parser.add_argument('--size', type=int, default=4, help='Set the board size')
     parser.add_argument('--depth', type=int, default=None, help='Set the search depth')
     parser.add_argument('--time-limit', type=float, default=None, help='Set the time limit')
-    parser.add_argument('--eval', choices=['Dijkstra', 'random'], default='Dijkstra', help='Choose the evaluation method')
+    parser.add_argument('--eval', choices=['Dijkstra', 'random', 'AStar'], default='Dijkstra', help='Choose the evaluation method')
     args = parser.parse_args(sys.argv[1:])
 
     if args.depth and args.time_limit:

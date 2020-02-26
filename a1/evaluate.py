@@ -30,28 +30,56 @@ class Evaluate:
                     continue
 
                 # Only count nodes without placed positions of this color
-                score = self.get_path_length_between(board, from_coord, to_coord, color)
+                if self.eval_method == 'Dijkstra': 
+                    score = self.dijkstra(board, from_coord, to_coord, color, opposite_color)
+                elif self.eval_method == 'AStar':
+                    score = self.astar(board, from_coord, to_coord, color, opposite_color, self.heuristic)
 
                 if score < min_score:
                     min_score = score
 
         return min_score
 
-    def get_path_length_between(self, board, from_coord, to_coord, color):
-        """Returns the shortest possible path from the provided source and destination coordinates"""
-        dist, _ = self.dijkstra(board, from_coord, to_coord, color)
-        return dist[to_coord]
+    def astar(self, board, from_coord, to_coord, color, opposite_color, h):
+        """Runs the AStar pathfinding algorithm and returns the length of the shortest path to the target coordinate"""
+        q = []
+        g = {}
 
-    def dijkstra(self, board, from_coord, to_coord, color):
+        f = h(from_coord, to_coord)
+        g[from_coord] = 0
+        heappush(q, (f, from_coord))
+
+        while q:
+            node_dist, node = heappop(q)
+
+            if node == to_coord:
+                return node_dist
+
+            for neighbor in board.get_neighbors(node):
+                new_g = g[node] + self.distance_to(board.board[neighbor], opposite_color)
+
+                if neighbor not in g or new_g < g[neighbor]:
+                    g[neighbor] = new_g
+                    f = new_g + h(neighbor, to_coord)
+
+                    if neighbor not in q:
+                        heappush(q, (f, neighbor))
+        
+        return math.inf
+
+    @lru_cache(maxsize = 512)
+    def heuristic(self, source, target):
+        """Returns the simple euclidian distance to the target coordinate"""
+        return math.sqrt((source[0] - target[0]) ** 2 + (source[1] - target[1]) ** 2)
+        
+
+    def dijkstra(self, board, from_coord, to_coord, color, opposite_color):
         """Runs Dijkstra's algorithm between the two provided coords on the provided board"""
-        opposite_color = board.get_opposite_color(color)
         q = []
         dist = {}
-        prev = {}
         
         for node in board.board:
             dist[node] = math.inf
-            prev[node] = None
             
         dist[from_coord] = 1 if board.board[from_coord] == board.EMPTY else 0
         heappush(q, (dist[from_coord], from_coord))
@@ -60,19 +88,18 @@ class Evaluate:
             node_dist, node = heappop(q)
 
             if node == to_coord:
-                break
+                return dist[to_coord]
 
             for neighbor in board.get_neighbors(node):
-                new_dist = node_dist + self.distance_between(board.board[node], board.board[neighbor], opposite_color)
+                new_dist = node_dist + self.distance_to(board.board[neighbor], opposite_color)
                 if new_dist < dist[neighbor]:
                     dist[neighbor] = new_dist
-                    prev[neighbor] = node
                     heappush(q, (new_dist, neighbor))
-        
-        return (dist, prev)
 
-    @lru_cache(maxsize=16) # use LRU cache to cache the last 16 results
-    def distance_between(self, color_a, color_b, opposite_color):
+        return math.inf
+        
+    @lru_cache(maxsize=8)
+    def distance_to(self, color_b, opposite_color):
         """Returns the distance between the two provided colors, this is the vertex cost for Dijkstra"""
         if color_b == opposite_color:
             return math.inf
@@ -86,7 +113,7 @@ class Evaluate:
         if self.eval_method == 'random':
             return random.random()
 
-        elif self.eval_method == 'Dijkstra':
+        elif self.eval_method in ('Dijkstra', 'AStar'):
             if board.check_draw() or (board.check_win(color) and board.check_win(board.get_opposite_color(color))): return 0
             if board.check_win(color): return 1000
             if board.check_win(board.get_opposite_color(color)): return -1000
