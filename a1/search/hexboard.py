@@ -104,23 +104,15 @@ class HexBoard:
 
     def check_win(self, color):
         """Check if we have made a snake from the source side to the opposing side for the provided color"""
-        for i in range(self.size):
-            if color == HexBoard.BLUE:
-                move = (0, i)
-            else:
-                move = (i, 0)
-			
+        for move in get_source_coordinates(self):			
             if self.traverse(color, move, {}):
                 return True
-
         return False
 
     def check_draw(self):
-        for x in range(self.size):
-            for y in range(self.size):
-                if self.board[(x, y)] == HexBoard.EMPTY:
-                    return False
-        
+        """Checks if we have any empty hexes left on the board"""
+        for _, color in self.board.items():
+            if color == HexBoard.EMPTY: return False
         return True
 
     @lru_cache(maxsize=2)
