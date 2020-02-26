@@ -12,11 +12,11 @@ char_to_row_idx = {'a': 0, 'b': 1, 'c': 2, 'd': 3}
 class HexGame:
     """This instance is responsible for running a single game."""
 
-    def __init__(self, size, depth, eval_method):
+    def __init__(self, size, depth, eval_method, disable_tt = False):
         """Creates a new HexGame using the provided boardsize, search depth for dijkstra and evaluation method"""
         self.board_size = size
         self.search_depth = depth
-        self.minimax = Minimax(size, depth, None, Evaluate(eval_method))
+        self.minimax = Minimax(size, depth, None, Evaluate(eval_method), disable_tt=disable_tt)
 
     def run_interactively(self, board):
         """Runs the game interactively, this starts a while loop that will only stop once the game is won or a draw is detected"""
@@ -46,16 +46,3 @@ class HexGame:
             print('The AI won.')
         else:
             print('You won.')
-
-    def simulate(self, board):
-        """Simulates play between two AI players"""
-        while not board.game_over():
-            board.place(self.minimax.get_next_move(board, HexBoard.RED), HexBoard.RED)
-            board.place(self.minimax.get_next_move(board, HexBoard.BLUE), HexBoard.BLUE)
-
-        if board.check_win(HexBoard.RED):
-            print('Red won.')
-        else:
-            print('Blue won.')
-
-        board.print()

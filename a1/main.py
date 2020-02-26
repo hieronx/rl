@@ -18,7 +18,7 @@ def save_result(start_time, data):
 
 def play_game(game_input):
     """Plays a series of games according to the provided game input object which packs all the settings into one object"""
-    process_id, board_size, game_cnt, start_time, p1, p2 = game_input
+    process_id, board_size, game_cnt, start_time, p1, p2, disable_tt = game_input
 
     r1 = Rating()
     r2 = Rating()
@@ -28,7 +28,7 @@ def play_game(game_input):
     text = "Processor %d" % (process_id)
 
     for game_id in tqdm(range(1, game_cnt + 1), desc=text, position=process_id):
-        m1, m2 = Minimax(board_size, p1['depth'], p1['time_limit'], Evaluate(p1['eval']), False), Minimax(board_size, p2['depth'], p2['time_limit'], Evaluate(p2['eval']), False)
+        m1, m2 = Minimax(board_size, p1['depth'], p1['time_limit'], Evaluate(p1['eval']), False, disable_tt=disable_tt), Minimax(board_size, p2['depth'], p2['time_limit'], Evaluate(p2['eval']), False, disable_tt=disable_tt)
         board = HexBoard(board_size)
 
         r1_first = True if not r1_first else False
@@ -54,7 +54,7 @@ def play_game(game_input):
     print(r1)
     print(r2)
 
-def run_trueskill():
+def run_trueskill(args):
     """Surprise, starts a trueskill comparison for each of the possible permutations of the input players"""
     freeze_support() # for Windows support
 
@@ -71,7 +71,7 @@ def run_trueskill():
     start_time = str(int(time.time()))
     save_result(start_time, ('p1_depth', 'p1_time_limit', 'p1_eval', 'p2_depth', 'p2_time_limit', 'p2_eval', 'game_id', 'r1_mu', 'r1_sigma', 'r2_mu', 'r2_sigma'))
 
-    game_inputs = [(process_id, board_size, game_cnt, start_time, p1, p2) for process_id, (p1, p2) in enumerate(player_permutations)]
+    game_inputs = [(process_id, board_size, game_cnt, start_time, p1, p2, args.disable_tt) for process_id, (p1, p2) in enumerate(player_permutations)]
 
     pool = Pool(len(game_inputs))
     pool.map(play_game, game_inputs)
@@ -79,19 +79,16 @@ def run_trueskill():
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="Minimax for Hex")
     parser.add_argument('--trueskill', action='store_true', help='If added, evaluate using TrueSkill')
-    parser.add_argument('--simulate', action='store_true', help='If added, simulates both sides')
     parser.add_argument('--disable-tt', action='store_true', help='If added, disables the transposition table')
     parser.add_argument('--size', type=int, default=4, help='Set the board size')
     parser.add_argument('--depth', type=int, default=4, help='Set the search depth')
     parser.add_argument('--eval', choices=['Dijkstra', 'random'], default='Dijkstra', help='Choose the evaluation method')
     args = parser.parse_args(sys.argv[1:])
 
-    game = HexGame(args.size, args.depth, args.eval)
+    game = HexGame(args.size, args.depth, args.eval, args.disable_tt)
     board = HexBoard(args.size)
 
     if args.trueskill:
-        run_trueskill()  
-    elif args.simulate:
-        game.simulate(board)
+        run_trueskill(args)
     else:
         game.run_interactively(board)
