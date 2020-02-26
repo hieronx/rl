@@ -96,12 +96,7 @@ class Minimax:
             return (best_move, best_score, total_nodes_searched, total_cutoffs)
 
     def get_possible_moves(self, board):
-        empty_coordinates = []
-        for x in range(self.board_size):
-            for y in range(self.board_size):
-                if board.is_empty((x, y)):
-                    empty_coordinates.append((x, y))
-        
+        empty_coordinates = [coord for coord, color in board.board.items() if color == HexBoard.EMPTY]
         return empty_coordinates
 
     def put_in_tp_table(self, board, color, move, score):

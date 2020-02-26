@@ -104,7 +104,7 @@ class HexBoard:
 
     def check_win(self, color):
         """Check if we have made a snake from the source side to the opposing side for the provided color"""
-        for move in get_source_coordinates(self):			
+        for move in self.get_source_coordinates(self):			
             if self.traverse(color, move, {}):
                 return True
         return False
@@ -162,4 +162,9 @@ class HexBoard:
         print("   -----------------------")
 
     def hash_code(self, color):
-        return 10 * hash(frozenset(self.board.items())) + color
+        multiplier = 10
+        code = color
+        for _, value in self.board.items():
+            code += value * multiplier
+            multiplier *= 10
+        return code
