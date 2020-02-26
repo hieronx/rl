@@ -186,4 +186,4 @@ class HexBoard:
         return code
 
     def hash_code_internal(self, color):
-        return color + hash(self)
+        return 10 * hash(frozenset(self.board.items())) + color
