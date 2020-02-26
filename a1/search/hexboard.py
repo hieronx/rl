@@ -14,6 +14,7 @@ class HexBoard:
     def __init__(self, board_size):
         """Creates a new empty board with the provided size"""
         self.board = {}
+        possible_moves = []
         self.size = board_size
 
         for x in range(board_size):

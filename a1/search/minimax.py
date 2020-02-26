@@ -25,10 +25,8 @@ class Minimax:
         assert self.depth is not None or self.time_limit is not None
 
         if self.depth:
-            print('Using depth %d' % self.depth)
             move, _ = self.alpha_beta_search(board, self.depth, color, opposite_color, alpha, beta, True)
         elif self.time_limit:
-            print('Using time limit')
             max_depth = 1
             while (time.time() - start_time) < self.time_limit:
                 move, _ = self.alpha_beta_search(board, max_depth, color, opposite_color, alpha, beta, True)
@@ -61,7 +59,7 @@ class Minimax:
             self.stats['nodes_searched'] += 1
             return (None, score)
 
-        moves = self.get_possible_moves(board)
+        moves = board.get_possible_moves()
         
         if cached_best_move is not None:
             moves.insert(0, cached_best_move)
