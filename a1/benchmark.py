@@ -1,6 +1,7 @@
 import unittest
 import time
 from tqdm import tqdm
+import statistics
 
 from hexboard import HexBoard
 from minimax import Minimax
@@ -30,7 +31,7 @@ class BenchmarkHexMinimax(unittest.TestCase):
             
             game_times.append(time.time() - start_time)
         
-        # print('Benchmark %d games, mean=%.3fs, std-dev=%.5fs' % (game_count, np.mean(game_times, axis=0), np.std(game_times, axis=0)))
+        print('Benchmark %d games, mean=%.3fs, std-dev=%.5fs' % (game_count, statistics.mean(game_times), statistics.stdev(game_times)))
 
 
 if __name__ == '__main__':
