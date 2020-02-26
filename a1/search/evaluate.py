@@ -64,7 +64,7 @@ class Evaluate:
         
         return (dist, prev)
 
-    @lru_cache(maxsize=32)
+    @lru_cache(maxsize=16)
     def distance_between(self, color_a, color_b, opposite_color):
         if color_b == opposite_color:
             return math.inf
