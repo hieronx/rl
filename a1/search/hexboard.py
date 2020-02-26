@@ -47,6 +47,7 @@ class HexBoard:
         new_board.move_count += 1
         return new_board
 
+    @lru_cache(maxsize=4)
     def get_opposite_color(self, current_color):
         """Returns the opposite color of the provided color. Returns BLUE if the color is not recognized"""
         return HexBoard.RED if current_color == HexBoard.BLUE else HexBoard.BLUE
