@@ -1,6 +1,5 @@
 import argparse
 import sys
-import itertools
 from tqdm import tqdm
 from trueskill import Rating, rate_1vs1
 import time
@@ -57,14 +56,19 @@ def evaluate():
     freeze_support() # for Windows support
 
     board_size = 3
-    game_cnt = 200
-    # players = [{ 'depth': 3, 'eval': 'random' }, { 'depth': 3, 'eval': 'Dijkstra' }, { 'depth': 4, 'eval': 'Dijkstra' }]
-    players = [{ 'depth': 3, 'eval': 'random' }, { 'depth': 3, 'eval': 'Dijkstra' }]
+    game_cnt = 100
+    players = [{ 'depth': 3, 'eval': 'random' }, { 'depth': 3, 'eval': 'Dijkstra' }, { 'depth': 4, 'eval': 'Dijkstra' }]
+    # players = [{ 'depth': 3, 'eval': 'random' }, { 'depth': 3, 'eval': 'Dijkstra' }]
+
+    player_permutations = []
+    for i in range(len(players)):
+        for j in range(i + 1, len(players)):
+            player_permutations.append((players[i], players[j]))
 
     start_time = str(int(time.time()))
     save_result(start_time, ('p1_depth', 'p1_eval', 'p2_depth', 'p2_eval', 'game_id', 'r1_mu', 'r1_sigma', 'r2_mu', 'r2_sigma'))
 
-    game_inputs = [(process_id, board_size, game_cnt, start_time, p1, p2) for process_id, (p1, p2) in enumerate(itertools.permutations(players, 2))]
+    game_inputs = [(process_id, board_size, game_cnt, start_time, p1, p2) for process_id, (p1, p2) in enumerate(player_permutations)]
 
     pool = Pool(len(game_inputs))
     pool.map(play_game, game_inputs)
@@ -74,7 +78,7 @@ if __name__ == '__main__':
     parser.add_argument('--evaluate', action='store_true', help='If added, evaluate using TrueSkill')
     parser.add_argument('--simulate', action='store_true', help='If added, simulates both sides')
     parser.add_argument('--size', type=int, default=4, help='Set the board size')
-    parser.add_argument('--depth', type=int, default=3, help='Set the search depth')
+    parser.add_argument('--depth', type=int, default=4, help='Set the search depth')
     parser.add_argument('--eval', choices=['Dijkstra', 'random'], default='Dijkstra', help='Choose the evaluation method')
     args = parser.parse_args(sys.argv[1:])
 

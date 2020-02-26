@@ -25,7 +25,8 @@ class Minimax:
         
         if self.live_play:
             cls()
-            print("Searched %d nodes and experienced %d cutoffs." % (nodes_searched, cutoffs))
+            print("Searched %d nodes and experienced %d cutoffs, transposition table size is %d." % (nodes_searched, cutoffs, len(self.tp_table)))
+            print(self.tp_table[list(self.tp_table)[len(list(self.tp_table))-1]])
 
             elapsed_time = time.time() - start_time
             print("Generation of this next move took %f seconds." % elapsed_time)
@@ -34,15 +35,23 @@ class Minimax:
 
     def alpha_beta_search(self, board, depth, color, opposite_color, alpha, beta, maximizing):
         hash_code = board.hash_code(color if maximizing else opposite_color)
+        tt_best_move = None
+
         if hash_code in self.tp_table:
-            return (self.tp_table[hash_code][0], self.tp_table[hash_code][1], 0, 0)
+            if self.tp_table[hash_code][0] == depth:
+                return (self.tp_table[hash_code][1], self.tp_table[hash_code][2], 0, 0)
+            else:
+                tt_best_move = self.tp_table[hash_code][1]
         
         if depth == 0 or board.game_over():
             score = self.evaluate.evaluate_board(board, color)
             return (None, score, 1, 0)
 
+        # tt_best_move = None
         moves = self.get_possible_moves(board)
-        assert len(moves) > 0
+        if tt_best_move is not None:
+            # if tt_best_move in moves: moves.remove(tt_best_move)
+            moves.insert(0, tt_best_move)
 
         total_nodes_searched = 0
         total_cutoffs = 0
@@ -68,7 +77,7 @@ class Minimax:
                         total_cutoffs += 1
                         break
 
-            self.put_in_tp_table(board, color, best_move, best_score)
+            self.put_in_tp_table(board, color, depth, best_move, best_score)
             return (best_move, best_score, total_nodes_searched, total_cutoffs)
             
         else:
@@ -92,16 +101,16 @@ class Minimax:
                         total_cutoffs += 1
                         break
                     
-            self.put_in_tp_table(board, opposite_color, best_move, best_score)
+            self.put_in_tp_table(board, opposite_color, depth, best_move, best_score)
             return (best_move, best_score, total_nodes_searched, total_cutoffs)
 
     def get_possible_moves(self, board):
         empty_coordinates = [coord for coord, color in board.board.items() if color == HexBoard.EMPTY]
         return empty_coordinates
 
-    def put_in_tp_table(self, board, color, move, score):
-        best_move_board = board.make_move(move, color)
-        hash_code = best_move_board.hash_code(color)
+    def put_in_tp_table(self, board, color, depth, move, score):
+        hash_code = board.hash_code(color)
+        self.tp_table[hash_code] = (depth, move, score)
 
-        if hash_code not in self.tp_table:
-            self.tp_table[hash_code] = (move, score)
+        # if hash_code not in self.tp_table:
+        #     self.tp_table[hash_code] = (depth, move, score)
