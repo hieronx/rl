@@ -53,14 +53,6 @@ class HexBoard:
         """Returns the opposite color of the provided color. Returns BLUE if the color is not recognized"""
         return HexBoard.RED if current_color == HexBoard.BLUE else HexBoard.BLUE
 
-    def get_traversable_neighbors(self, coordinates, color):
-        neighbors = self.get_neighbors(coordinates)
-        traversable = []
-        for neighbor in neighbors:
-            if self.is_empty(coordinates) or self.is_color(coordinates, color):
-                traversable.append(neighbor)
-        return traversable
-
     @lru_cache(maxsize=256) # caching this to create lower lookup times, technically can't have more than board.size ** 2 options
     def get_neighbors(self, coordinates):
         """Returns a list with the coordinates of every possible/valid neighbor."""
