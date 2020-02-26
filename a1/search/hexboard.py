@@ -176,14 +176,5 @@ class HexBoard:
 
         print("   -----------------------")
 
-
     def hash_code(self, color):
-        multiplier = 10
-        code = color
-        for _, value in self.board.items():
-            code += value * multiplier
-            multiplier *= 10
-        return code
-
-    def hash_code_internal(self, color):
         return 10 * hash(frozenset(self.board.items())) + color

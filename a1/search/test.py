@@ -100,21 +100,6 @@ class TestHexMinimax(unittest.TestCase):
         move = minimax.get_next_move(board, HexBoard.RED)
         self.assertEqual(move, (1, 3))
 
-    def test_hash_speed(self):
-        start = time.time()
-        board = HexBoard(5)
-        for i in range(1000000):
-            code = board.hash_code(HexBoard.BLUE)
-        elapsed = time.time() - start
-        print("Hash generation took %f seconds for the current version" % elapsed)
-
-        start = time.time()
-        board = HexBoard(5)
-        for i in range(1000000):
-            code = board.hash_code_internal(HexBoard.BLUE)
-        elapsed = time.time() - start
-        print("Hash generation took %f seconds for the internal version" % elapsed)
-
     def test_dijkstra(self):
         evaluate = Evaluate('Dijkstra')
         board = HexBoard(3)
