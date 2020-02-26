@@ -37,25 +37,23 @@ class Minimax:
 
     def alpha_beta_search(self, board, depth, color, opposite_color, alpha, beta, maximizing):
         hash_code = board.hash_code(color if maximizing else opposite_color)
-        tt_best_move = None
+        cached_best_move = None
 
         if hash_code in self.tp_table:
             if self.tp_table[hash_code][0] == depth:
                 self.stats['tt_lookups'] += 1
                 return (self.tp_table[hash_code][1], self.tp_table[hash_code][2])
             else:
-                tt_best_move = self.tp_table[hash_code][1]
+                cached_best_move = self.tp_table[hash_code][1]
         
         if depth == 0 or board.game_over():
             score = self.evaluate.evaluate_board(board, color)
             self.stats['nodes_searched'] += 1
             return (None, score)
 
-        # tt_best_move = None
         moves = self.get_possible_moves(board)
-        if tt_best_move is not None:
-            # if tt_best_move in moves: moves.remove(tt_best_move)
-            moves.insert(0, tt_best_move)
+        if cached_best_move is not None:
+            moves.insert(0, cached_best_move)
 
         if maximizing:
             best_score = -math.inf
@@ -75,7 +73,7 @@ class Minimax:
                         self.stats['cutoffs'] += 1
                         break
 
-            self.put_in_tp_table(board, color, depth, best_move, best_score)
+            self.tp_table[board.hash_code(color)] = (depth, best_move, best_score)
             return (best_move, best_score)
             
         else:
@@ -96,16 +94,8 @@ class Minimax:
                         self.stats['cutoffs'] += 1
                         break
                     
-            self.put_in_tp_table(board, opposite_color, depth, best_move, best_score)
+            self.tp_table[board.hash_code(opposite_color)] = (depth, best_move, best_score)
             return (best_move, best_score)
 
     def get_possible_moves(self, board):
-        empty_coordinates = [coord for coord, color in board.board.items() if color == HexBoard.EMPTY]
-        return empty_coordinates
-
-    def put_in_tp_table(self, board, color, depth, move, score):
-        hash_code = board.hash_code(color)
-        self.tp_table[hash_code] = (depth, move, score)
-
-        # if hash_code not in self.tp_table:
-        #     self.tp_table[hash_code] = (depth, move, score)
+        return [coord for coord, color in board.board.items() if color == HexBoard.EMPTY]
