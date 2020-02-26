@@ -13,15 +13,15 @@ def run_trueskill(args):
     """Surprise, starts a trueskill comparison for each of the possible permutations of the input players, using multi-threading"""
     freeze_support() # for Windows support
 
-    board_size = 3
-    game_cnt = 200
+    board_size = 5
+    game_cnt = 20
     # players = [
     #     { 'depth': 3, 'time_limit': None, 'eval': 'random' },
     #     { 'depth': 3, 'time_limit': None, 'eval': 'Dijkstra' },
     #     { 'depth': 4, 'time_limit': None, 'eval': 'Dijkstra' },
     #     { 'depth': None, 'time_limit': 0.1, 'eval': 'Dijkstra' },
     # ]
-    players = [{ 'depth': 3, 'time_limit': None, 'eval': 'random' }, { 'depth': 3, 'time_limit': None, 'eval': 'Dijkstra' }]
+    players = [{ 'depth': None, 'time_limit': 1, 'eval': 'Dijkstra' }, { 'depth': None, 'time_limit': 1, 'eval': 'AStar' }]
 # 
     player_permutations = []
     for i in range(len(players)):
@@ -71,8 +71,8 @@ def play_game(game_input):
         
         save_result(start_time, (p1['depth'], p1['time_limit'], p1['eval'], p2['depth'], p2['time_limit'], p2['eval'], game_id, r1.mu, r1.sigma, r2.mu, r2.sigma))
         
-    print(r1)
-    print(r2)
+    print('[p1=%s] %s' % (p1['eval'], r1))
+    print('[p2=%s] %s' % (p2['eval'], r2))
 
 def save_result(start_time, data):
     """Saves the provided data to the disk using the provided start_time as .csv"""
