@@ -161,6 +161,7 @@ class HexBoard:
         print("   -----------------------")
 
     def hash_code(self, color):
+        """Generates a hash code that mirrors the current board state as seen by the provided player"""
         multiplier = 10
         code = color
         for _, value in self.board.items():
