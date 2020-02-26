@@ -1,5 +1,4 @@
 import unittest
-import numpy as np
 import time
 from tqdm import tqdm
 
@@ -31,7 +30,7 @@ class BenchmarkHexMinimax(unittest.TestCase):
             
             game_times.append(time.time() - start_time)
         
-        print('Benchmark %d games, mean=%.3fs, std-dev=%.5fs' % (game_count, np.mean(game_times, axis=0), np.std(game_times, axis=0)))
+        # print('Benchmark %d games, mean=%.3fs, std-dev=%.5fs' % (game_count, np.mean(game_times, axis=0), np.std(game_times, axis=0)))
 
 
 if __name__ == '__main__':
