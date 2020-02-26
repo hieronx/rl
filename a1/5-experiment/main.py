@@ -26,7 +26,7 @@ def play_game(game_input):
     text = "Processor %d" % (process_id)
 
     for game_id in tqdm(range(1, game_cnt + 1), desc=text, position=process_id):
-        m1, m2 = Minimax(board_size, p1['depth'], p1['time_limit'], Evaluate(p1['eval']), False), Minimax(board_size, p2['depth'], p2['time_limit'], Evaluate(p2['eval']), False)
+        m1, m2 = Minimax(board_size, p1['depth'], Evaluate(p1['eval']), False), Minimax(board_size, p2['depth'], Evaluate(p2['eval']), False)
         board = HexBoard(board_size)
 
         r1_first = True if not r1_first else False
@@ -47,7 +47,7 @@ def play_game(game_input):
         elif board.check_win(r2_col):
             r2, r1 = rate_1vs1(r2, r1, drawn=False)
         
-        save_result(start_time, (p1['depth'], p1['time_limit'], p1['eval'], p2['depth'], p2['time_limit'], p2['eval'], game_id, r1.mu, r1.sigma, r2.mu, r2.sigma))
+        save_result(start_time, (p1['depth'], p1['eval'], p2['depth'], p2['eval'], game_id, r1.mu, r1.sigma, r2.mu, r2.sigma))
         
     print(r1)
     print(r2)
@@ -55,10 +55,9 @@ def play_game(game_input):
 def run_trueskill():
     freeze_support() # for Windows support
 
-    board_size = 4
+    board_size = 3
     game_cnt = 100
-    # players = [{ 'depth': 3, 'eval': 'random' }, { 'depth': 3, 'eval': 'Dijkstra' }, { 'depth': 4, 'eval': 'Dijkstra' }]
-    players = [{ 'depth': 3, 'time_limit': None, 'eval': 'random' }, { 'depth': None, 'time_limit': 0.1, 'eval': 'Dijkstra' }]
+    players = [{ 'depth': 3, 'eval': 'random' }, { 'depth': 3, 'eval': 'Dijkstra' }, { 'depth': 4, 'eval': 'Dijkstra' }]
 
     player_permutations = []
     for i in range(len(players)):
@@ -66,7 +65,7 @@ def run_trueskill():
             player_permutations.append((players[i], players[j]))
 
     start_time = str(int(time.time()))
-    save_result(start_time, ('p1_depth', 'p1_time_limit', 'p1_eval', 'p2_depth', 'p2_time_limit', 'p2_eval', 'game_id', 'r1_mu', 'r1_sigma', 'r2_mu', 'r2_sigma'))
+    save_result(start_time, ('p1_depth', 'p1_eval', 'p2_depth', 'p2_eval', 'game_id', 'r1_mu', 'r1_sigma', 'r2_mu', 'r2_sigma'))
 
     game_inputs = [(process_id, board_size, game_cnt, start_time, p1, p2) for process_id, (p1, p2) in enumerate(player_permutations)]
 
@@ -77,8 +76,8 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="Minimax for Hex")
     parser.add_argument('--trueskill', action='store_true', help='If added, evaluate using TrueSkill')
     parser.add_argument('--simulate', action='store_true', help='If added, simulates both sides')
-    parser.add_argument('--size', type=int, default=4, help='Set the board size')
-    parser.add_argument('--depth', type=int, default=4, help='Set the search depth')
+    parser.add_argument('--size', type=int, default=3, help='Set the board size')
+    parser.add_argument('--depth', type=int, default=3, help='Set the search depth')
     parser.add_argument('--eval', choices=['Dijkstra', 'random'], default='Dijkstra', help='Choose the evaluation method')
     args = parser.parse_args(sys.argv[1:])
 
