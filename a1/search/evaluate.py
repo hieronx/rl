@@ -54,6 +54,9 @@ class Evaluate:
         while q:
             node_dist, node = heappop(q)
 
+            if node == to_coord:
+                break
+
             for neighbor in board.get_neighbors(node):
                 new_dist = node_dist + self.distance_between(board.board[node], board.board[neighbor], opposite_color)
                 if new_dist < dist[neighbor]:
