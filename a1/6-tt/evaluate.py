@@ -8,11 +8,15 @@ from minimax import Minimax
 from heapq import heappop, heappush
 
 class Evaluate:
+    """This class holds all the logic needed to evaluate a single board state, such as Dijkstra's shortest
+    path algorithm"""
 
     def __init__(self, eval_method):
+        """Stores the eval method that will be used for this evaluate class"""
         self.eval_method = eval_method
 
     def find_shortest_path_to_border(self, board, color):
+        """Returns the length of the shortest possible path to the border for the specified color"""
         source_coords = board.get_source_coordinates(color)
         target_coords = board.get_target_coordinates(color)
         opposite_color = board.get_opposite_color(color)
@@ -35,10 +39,12 @@ class Evaluate:
         return min_score
 
     def get_path_length_between(self, board, from_coord, to_coord, color):
+        """Returns the shortest possible path from the provided source and destination coordinates"""
         dist, _ = self.dijkstra(board, from_coord, to_coord, color)
         return dist[to_coord]
 
     def dijkstra(self, board, from_coord, to_coord, color):
+        """Runs Dijkstra's algorithm between the two provided coords on the provided board"""
         opposite_color = board.get_opposite_color(color)
         q = []
         dist = {}
@@ -66,8 +72,9 @@ class Evaluate:
         
         return (dist, prev)
 
-    @lru_cache(maxsize=16)
+    @lru_cache(maxsize=16) # use LRU cache to cache the last 16 results
     def distance_between(self, color_a, color_b, opposite_color):
+        """Returns the distance between the two provided colors, this is the vertex cost for Dijkstra"""
         if color_b == opposite_color:
             return math.inf
         elif color_b == HexBoard.EMPTY:
@@ -76,6 +83,7 @@ class Evaluate:
             return 0
 
     def evaluate_board(self, board, color):
+        """Returns a number that corresponds to a board evaluation. Higher numbers mean better numbers for the provided color"""
         if self.eval_method == 'random':
             return np.random.uniform(0, 1)
 
@@ -93,5 +101,5 @@ class Evaluate:
             return -(player_sp - opponent_sp)
         
         else:
-            print('This should not have happened')
+            print('This should not have happened, since we should have provided a valid eval method...')
             return 0
