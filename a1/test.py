@@ -1,5 +1,5 @@
 import unittest
-import numpy as np
+import random
 import time
 
 from hexboard import HexBoard
@@ -35,7 +35,7 @@ class TestHexMinimax(unittest.TestCase):
 
         while not endable_board.game_over():
             endable_board.place(
-                (np.random.randint(0, 4), np.random.randint(0, 4)), HexBoard.RED)
+                (random.randint(0, 4), random.randint(0, 4)), HexBoard.RED)
 
         self.assertEqual(endable_board.game_over(), True)
         self.assertEqual(endable_board.check_win(HexBoard.RED), True)

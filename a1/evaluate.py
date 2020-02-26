@@ -1,5 +1,5 @@
 import math
-import numpy as np
+import random
 
 from functools import lru_cache
 from hexboard import HexBoard
@@ -84,7 +84,7 @@ class Evaluate:
     def evaluate_board(self, board, color):
         """Returns a number that corresponds to a board evaluation. Higher numbers mean better numbers for the provided color"""
         if self.eval_method == 'random':
-            return np.random.uniform(0, 1)
+            return random.random()
 
         elif self.eval_method == 'Dijkstra':
             if board.check_draw() or (board.check_win(color) and board.check_win(board.get_opposite_color(color))): return 0
