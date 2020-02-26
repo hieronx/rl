@@ -20,7 +20,7 @@ class BenchmarkHexMinimax(unittest.TestCase):
             board = HexBoard(board_size)
 
             evaluate = Evaluate('Dijkstra')
-            minimax = Minimax(board_size, 3, evaluate, False)
+            minimax = Minimax(board_size, 3, None, evaluate, False)
 
             next_color = HexBoard.RED
             while not board.game_over():

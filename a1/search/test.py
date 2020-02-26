@@ -56,7 +56,7 @@ class TestHexMinimax(unittest.TestCase):
 
     def test_possible_moves(self):
         evaluate = Evaluate('random')
-        minimax = Minimax(2, 1, evaluate)
+        minimax = Minimax(2, 1, None, evaluate)
 
         board = HexBoard(2)
         possible_moves = minimax.get_possible_moves(board)
@@ -73,7 +73,7 @@ class TestHexMinimax(unittest.TestCase):
 
         self.assertFalse(board.game_over())
 
-        minimax = Minimax(3, 3, evaluate, False)
+        minimax = Minimax(3, 3, None, evaluate, False)
         move = minimax.get_next_move(board, HexBoard.RED)
         self.assertEqual(move, (0, 2))
 
@@ -96,7 +96,7 @@ class TestHexMinimax(unittest.TestCase):
 
         self.assertTrue(eval_good_board > eval_bad_board)
 
-        minimax = Minimax(4, 3, evaluate, False)
+        minimax = Minimax(4, 3, None, evaluate, False)
         move = minimax.get_next_move(board, HexBoard.RED)
         self.assertEqual(move, (1, 3))
 
@@ -126,7 +126,7 @@ class TestHexMinimax(unittest.TestCase):
         self.assertEqual(evaluate.get_path_length_between(board, (0, 0), (0, 3), HexBoard.RED), 3)
         self.assertEqual(evaluate.get_path_length_between(board, (3, 0), (0, 3), HexBoard.RED), 2)
 
-        minimax = Minimax(3, 2, evaluate, False)
+        minimax = Minimax(3, 2, None, evaluate, False)
         move = minimax.get_next_move(board, HexBoard.RED)
         self.assertEqual(move, (0, 1))
 
@@ -158,7 +158,7 @@ class TestHexMinimax(unittest.TestCase):
     def test_tp_table(self):
         evaluate = Evaluate('Dijkstra')
         board = HexBoard(3)
-        minimax = Minimax(3, 3, evaluate, False)
+        minimax = Minimax(3, 3, None, evaluate, False)
 
         board.place((0, 0), HexBoard.RED)
         board.place((0, 1), HexBoard.RED)
@@ -176,7 +176,7 @@ class TestHexMinimax(unittest.TestCase):
             board_size = 3 if i < (0.5 * game_count) else 4
             evaluate = Evaluate('Dijkstra')
             board = HexBoard(board_size)
-            minimax = Minimax(board_size, 3, evaluate, False)
+            minimax = Minimax(board_size, 3, None, evaluate, False)
 
             while not board.game_over():
                 board.place(minimax.get_next_move(board, HexBoard.RED), HexBoard.RED)
