@@ -6,8 +6,10 @@ from util import cls
 from hexboard import HexBoard
 
 class Minimax:
+    """This object houses all the code necessary for the minimax implementation"""
 
     def __init__(self, size, depth, time_limit, evaluate_class, live_play = True):
+        """Initializes a new minimax object that is either depth-bound or time-limit bound"""
         assert depth is not None or time_limit is not None
 
         self.board_size = size
@@ -19,6 +21,7 @@ class Minimax:
         self.stats = { 'nodes_searched': 0, 'cutoffs': 0, 'tt_lookups': 0 }
 
     def get_next_move(self, board, color):
+        """Returns the best next move for the provided color on the provided board/state"""
         start_time = time.time()
         alpha = -math.inf
         beta = math.inf
@@ -44,6 +47,7 @@ class Minimax:
         return move
 
     def alpha_beta_search(self, board, depth, color, opposite_color, alpha, beta, maximizing):
+        """Handles minimax search using alpha beta pruning and good use of move-ordering and transposition tables"""
         hash_code = board.hash_code(color if maximizing else opposite_color)
         cached_best_move = None
 
@@ -107,4 +111,5 @@ class Minimax:
             return (best_move, best_score)
 
     def get_possible_moves(self, board):
+        """Compiles a list of all empty hexes in the current hexboard"""
         return [coord for coord, color in board.board.items() if color == HexBoard.EMPTY]
