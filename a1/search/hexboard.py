@@ -1,4 +1,5 @@
 from copy import deepcopy
+from functools import lru_cache
 
 
 class HexBoard:
@@ -50,9 +51,7 @@ class HexBoard:
 
     def get_opposite_color(self, current_color):
         """Returns the opposite color of the provided color. Returns BLUE if the color is not recognized"""
-        if current_color == HexBoard.BLUE:
-            return HexBoard.RED
-        return HexBoard.BLUE
+        return HexBoard.RED if current_color == HexBoard.BLUE else HexBoard.BLUE
 
     def get_traversable_neighbors(self, coordinates, color):
         neighbors = self.get_neighbors(coordinates)
@@ -62,7 +61,8 @@ class HexBoard:
                 traversable.append(neighbor)
         return traversable
 
-    def get_neighbors(self, coordinates):
+    @lru_cache(maxsize=256) # caching this to create lower lookup times, technically can't have more than board.size ** 2 options
+    def get_neighbors_cached(self, coordinates):
         """Returns a list with the coordinates of every possible/valid neighbor."""
         (cx, cy) = coordinates
         neighbors = []
