@@ -20,7 +20,8 @@ class Minimax:
         beta = math.inf
         opposite_color = board.get_opposite_color(color)
         
-        move, _, nodes_searched, cutoffs = self.alpha_beta_search(board, self.depth, color, opposite_color, alpha, beta, True)
+        for i in range(1, 4):
+            move, _, nodes_searched, cutoffs = self.alpha_beta_search(board, i, color, opposite_color, alpha, beta, True)
         
         if self.live_play:
             cls()
