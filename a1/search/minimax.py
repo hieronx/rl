@@ -59,7 +59,7 @@ class Minimax:
             self.stats['nodes_searched'] += 1
             return (None, score)
 
-        moves = board.get_possible_moves()
+        moves = self.get_possible_moves(board)
         
         if cached_best_move is not None:
             moves.insert(0, cached_best_move)
@@ -105,3 +105,6 @@ class Minimax:
                     
             self.tp_table[board.hash_code(opposite_color)] = (depth, best_move, best_score)
             return (best_move, best_score)
+
+    def get_possible_moves(self, board):
+        return [coord for coord, color in board.board.items() if color == HexBoard.EMPTY]
