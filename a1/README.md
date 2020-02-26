@@ -1,5 +1,10 @@
 # Reinforcement Learning
-Github repository for all the homework assignments for the Reinforcement Learning course. May contain utter garbage.
+Codebase for assignment 1 of the Reinforcement Learning course at Leiden University, by Mees Gelein (s1117378) and Jeroen Offerijns (s1738291).
+
+## Setup
+To install the Pip dependencies:
+
+```pip install -r requirements.txt```
 
 ## How to use
 To print the instructions on how to use the program:

@@ -1,0 +1,2 @@
+trueskill==0.4.5
+tqdm==4.43.0
