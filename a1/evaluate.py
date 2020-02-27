@@ -22,13 +22,10 @@ class Evaluate:
         
         min_score = board.size**2
 
-        # For every combination of target and source coord
         for from_coord in source_coords:
-            # skip if the start coord is already taken by the enemy team
             if board.get_color(from_coord) == opposite_color:
                 continue
 
-            # Only count nodes without placed positions of this color
             if self.eval_method == 'Dijkstra': 
                 score = self.dijkstra(board, from_coord, target_coords, color, opposite_color)
             elif self.eval_method == 'AStar':
@@ -45,7 +42,7 @@ class Evaluate:
         checked = set()
 
         checked.add(from_coord)
-        f = h(from_coord, target_coords)
+        f = min(h(from_coord, to_coord) for to_coord in target_coords)
         heappush(q, (f, 0, from_coord))
 
         while q:
@@ -59,15 +56,15 @@ class Evaluate:
 
                 if neighbor not in checked:
                     checked.add(neighbor)
-                    f = new_g + h(neighbor, target_coords)
+                    f = new_g + min(h(from_coord, to_coord) for to_coord in target_coords)
                     heappush(q, (f, new_g, neighbor))
         
         return math.inf
 
-    @lru_cache(maxsize = 1024)
-    def heuristic(self, source, targets):
+    @lru_cache(maxsize = 512)
+    def heuristic(self, source, target):
         """Returns the shortest euclidian distance to one of the target coordinates"""
-        return min([math.sqrt((source[0] - target[0]) ** 2 + (source[1] - target[1]) ** 2) for target in targets])
+        return math.sqrt((source[0] - target[0]) ** 2 + (source[1] - target[1]) ** 2)
 
     def dijkstra(self, board, from_coord, target_coords, color, opposite_color):
         """Runs Dijkstra's algorithm between the two provided coords on the provided board"""
