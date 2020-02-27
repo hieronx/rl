@@ -13,15 +13,15 @@ def run_trueskill(args):
     """Surprise, starts a trueskill comparison for each of the possible permutations of the input players, using multi-threading"""
     freeze_support() # for Windows support
 
-    board_size = 5
-    game_cnt = 20
+    board_size = 3
+    game_cnt = 200
     # players = [
     #     { 'depth': 3, 'time_limit': None, 'eval': 'random' },
     #     { 'depth': 3, 'time_limit': None, 'eval': 'Dijkstra' },
     #     { 'depth': 4, 'time_limit': None, 'eval': 'Dijkstra' },
     #     { 'depth': None, 'time_limit': 0.1, 'eval': 'Dijkstra' },
     # ]
-    players = [{ 'depth': None, 'time_limit': 1, 'eval': 'Dijkstra' }, { 'depth': None, 'time_limit': 1, 'eval': 'AStar' }]
+    players = [{ 'depth': 3, 'time_limit': None, 'eval': 'random' }, { 'depth': 3, 'time_limit': None, 'eval': 'AStar' }]
 # 
     player_permutations = []
     for i in range(len(players)):
