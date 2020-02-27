@@ -1,12 +1,13 @@
 import math
+import string
 
 from util import cls
 from hexboard import HexBoard
 from minimax import Minimax
 from evaluate import Evaluate
-import time
+import time 
 
-char_to_row_idx = {'a': 0, 'b': 1, 'c': 2, 'd': 3}
+char_to_row_idx = { char: i for i, char in enumerate(string.ascii_lowercase) }
 
 class HexGame:
     """This instance is responsible for running a single game."""
