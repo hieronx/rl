@@ -24,35 +24,34 @@ class Evaluate:
 
         # For every combination of target and source coord
         for from_coord in source_coords:
-            for to_coord in target_coords:
-                # skip if the target or destination coord is already taken by the enemy team
-                if board.get_color(from_coord) == opposite_color or board.get_color(to_coord) == opposite_color:
-                    continue
+            # skip if the start coord is already taken by the enemy team
+            if board.get_color(from_coord) == opposite_color:
+                continue
 
-                # Only count nodes without placed positions of this color
-                if self.eval_method == 'Dijkstra': 
-                    score = self.dijkstra(board, from_coord, to_coord, color, opposite_color)
-                elif self.eval_method == 'AStar':
-                    score = self.astar(board, from_coord, to_coord, color, opposite_color, self.heuristic)
+            # Only count nodes without placed positions of this color
+            if self.eval_method == 'Dijkstra': 
+                score = self.dijkstra(board, from_coord, target_coords, color, opposite_color)
+            elif self.eval_method == 'AStar':
+                score = self.astar(board, from_coord, target_coords, color, opposite_color, self.heuristic)
 
-                if score < min_score:
-                    min_score = score
+            if score < min_score:
+                min_score = score
 
         return min_score
 
-    def astar(self, board, from_coord, to_coord, color, opposite_color, h):
+    def astar(self, board, from_coord, target_coords, color, opposite_color, h):
         """Runs the AStar pathfinding algorithm and returns the length of the shortest path to the target coordinate"""
         q = []
         checked = set()
 
         checked.add(from_coord)
-        f = h(from_coord, to_coord)
+        f = h(from_coord, target_coords)
         heappush(q, (f, 0, from_coord))
 
         while q:
             node_f, node_g, node = heappop(q)
 
-            if node == to_coord:
+            if node in target_coords:
                 return node_f
 
             for neighbor in board.get_neighbors(node):
@@ -60,18 +59,17 @@ class Evaluate:
 
                 if neighbor not in checked:
                     checked.add(neighbor)
-                    f = new_g + h(neighbor, to_coord)
+                    f = new_g + h(neighbor, target_coords)
                     heappush(q, (f, new_g, neighbor))
         
         return math.inf
 
-    @lru_cache(maxsize = 512)
-    def heuristic(self, source, target):
-        """Returns the simple euclidian distance to the target coordinate"""
-        return math.sqrt((source[0] - target[0]) ** 2 + (source[1] - target[1]) ** 2)
-        
+    @lru_cache(maxsize = 1024)
+    def heuristic(self, source, targets):
+        """Returns the shortest euclidian distance to one of the target coordinates"""
+        return min([math.sqrt((source[0] - target[0]) ** 2 + (source[1] - target[1]) ** 2) for target in targets])
 
-    def dijkstra(self, board, from_coord, to_coord, color, opposite_color):
+    def dijkstra(self, board, from_coord, target_coords, color, opposite_color):
         """Runs Dijkstra's algorithm between the two provided coords on the provided board"""
         q = []
         dist = {}
@@ -85,8 +83,8 @@ class Evaluate:
         while q:
             node_dist, node = heappop(q)
 
-            if node == to_coord:
-                return dist[to_coord]
+            if node in target_coords:
+                return dist[node]
 
             for neighbor in board.get_neighbors(node):
                 new_dist = node_dist + self.distance_to(board.board[neighbor], opposite_color)
