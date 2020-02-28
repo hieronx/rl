@@ -101,7 +101,7 @@ def save_result(config, data, clear=False):
     if not os.path.exists('output'): os.makedirs('output')
 
     fn = 'output/%s.csv' % config
-    if clear: os.remove(fn)
+    if clear and os.path.isfile(fn): os.remove(fn)
 
     with open(fn,'a') as fd:
         fd.write(','.join(map(str, data)) + '\n')
