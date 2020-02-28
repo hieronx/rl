@@ -45,20 +45,22 @@ def run_trueskill(args):
         for j in range(i + 1, len(players)):
             player_permutations.append((players[i], players[j]))
 
-    start_time = str(int(time.time()))
-    save_result(start_time, ('p1_depth', 'p1_time_limit', 'p1_eval', 'p2_depth', 'p2_time_limit', 'p2_eval', 'game_id', 'r1_mu', 'r1_sigma', 'r2_mu', 'r2_sigma'))
+    save_result(args.config, ('p1_depth', 'p1_time_limit', 'p1_eval', 'p2_depth', 'p2_time_limit', 'p2_eval', 'game_id', 'r1_mu', 'r1_sigma', 'r2_mu', 'r2_sigma'), clear=True)
 
-    game_inputs = [(process_id, board_size, game_cnt, start_time, p1, p2, args.disable_tt) for process_id, (p1, p2) in enumerate(player_permutations)]
+    game_inputs = [(process_id, board_size, game_cnt, args.config, p1, p2, args.disable_tt) for process_id, (p1, p2) in enumerate(player_permutations)]
 
     pool = Pool(len(game_inputs))
     pool.map(play_game, game_inputs)
 
+    fn = 'output/%s.csv' % args.config
+    print('Saved %s' % fn)
+
     if args.plot:
-        save_plots(args, start_time, player_permutations)
+        save_plots(args, player_permutations)
 
 def play_game(game_input):
     """Plays a series of games according to the provided game input object which packs all the settings into one object"""
-    process_id, board_size, game_cnt, start_time, p1, p2, disable_tt = game_input
+    process_id, board_size, game_cnt, config, p1, p2, disable_tt = game_input
 
     r1 = Rating()
     r2 = Rating()
@@ -89,20 +91,23 @@ def play_game(game_input):
         elif board.check_win(r2_col):
             r2, r1 = rate_1vs1(r2, r1, drawn=False)
         
-        save_result(start_time, (p1['depth'], p1['time_limit'], p1['eval'], p2['depth'], p2['time_limit'], p2['eval'], game_id, r1.mu, r1.sigma, r2.mu, r2.sigma))
+        save_result(config, (p1['depth'], p1['time_limit'], p1['eval'], p2['depth'], p2['time_limit'], p2['eval'], game_id, r1.mu, r1.sigma, r2.mu, r2.sigma))
         
     # print('[p1=%s] %s' % (p1['eval'], r1))
     # print('[p2=%s] %s' % (p2['eval'], r2))
 
-def save_result(start_time, data):
+def save_result(config, data, clear=False):
     """Saves the provided data to the disk using the provided start_time as .csv"""
-    if not os.path.exists('results'): os.makedirs('results')
+    if not os.path.exists('output'): os.makedirs('output')
 
-    with open('results/' + start_time + '.csv','a') as fd:
+    fn = 'output/%s.csv' % config
+    if clear: os.remove(fn)
+
+    with open(fn,'a') as fd:
         fd.write(','.join(map(str, data)) + '\n')
 
-def save_plots(args, start_time, player_permutations):
-    df = pd.read_csv("results/" + start_time + ".csv", index_col=None, header=0)
+def save_plots(args, player_permutations):
+    df = pd.read_csv("output/" + args.config + ".csv", index_col=None, header=0)
     if not os.path.exists('output'): os.makedirs('output')
 
     for i, (p1, p2) in enumerate(player_permutations):
@@ -120,4 +125,4 @@ def save_plots(args, start_time, player_permutations):
         
         fn = 'output/%s_%s.png' % (args.config, i+1)
         ax.get_figure().savefig(fn)
-        print('Created %s.' % fn)
+        print('Saved %s' % fn)
