@@ -107,6 +107,7 @@ def save_result(config, data, clear=False):
         fd.write(','.join(map(str, data)) + '\n')
 
 def save_plots(args, player_permutations):
+    """Saves the plots that were generated from the player permutations to the disk using the timestamp as part of the filename"""
     df = pd.read_csv("output/" + args.config + ".csv", index_col=None, header=0)
     if not os.path.exists('output'): os.makedirs('output')
 
