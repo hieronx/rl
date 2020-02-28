@@ -4,6 +4,9 @@ from copy import deepcopy
 from tqdm import tqdm
 import time
 import os
+import pandas as pd
+import glob
+import matplotlib.pyplot as plt
 
 from hexboard import HexBoard
 from minimax import Minimax
@@ -50,6 +53,9 @@ def run_trueskill(args):
     pool = Pool(len(game_inputs))
     pool.map(play_game, game_inputs)
 
+    if args.plot:
+        save_plots(args, start_time, player_permutations)
+
 def play_game(game_input):
     """Plays a series of games according to the provided game input object which packs all the settings into one object"""
     process_id, board_size, game_cnt, start_time, p1, p2, disable_tt = game_input
@@ -85,8 +91,8 @@ def play_game(game_input):
         
         save_result(start_time, (p1['depth'], p1['time_limit'], p1['eval'], p2['depth'], p2['time_limit'], p2['eval'], game_id, r1.mu, r1.sigma, r2.mu, r2.sigma))
         
-    print('[p1=%s] %s' % (p1['eval'], r1))
-    print('[p2=%s] %s' % (p2['eval'], r2))
+    # print('[p1=%s] %s' % (p1['eval'], r1))
+    # print('[p2=%s] %s' % (p2['eval'], r2))
 
 def save_result(start_time, data):
     """Saves the provided data to the disk using the provided start_time as .csv"""
@@ -94,3 +100,24 @@ def save_result(start_time, data):
 
     with open('results/' + start_time + '.csv','a') as fd:
         fd.write(','.join(map(str, data)) + '\n')
+
+def save_plots(args, start_time, player_permutations):
+    df = pd.read_csv("results/" + start_time + ".csv", index_col=None, header=0)
+    if not os.path.exists('output'): os.makedirs('output')
+
+    for i, (p1, p2) in enumerate(player_permutations):
+        games = df[(df['p1_depth'].astype(str) == str(p1['depth'])) & (df['p1_eval'] == p1['eval']) & (df['p1_time_limit'].astype(str) == str(p1['time_limit']))
+                & (df['p2_depth'].astype(str) == str(p2['depth'])) & (df['p2_time_limit'].astype(str) == str(p2['time_limit'])) & (df['p2_eval'] == p2['eval'])] 
+       
+        ax = games.plot(x='game_id', y=['r1_mu', 'r2_mu'], figsize=(8,5), grid=True)
+        
+        ax.set_xlabel("Number of games")
+        ax.set_ylabel("TrueSkill μ-value")
+        
+        p1_name = p1['eval'] + (" (depth " + str(p1['depth']) + ")" if p1['depth'] is not None else " (time limit " + str(p1['time_limit']) + "s)")
+        p2_name = p2['eval'] + (" (depth " + str(p2['depth']) + ")" if p2['depth'] is not None else " (time limit " + str(p2['time_limit']) + "s)")
+        ax.legend([p1_name, p2_name]);
+        
+        fn = 'output/%s_%s.png' % (args.config, i+1)
+        ax.get_figure().savefig(fn)
+        print('Created %s.' % fn)
