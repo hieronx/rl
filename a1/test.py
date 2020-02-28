@@ -106,9 +106,9 @@ class TestHexMinimax(unittest.TestCase):
 
         self.assertEqual(evaluate.dijkstra(board, (0,0), [(2,0)], HexBoard.BLUE, HexBoard.RED), 1)
 
-    def test_dijkstra_second_row(self):
-        """Another test scenario to see if dijkstra returns the correct path length"""
-        evaluate = Evaluate('Dijkstra')
+    def test_astar_second_row(self):
+        """Another test scenario to see if AStar returns the correct path length"""
+        evaluate = Evaluate('AStar')
         board = HexBoard(4)
 
         board.board[(1, 0)] = HexBoard.RED
@@ -120,9 +120,9 @@ class TestHexMinimax(unittest.TestCase):
         board.board[(2, 1)] = HexBoard.BLUE
         board.board[(3, 1)] = HexBoard.BLUE
 
-        self.assertEqual(evaluate.dijkstra(board, (0, 1), [(3, 1)], HexBoard.BLUE, HexBoard.RED), 1)
-        self.assertEqual(evaluate.dijkstra(board, (0, 0), [(0, 3)], HexBoard.RED, HexBoard.BLUE), 3)
-        self.assertEqual(evaluate.dijkstra(board, (3, 0), [(0, 3)], HexBoard.RED, HexBoard.BLUE), 2)
+        self.assertEqual(evaluate.astar(board, (0, 1), [(3, 1)], HexBoard.BLUE, HexBoard.RED), 1)
+        self.assertEqual(evaluate.astar(board, (0, 0), [(0, 3)], HexBoard.RED, HexBoard.BLUE), 3)
+        self.assertEqual(evaluate.astar(board, (3, 0), [(0, 3)], HexBoard.RED, HexBoard.BLUE), 2)
 
         minimax = Minimax(3, 2, None, evaluate, False)
         move = minimax.get_next_move(board, HexBoard.RED)

@@ -29,27 +29,27 @@ class Evaluate:
             if self.eval_method == 'Dijkstra': 
                 score = self.dijkstra(board, from_coord, target_coords, color, opposite_color)
             elif self.eval_method == 'AStar':
-                score = self.astar(board, from_coord, target_coords, color, opposite_color, self.heuristic)
+                score = self.astar(board, from_coord, target_coords, color, opposite_color)
 
             if score < min_score:
                 min_score = score
 
         return min_score
 
-    def astar(self, board, from_coord, target_coords, color, opposite_color, h):
+    def astar(self, board, from_coord, target_coords, color, opposite_color):
         """Runs the AStar pathfinding algorithm and returns the length of the shortest path to the target coordinate"""
         q = []
+        h = self.heuristic
         checked = set()
 
         checked.add(from_coord)
         f = min([h(from_coord, to_coord) for to_coord in target_coords])
-        heappush(q, (f, 0, from_coord))
+        heappush(q, (f, self.distance_to(board.board[from_coord], opposite_color), from_coord))
 
         while q:
             node_f, node_g, node = heappop(q)
-
             if node in target_coords:
-                return node_f
+                return node_g
 
             for neighbor in board.get_neighbors(node):
                 new_g = node_g + self.distance_to(board.board[neighbor], opposite_color)
