@@ -22,7 +22,7 @@ To run the unit tests:
 ```python main.py --eval Dijkstra --depth 3 --disable-tt```
 
 ## Section 5 - Experiment
-```python main.py --trueskill --disable-tt```
+```python main.py --trueskill random-vs-Dijkstra```
 
 ## Section 6 - Iterative Deepening and Transposition Tables
-```python main.py --trueskill```
+```python main.py --trueskill depth-vs-time-limit```
