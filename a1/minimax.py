@@ -35,8 +35,8 @@ class Minimax:
         elif self.time_limit:
             best_move = None
             while (time.time() - self.start_time) < self.time_limit:
-                new_move, _ = self.alpha_beta_search(board, max_depth, color, opposite_color, alpha, beta, True)
-                if new_move is not None:
+                new_move, new_score = self.alpha_beta_search(board, max_depth, color, opposite_color, alpha, beta, True)
+                if new_move is not None and new_score is not None:
                     best_move = new_move
                 max_depth += 1
         
@@ -56,8 +56,8 @@ class Minimax:
         cached_best_move = None
 
         # stop handling any code and immediately drop all your responsibilities if times has passed
-        if self.time_limit is not None and time.time() - self.start_time >= self.time_limit: 
-            return (None, 0)
+        if self.time_limit is not None and (time.time() - self.start_time) >= self.time_limit: 
+            return (None, None)
         
         if not self.disable_tt:
             hash_code = board.hash_code(color if maximizing else opposite_color)
@@ -88,6 +88,9 @@ class Minimax:
                 _, score = self.alpha_beta_search(board, depth - 1, color, opposite_color, alpha, beta, False)
                 board.board[move] = HexBoard.EMPTY
 
+                if score == None:
+                    return (None, None)
+
                 if score > best_score:
                     best_score = score
                     best_move = move
@@ -108,6 +111,9 @@ class Minimax:
                 board.board[move] = opposite_color
                 _, score = self.alpha_beta_search(board, depth - 1, color, opposite_color, alpha, beta, True)
                 board.board[move] = HexBoard.EMPTY
+
+                if score == None:
+                    return (None, None)
 
                 if score < best_score:
                     best_score = score

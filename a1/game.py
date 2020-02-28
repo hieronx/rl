@@ -40,7 +40,6 @@ class HexGame:
                             break
 
             board = board.make_move((char_to_row_idx[x], int(y)), HexBoard.BLUE)
-            print(board.game_over())
 
         if board.check_win(HexBoard.RED):
             print('The AI won.')
