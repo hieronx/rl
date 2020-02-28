@@ -37,7 +37,7 @@ class Evaluate:
         return min_score
 
     def astar(self, board, from_coord, target_coords, color, opposite_color):
-        """Runs the AStar pathfinding algorithm and returns the length of the shortest path to the target coordinate"""
+        """Runs the AStar pathfinding algorithm and returns the length of the shortest path to one of the target coordinates"""
         q = []
         h = self.heuristic
         checked = set()
