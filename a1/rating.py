@@ -13,7 +13,7 @@ def run_trueskill(args):
     """Surprise, starts a trueskill comparison for each of the possible permutations of the input players, using multi-threading"""
     freeze_support() # for Windows support
 
-    if args.trueskill == 'random-vs-Dijkstra':
+    if args.config == 'random-vs-Dijkstra':
         board_size = 4
         game_cnt = 200
 
@@ -22,7 +22,7 @@ def run_trueskill(args):
             { 'depth': 3, 'time_limit': None, 'eval': 'Dijkstra' },
             { 'depth': 4, 'time_limit': None, 'eval': 'Dijkstra' },
         ]
-    elif args.trueskill == 'depth-vs-time-limit':
+    elif args.config == 'depth-vs-time-limit':
         board_size = 4
         game_cnt = 200
 
@@ -31,7 +31,7 @@ def run_trueskill(args):
             { 'depth': None, 'time_limit': 0.1, 'eval': 'Dijkstra' },
             { 'depth': None, 'time_limit': 1.0, 'eval': 'Dijkstra' },
         ]
-    elif args.trueskill == 'Dijkstra-performance':
+    elif args.config == 'Dijkstra-performance':
         board_size = 3
         game_cnt = 200
 
