@@ -85,12 +85,8 @@ class Minimax:
 
             for move in moves:
                 board.board[move] = color
-                new_move, score = self.alpha_beta_search(board, depth - 1, color, opposite_color, alpha, beta, False)
+                _, score = self.alpha_beta_search(board, depth - 1, color, opposite_color, alpha, beta, False)
                 board.board[move] = HexBoard.EMPTY
-
-                if new_move is None and score == 0:
-                    # Time limit passed
-                    return (None, 0)
 
                 if score > best_score:
                     best_score = score
@@ -110,12 +106,8 @@ class Minimax:
 
             for move in moves:
                 board.board[move] = opposite_color
-                new_move, score = self.alpha_beta_search(board, depth - 1, color, opposite_color, alpha, beta, True)
+                _, score = self.alpha_beta_search(board, depth - 1, color, opposite_color, alpha, beta, True)
                 board.board[move] = HexBoard.EMPTY
-
-                if new_move is None and score == 0:
-                    # Time limit passed
-                    return (None, 0)
 
                 if score < best_score:
                     best_score = score
