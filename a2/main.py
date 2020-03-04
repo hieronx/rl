@@ -4,8 +4,8 @@ import logging
 
 from util.hexboard import HexBoard
 from util.game import HexGame
-from rating import run_trueskill
-from benchmark import run_benchmark
+from rating.trueskill import run_trueskill
+from rating.benchmark import run_benchmark
 
 logging.basicConfig(format = '%(asctime)s - %(levelname)s - %(name)s -   %(message)s',
                     datefmt = '%m/%d/%Y %H:%M:%S',
@@ -38,10 +38,13 @@ if __name__ == '__main__':
         exit()
 
     if args.task == 'trueskill':
+        logger.info('Booting TrueSkill rating script...')
         run_trueskill(args)
     elif args.task == 'benchmark':
+        logger.info('Booting benchmark script...')
         run_benchmark()
     else:
+        logger.info('Booting gameplay script...')
         game = HexGame(args)
         board = HexBoard(args.size)
         game.run_interactively(board)

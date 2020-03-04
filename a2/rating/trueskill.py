@@ -7,6 +7,7 @@ import os
 import pandas as pd
 import glob
 import matplotlib.pyplot as plt
+import logging
 
 from util.hexboard import HexBoard
 from search.minimax import Minimax
@@ -14,6 +15,8 @@ from search.minimax import Minimax
 from evaluate.dijkstra import Dijkstra
 from evaluate.astar import AStar
 from evaluate.random import Random
+
+logger = logging.getLogger(__name__)
 
 def get_eval_class(eval_method):
     if eval_method == 'Dijkstra':
@@ -72,7 +75,7 @@ def run_trueskill(args):
     pool.map(play_game, game_inputs)
 
     fn = 'output/%s.csv' % args.config
-    print('Saved %s' % fn)
+    logger.info('Saved %s' % fn)
 
     if args.plot:
         save_plots(args, player_permutations)
@@ -112,8 +115,8 @@ def play_game(game_input):
         
         save_result(config, (p1['search'], p1['depth'], p1['time_limit'], p1['eval'], p2['search'], p2['depth'], p2['time_limit'], p2['eval'], game_id, r1.mu, r1.sigma, r2.mu, r2.sigma))
         
-    # print('[p1=%s] %s' % (p1['eval'], r1))
-    # print('[p2=%s] %s' % (p2['eval'], r2))
+    # logger.info('[p1=%s] %s' % (p1['eval'], r1))
+    # logger.info('[p2=%s] %s' % (p2['eval'], r2))
 
 def save_result(config, data, clear=False):
     """Saves the provided data to the disk using the provided start_time as .csv"""
@@ -145,4 +148,4 @@ def save_plots(args, player_permutations):
         
         fn = 'output/%s_%s.png' % (args.config, i+1)
         ax.get_figure().savefig(fn)
-        print('Saved %s' % fn)
+        logger.info('Saved %s' % fn)
