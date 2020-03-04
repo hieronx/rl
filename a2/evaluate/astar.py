@@ -10,7 +10,7 @@ class AStar(HexSPEvalMethod):
         """Stores the eval method that will be used for this evaluate class"""
         super(HexSPEvalMethod, self).__init__('AStar')
 
-    def astar(self, board, from_coord, target_coords, color, opposite_color):
+    def get_score(self, board, from_coord, target_coords, color, opposite_color):
         """Runs the AStar pathfinding algorithm and returns the length of the shortest path to one of the target coordinates"""
         q = []
         h = self.heuristic

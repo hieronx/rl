@@ -127,7 +127,3 @@ class Minimax(HexSearchMethod):
                     
             if not self.disable_tt: self.tp_table[board.hash_code(opposite_color)] = (depth, best_move, best_score)
             return (best_move, best_score)
-
-    def get_possible_moves(self, board):
-        """Compiles a list of all empty hexes in the current hexboard"""
-        return [coord for coord, color in board.board.items() if color == HexBoard.EMPTY]

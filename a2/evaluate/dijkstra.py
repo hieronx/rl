@@ -9,7 +9,7 @@ class Dijkstra(HexSPEvalMethod):
         """Stores the eval method that will be used for this evaluate class"""
         super(HexSPEvalMethod, self).__init__('Dijkstra')
 
-    def dijkstra(self, board, from_coord, target_coords, color, opposite_color):
+    def get_score(self, board, from_coord, target_coords, color, opposite_color):
         """Runs Dijkstra's algorithm between the two provided coords on the provided board"""
         q = []
         dist = {}

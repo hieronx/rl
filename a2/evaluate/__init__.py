@@ -40,6 +40,9 @@ class HexSPEvalMethod(HexEvalMethod):
 
         return -(player_sp - opponent_sp)
 
+    def get_score(self, board, from_coord, target_coords, color, opposite_color):
+        raise NotImplementedError
+
     def find_shortest_path_to_border(self, board, color):
         """Returns the length of the shortest possible path to the border for the specified color"""
         source_coords = board.get_source_coordinates(color)
@@ -52,10 +55,7 @@ class HexSPEvalMethod(HexEvalMethod):
             if board.get_color(from_coord) == opposite_color:
                 continue
 
-            if self.eval_method == 'Dijkstra': 
-                score = self.dijkstra(board, from_coord, target_coords, color, opposite_color)
-            elif self.eval_method == 'AStar':
-                score = self.astar(board, from_coord, target_coords, color, opposite_color)
+            score = self.get_score(board, from_coord, target_coords, color, opposite_color)
 
             if score < min_score:
                 min_score = score
