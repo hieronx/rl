@@ -2,9 +2,10 @@ import argparse
 import sys
 import logging
 
-from hexboard import HexBoard
-from game import HexGame
+from util.hexboard import HexBoard
+from util.game import HexGame
 from rating import run_trueskill
+from benchmark import run_benchmark
 
 logging.basicConfig(format = '%(asctime)s - %(levelname)s - %(name)s -   %(message)s',
                     datefmt = '%m/%d/%Y %H:%M:%S',
@@ -13,7 +14,7 @@ logger = logging.getLogger(__name__)
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="Reinforcement learning for Hex")
-    parser.add_argument('task', choices=['play', 'trueskill'])
+    parser.add_argument('task', choices=['play', 'trueskill', 'benchmark'])
     parser.add_argument('--config', choices=['random-vs-Dijkstra', 'depth-vs-time-limit', 'Dijkstra-performance', 'Minimax-vs-MCTS'], default=None, help='If added, evaluate using TrueSkill using the chosen configuration set')
     parser.add_argument('--plot', action='store_true', help='If added, save the plots of the TrueSkill evaluations')
     parser.add_argument('--disable-tt', action='store_true', help='If added, disables the transposition table')
@@ -38,6 +39,8 @@ if __name__ == '__main__':
 
     if args.task == 'trueskill':
         run_trueskill(args)
+    elif args.task == 'benchmark':
+        run_benchmark()
     else:
         game = HexGame(args)
         board = HexBoard(args.size)

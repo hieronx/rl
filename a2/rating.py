@@ -8,7 +8,7 @@ import pandas as pd
 import glob
 import matplotlib.pyplot as plt
 
-from hexboard import HexBoard
+from util.hexboard import HexBoard
 from search.minimax import Minimax
 
 from evaluate.dijkstra import Dijkstra

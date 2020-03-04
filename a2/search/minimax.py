@@ -2,7 +2,7 @@ import math
 import time
 
 from util import cls
-from hexboard import HexBoard
+from util.hexboard import HexBoard
 from . import HexSearchMethod
 
 class Minimax(HexSearchMethod):

@@ -1,7 +1,7 @@
 import math
 from functools import lru_cache
 
-from hexboard import HexBoard
+from util.hexboard import HexBoard
 
 class HexEvalMethod:
 

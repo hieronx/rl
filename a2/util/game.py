@@ -3,7 +3,7 @@ import string
 import time 
 
 from util import cls
-from hexboard import HexBoard
+from util.hexboard import HexBoard
 
 from search.minimax import Minimax
 from search.mcts import MCTS

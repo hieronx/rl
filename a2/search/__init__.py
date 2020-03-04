@@ -1,4 +1,4 @@
-from hexboard import HexBoard
+from util.hexboard import HexBoard
 
 class HexSearchMethod:
         
