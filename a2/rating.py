@@ -15,6 +15,14 @@ from evaluate.dijkstra import Dijkstra
 from evaluate.astar import AStar
 from evaluate.random import Random
 
+def get_eval_class(eval_method):
+    if eval_method == 'Dijkstra':
+        return Dijkstra()
+    elif eval_method == 'AStar':
+        return AStar()
+    elif eval_method == 'random':
+        return Random()
+
 def run_trueskill(args):
     """Surprise, starts a trueskill comparison for each of the possible permutations of the input players, using multi-threading"""
     freeze_support() # for Windows support
@@ -38,12 +46,12 @@ def run_trueskill(args):
             { 'depth': None, 'time_limit': 1.0, 'eval': 'Dijkstra' },
         ]
     elif args.config == 'Minimax-vs-MCTS':
-        board_size = 4
-        game_cnt = 200
+        board_size = 3
+        game_cnt = 5
 
         players = [
-            { 'depth': None, 'time_limit': 1.0, 'search': 'Minimax', 'eval': 'Dijkstra' },
-            { 'depth': None, 'time_limit': 1.0, 'search': 'MCTS', 'eval': 'Dijkstra' },
+            { 'depth': None, 'time_limit': 0.1, 'search': 'Minimax', 'eval': 'Dijkstra' },
+            { 'depth': None, 'time_limit': 0.1, 'search': 'MCTS', 'eval': 'Dijkstra' },
         ]
     elif args.config == 'Dijkstra-performance':
         board_size = 3
@@ -69,14 +77,6 @@ def run_trueskill(args):
     if args.plot:
         save_plots(args, player_permutations)
 
-def get_eval_class(eval_method):
-    if args.eval == 'Dijkstra':
-        return Dijkstra()
-    elif args.eval == 'AStar':
-        return AStar()
-    elif args.eval == 'random':
-        return Random()
-
 def play_game(game_input):
     """Plays a series of games according to the provided game input object which packs all the settings into one object"""
     process_id, board_size, game_cnt, config, p1, p2, disable_tt = game_input
@@ -89,7 +89,7 @@ def play_game(game_input):
     text = "Processor %d" % (process_id)
 
     for game_id in tqdm(range(1, game_cnt + 1), desc=text, position=process_id):
-        m1, m2 = Minimax(board_size, p1['depth'], p1['time_limit'], self.get_eval_class(p1['eval']), False, disable_tt=disable_tt), Minimax(board_size, p2['depth'], p2['time_limit'], self.get_eval_class(p2['eval']), False, disable_tt=disable_tt)
+        m1, m2 = Minimax(board_size, p1['depth'], p1['time_limit'], get_eval_class(p1['eval']), False, disable_tt=disable_tt), Minimax(board_size, p2['depth'], p2['time_limit'], get_eval_class(p2['eval']), False, disable_tt=disable_tt)
         board = HexBoard(board_size)
 
         r1_first = True if not r1_first else False
@@ -131,8 +131,8 @@ def save_plots(args, player_permutations):
     if not os.path.exists('output'): os.makedirs('output')
 
     for i, (p1, p2) in enumerate(player_permutations):
-        games = df[(df['p1_depth'].astype(str) == str(p1['depth'])) & (df['p1_eval'] == p1['eval']) & (df['p1_time_limit'].astype(str) == str(p1['time_limit']))
-                & (df['p2_depth'].astype(str) == str(p2['depth'])) & (df['p2_time_limit'].astype(str) == str(p2['time_limit'])) & (df['p2_eval'] == p2['eval'])] 
+        games = df[(df['p1_search'] == p1['search']) & (df['p1_depth'].astype(str) == str(p1['depth'])) & (df['p1_eval'] == p1['eval']) & (df['p1_time_limit'].astype(str) == str(p1['time_limit']))
+                & (df['p2_search'] == p2['search']) & (df['p2_depth'].astype(str) == str(p2['depth'])) & (df['p2_time_limit'].astype(str) == str(p2['time_limit'])) & (df['p2_eval'] == p2['eval'])] 
        
         ax = games.plot(x='game_id', y=['r1_mu', 'r2_mu'], figsize=(8,5), grid=True)
         
