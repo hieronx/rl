@@ -2,9 +2,10 @@ import unittest
 import random
 import time
 
-from hexboard import HexBoard
-from minimax import Minimax
-from evaluate import Evaluate
+from util.hexboard import HexBoard
+from search.minimax import Minimax
+from evaluate.dijkstra import Dijkstra
+from evaluate.astar import AStar
 
 class TestHexMinimax(unittest.TestCase):
     """All unit tests used to determine if the code we wrote is still running as intended"""
@@ -60,7 +61,7 @@ class TestHexMinimax(unittest.TestCase):
 
     def test_minimax(self):
         """"Tests to see if minimax returns the expected best moves for specific board states"""
-        evaluate = Evaluate('Dijkstra')
+        dijkstra = Dijkstra()
         board = HexBoard(3)
 
         board.board[(0, 0)] = HexBoard.RED
@@ -68,13 +69,13 @@ class TestHexMinimax(unittest.TestCase):
 
         self.assertFalse(board.game_over())
 
-        minimax = Minimax(3, 3, None, evaluate, False)
+        minimax = Minimax(3, 3, None, dijkstra, False)
         move = minimax.get_next_move(board, HexBoard.RED)
         self.assertEqual(move, (0, 2))
 
     def test_minimax_top_left(self):
         """"Another scenario which tests a specific minimax scenario"""
-        evaluate = Evaluate('Dijkstra')
+        dijkstra = Dijkstra()
         board = HexBoard(4)
 
         board.board[(1, 0)] = HexBoard.RED
@@ -85,30 +86,30 @@ class TestHexMinimax(unittest.TestCase):
         board.board[(0, 3)] = HexBoard.BLUE
 
         good_board = board.make_move((1, 3), HexBoard.RED)
-        eval_good_board = evaluate.evaluate_board(good_board, HexBoard.RED)
+        eval_good_board = dijkstra.evaluate_board(good_board, HexBoard.RED)
 
         bad_board = board.make_move((0, 0), HexBoard.RED)
-        eval_bad_board = evaluate.evaluate_board(bad_board, HexBoard.RED)
+        eval_bad_board = dijkstra.evaluate_board(bad_board, HexBoard.RED)
 
         self.assertTrue(eval_good_board > eval_bad_board)
 
-        minimax = Minimax(4, 3, None, evaluate, False)
+        minimax = Minimax(4, 3, None, dijkstra, False)
         move = minimax.get_next_move(board, HexBoard.RED)
         self.assertEqual(move, (1, 3))
 
     def test_dijkstra(self):
         """First scenario to see if dijkstra returns sane data"""
-        evaluate = Evaluate('Dijkstra')
+        dijkstra = Dijkstra()
         board = HexBoard(3)
 
         board.board[(0, 0)] = HexBoard.BLUE
         board.board[(1, 0)] = HexBoard.BLUE
 
-        self.assertEqual(evaluate.dijkstra(board, (0,0), [(2,0)], HexBoard.BLUE, HexBoard.RED), 1)
+        self.assertEqual(dijkstra.get_score(board, (0,0), [(2,0)], HexBoard.BLUE, HexBoard.RED), 1)
 
     def test_astar_second_row(self):
         """Another test scenario to see if AStar returns the correct path length"""
-        evaluate = Evaluate('AStar')
+        astar = AStar()
         board = HexBoard(4)
 
         board.board[(1, 0)] = HexBoard.RED
@@ -120,30 +121,30 @@ class TestHexMinimax(unittest.TestCase):
         board.board[(2, 1)] = HexBoard.BLUE
         board.board[(3, 1)] = HexBoard.BLUE
 
-        self.assertEqual(evaluate.astar(board, (0, 1), [(3, 1)], HexBoard.BLUE, HexBoard.RED), 1)
-        self.assertEqual(evaluate.astar(board, (0, 0), [(0, 3)], HexBoard.RED, HexBoard.BLUE), 3)
-        self.assertEqual(evaluate.astar(board, (3, 0), [(0, 3)], HexBoard.RED, HexBoard.BLUE), 2)
+        self.assertEqual(astar.get_score(board, (0, 1), [(3, 1)], HexBoard.BLUE, HexBoard.RED), 1)
+        self.assertEqual(astar.get_score(board, (0, 0), [(0, 3)], HexBoard.RED, HexBoard.BLUE), 3)
+        self.assertEqual(astar.get_score(board, (3, 0), [(0, 3)], HexBoard.RED, HexBoard.BLUE), 2)
 
-        minimax = Minimax(3, 2, None, evaluate, False)
+        minimax = Minimax(3, 2, None, astar, False)
         move = minimax.get_next_move(board, HexBoard.RED)
         self.assertEqual(move, (0, 1))
 
     def test_board_evaluation(self):
         """Checks to see if the board evaluation returns the expected result in several synthetic board states"""
-        evaluate = Evaluate('Dijkstra')
+        dijkstra = Dijkstra()
         board = HexBoard(3)
         
         board.board[(0, 0)] = HexBoard.BLUE
         board.board[(1, 0)] = HexBoard.BLUE
 
-        self.assertTrue(evaluate.evaluate_board(board, HexBoard.BLUE) > evaluate.evaluate_board(board, HexBoard.RED))
+        self.assertTrue(dijkstra.evaluate_board(board, HexBoard.BLUE) > dijkstra.evaluate_board(board, HexBoard.RED))
 
         board = HexBoard(3)
 
         board.board[(0, 0)] = HexBoard.RED
         board.board[(0, 1)] = HexBoard.RED
 
-        self.assertTrue(evaluate.evaluate_board(board, HexBoard.RED) > evaluate.evaluate_board(board, HexBoard.BLUE))
+        self.assertTrue(dijkstra.evaluate_board(board, HexBoard.RED) > dijkstra.evaluate_board(board, HexBoard.BLUE))
 
     def test_hash_code(self):
         """Makes sure the hashcode that we're generating is indeed what we expect it to be"""
@@ -157,9 +158,9 @@ class TestHexMinimax(unittest.TestCase):
 
     def test_tp_table(self):
         """Tests if the transposition table is working as intended"""
-        evaluate = Evaluate('Dijkstra')
+        dijkstra = Dijkstra()
         board = HexBoard(3)
-        minimax = Minimax(3, 3, None, evaluate, False)
+        minimax = Minimax(3, 3, None, dijkstra, False)
 
         board.board[(0, 0)] = HexBoard.RED
         board.board[(0, 1)] = HexBoard.RED

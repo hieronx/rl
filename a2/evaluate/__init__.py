@@ -8,7 +8,7 @@ class HexEvalMethod:
     def __init__(self, eval_method):
         self.eval_method = eval_method
 
-    def evaluate_board(self, board, color):
+    def evaluate_board(board, color):
         raise NotImplementedError
     
     @lru_cache(maxsize=8)
