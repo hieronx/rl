@@ -1,7 +1,6 @@
 from trueskill import Rating, rate_1vs1
 from multiprocessing import Pool, freeze_support
 from copy import deepcopy
-from tqdm import tqdm
 import time
 import os
 import pandas as pd
@@ -9,6 +8,7 @@ import glob
 import matplotlib.pyplot as plt
 import logging
 
+from util import progressbar
 from util.hexboard import HexBoard
 from search.minimax import Minimax
 
@@ -55,6 +55,8 @@ def run_trueskill(args):
         players = [
             { 'depth': None, 'time_limit': 0.1, 'search': 'Minimax', 'eval': 'Dijkstra' },
             { 'depth': None, 'time_limit': 0.1, 'search': 'MCTS', 'eval': 'Dijkstra' },
+            { 'depth': None, 'time_limit': 0.5, 'search': 'MCTS', 'eval': 'Dijkstra' },
+            { 'depth': None, 'time_limit': 1.0, 'search': 'MCTS', 'eval': 'Dijkstra' },
         ]
     elif args.config == 'Dijkstra-performance':
         board_size = 3
@@ -89,9 +91,9 @@ def play_game(game_input):
     r1_col, r2_col = HexBoard.RED, HexBoard.BLUE
     r1_first = True
 
-    text = "Processor %d" % (process_id)
+    # text = "Processor %d" % (process_id)
 
-    for game_id in tqdm(range(1, game_cnt + 1), desc=text, position=process_id):
+    for game_id in progressbar(range(1, game_cnt + 1), desc="Processor %d" % (process_id + 1), position=process_id):
         m1, m2 = Minimax(board_size, p1['depth'], p1['time_limit'], get_eval_class(p1['eval']), False, disable_tt=disable_tt), Minimax(board_size, p2['depth'], p2['time_limit'], get_eval_class(p2['eval']), False, disable_tt=disable_tt)
         board = HexBoard(board_size)
 
