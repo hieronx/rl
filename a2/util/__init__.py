@@ -9,14 +9,13 @@ def cls():
     else:
         temp = os.system('clear')
 
-# Source: https://stackoverflow.com/questions/3160699/python-progress-bar
+# Based on https://stackoverflow.com/questions/3160699/python-progress-bar
 def progressbar(it, desc="", position=None, size=80, file = sys.stdout):
     count = len(it)
 
     def show(j, ips):
         x = int(size*j/count)
         if position: moveto(file, position)
-        # self.status_printer()
         file.write("%s: |%s%s| %i/%i %.2fit/s\r" % (desc, "█"*x, " "*(size-x), j, count, ips))
         file.flush()
         if position: moveto(file, -position)
@@ -31,7 +30,7 @@ def progressbar(it, desc="", position=None, size=80, file = sys.stdout):
     file.write("\n")
     file.flush()
 
-# Source: https://github.com/tqdm/tqdm/blob/master/tqdm/std.py#L1401
+# Based on https://github.com/tqdm/tqdm/blob/master/tqdm/std.py#L1401
 def moveto(fp, n):
     fp.write(str('\n' * n + ('' if (os.name == 'nt') else '\x1b[A') * -n))
     fp.flush()
