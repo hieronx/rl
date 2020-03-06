@@ -13,5 +13,5 @@ class MCTS(HexSearchMethod):
         self.live_play = live_play
 
     def get_next_move(self, board, color):
-        logger.warn('MCTS still needs to be implemented.')
+        logger.error('MCTS still needs to be implemented.')
         return self.get_possible_moves(board)[0]

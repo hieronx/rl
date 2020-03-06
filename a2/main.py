@@ -34,6 +34,7 @@ if __name__ == '__main__':
 
     args = parser.parse_args(sys.argv[1:])
 
+    # Play command
     if args.command == 'play':
         if args.search == 'Minimax' and not (args.depth or args.time_limit):
             logger.warn('Either depth or time limit needs to be set when using Minimax search.')
@@ -43,19 +44,21 @@ if __name__ == '__main__':
             logger.warn('Depth and time limit cannot both be set.')
             exit()
 
-    if args.command == 'trueskill':
-        if not args.config:
-            logger.warn('--config needs to be set.')
-            exit()
-
-    if args.command == 'trueskill':
-        logger.info('Booting TrueSkill rating script...')
-        run_trueskill(args)
-    elif args.command == 'benchmark':
-        logger.info('Booting benchmark script...')
-        run_benchmark()
-    else:
         logger.info('Booting gameplay script...')
         game = HexGame(args)
         board = HexBoard(args.size)
         game.run_interactively(board)
+    
+    # TrueSkill command
+    elif args.command == 'trueskill':
+        if not args.config:
+            logger.warn('--config needs to be set.')
+            exit()
+
+        logger.info('Booting TrueSkill rating script...')
+        run_trueskill(args)
+    
+    # Benchmark command
+    elif args.command == 'benchmark':
+        logger.info('Booting benchmark script...')
+        run_benchmark()
