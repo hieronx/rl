@@ -55,8 +55,6 @@ def run_trueskill(args):
         players = [
             { 'depth': None, 'time_limit': 0.1, 'search': 'Minimax', 'eval': 'Dijkstra' },
             { 'depth': None, 'time_limit': 0.1, 'search': 'MCTS', 'eval': 'Dijkstra' },
-            { 'depth': None, 'time_limit': 0.5, 'search': 'MCTS', 'eval': 'Dijkstra' },
-            { 'depth': None, 'time_limit': 1.0, 'search': 'MCTS', 'eval': 'Dijkstra' },
         ]
     elif args.config == 'Dijkstra-performance':
         board_size = 3
