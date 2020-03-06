@@ -1,13 +1,13 @@
 import math
 from heapq import heappop, heappush
 
-from . import HexSPEvalMethod
+from . import HexEvalMethod
 
-class Dijkstra(HexSPEvalMethod):
+class Dijkstra(HexEvalMethod):
 
     def __init__(self):
         """Stores the eval method that will be used for this evaluate class"""
-        super(HexSPEvalMethod, self).__init__('Dijkstra')
+        HexEvalMethod.__init__('Dijkstra')
 
     def get_score(self, board, from_coord, target_coords, color, opposite_color):
         """Runs Dijkstra's algorithm between the two provided coords on the provided board"""

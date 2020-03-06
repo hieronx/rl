@@ -6,6 +6,7 @@ from util.hexboard import HexBoard
 from util.game import HexGame
 from rating.trueskill import run_trueskill
 from rating.benchmark import run_benchmark
+from rating.configs import configs
 
 logging.basicConfig(format = '%(asctime)s - %(levelname)s - %(name)s -   %(message)s',
                     datefmt = '%m/%d/%Y %H:%M:%S',
@@ -15,7 +16,7 @@ logger = logging.getLogger(__name__)
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="Reinforcement learning for Hex")
     parser.add_argument('task', choices=['play', 'trueskill', 'benchmark'])
-    parser.add_argument('--config', choices=['random-vs-Dijkstra', 'depth-vs-time-limit', 'Dijkstra-performance', 'Minimax-vs-MCTS'], default=None, help='If added, evaluate using TrueSkill using the chosen configuration set')
+    parser.add_argument('--config', choices=configs.keys(), default=None, help='If added, evaluate using TrueSkill using the chosen configuration set')
     parser.add_argument('--plot', action='store_true', help='If added, save the plots of the TrueSkill evaluations')
     parser.add_argument('--disable-tt', action='store_true', help='If added, disables the transposition table')
     parser.add_argument('--search', choices=['Minimax', 'MCTS'], default='MCTS', help='Set the search method')

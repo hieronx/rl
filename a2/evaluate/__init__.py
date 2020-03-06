@@ -5,7 +5,7 @@ from util.hexboard import HexBoard
 
 class HexEvalMethod:
 
-    def __init__(self, eval_method):
+    def __init(self, eval_method):
         self.eval_method = eval_method
 
     def evaluate_board(board, color):
@@ -21,12 +21,6 @@ class HexEvalMethod:
         else:
             return 0
 
-
-class HexSPEvalMethod(HexEvalMethod):
-    
-    def __init__(self, eval_method):
-        super(HexEvalMethod, self).__init__(eval_method)
-    
     def evaluate_board(self, board, color):
         if board.check_draw() or (board.check_win(color) and board.check_win(board.get_opposite_color(color))): return 0
         if board.check_win(color): return 1000

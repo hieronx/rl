@@ -10,7 +10,7 @@ from search.mcts import MCTS
 
 from evaluate.dijkstra import Dijkstra
 from evaluate.astar import AStar
-from evaluate.random import Random
+from evaluate.random import RandomEval
 
 char_to_row_idx = { char: i for i, char in enumerate(string.ascii_lowercase) }
 
@@ -27,7 +27,7 @@ class HexGame:
         elif args.eval == 'AStar':
             eval_class = AStar()
         elif args.eval == 'random':
-            eval_class = Random()
+            eval_class = RandomEval()
 
         if args.search == 'Minimax':
             self.search = Minimax(args.size, args.depth, args.time_limit, eval_class, disable_tt=args.disable_tt)

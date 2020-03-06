@@ -2,13 +2,13 @@ import math
 from heapq import heappop, heappush
 from functools import lru_cache
 
-from . import HexSPEvalMethod
+from . import HexEvalMethod
 
-class AStar(HexSPEvalMethod):
+class AStar(HexEvalMethod):
 
     def __init__(self):
         """Stores the eval method that will be used for this evaluate class"""
-        super(HexSPEvalMethod, self).__init__('AStar')
+        HexEvalMethod.__init__('AStar')
 
     def get_score(self, board, from_coord, target_coords, color, opposite_color):
         """Runs the AStar pathfinding algorithm and returns the length of the shortest path to one of the target coordinates"""
