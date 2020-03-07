@@ -79,5 +79,5 @@ def play_game(game_input):
         
         save_result(config, (p1['search'], p1['depth'], p1['time_limit'], p1['eval'], p2['search'], p2['depth'], p2['time_limit'], p2['eval'], game_id, r1.mu, r1.sigma, r2.mu, r2.sigma))
         
-    logger.info('[p1=%s] %s' % (p1['eval'], r1))
-    logger.info('[p2=%s] %s' % (p2['eval'], r2))
+    # logger.info('[p1=%s] %s' % (p1['eval'], r1))
+    # logger.info('[p2=%s] %s' % (p2['eval'], r2))

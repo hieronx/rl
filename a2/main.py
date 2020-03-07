@@ -37,11 +37,15 @@ if __name__ == '__main__':
     # Play command
     if args.command == 'play':
         if args.search == 'Minimax' and not (args.depth or args.time_limit):
-            logger.warn('Either depth or time limit needs to be set when using Minimax search.')
+            logger.critical('Either depth or time limit needs to be set when using Minimax search.')
+            exit()
+
+        if args.search == 'MCTS' and not args.time_limit:
+            logger.critical('Time limit needs to be set when using MCTS search.')
             exit()
 
         if args.depth and args.time_limit:
-            logger.warn('Depth and time limit cannot both be set.')
+            logger.critical('Depth and time limit cannot both be set.')
             exit()
 
         logger.info('Booting gameplay script...')
@@ -52,7 +56,7 @@ if __name__ == '__main__':
     # TrueSkill command
     elif args.command == 'trueskill':
         if not args.config:
-            logger.warn('--config needs to be set.')
+            logger.critical('--config needs to be set.')
             exit()
 
         logger.info('Booting TrueSkill rating script...')

@@ -7,7 +7,7 @@ from search.minimax import Minimax
 from search.mcts import MCTS
 from evaluate.dijkstra import Dijkstra
 from evaluate.astar import AStar
-                    
+
 class TestSearch(unittest.TestCase):
     """All unit tests for search used to determine if the code we wrote is still running as intended"""
 
@@ -76,6 +76,5 @@ class TestSearch(unittest.TestCase):
         move = minimax.get_next_move(board, HexBoard.RED)
         self.assertTrue(len(minimax.tp_table) > 0)
     
-
 if __name__ == '__main__':
     unittest.main()
