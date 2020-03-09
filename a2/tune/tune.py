@@ -37,7 +37,7 @@ def run_hyperparameter_search(args):
     logger.info('Creating %d threads for parallel search.' % thread_count)
 
     pool = Pool(thread_count)
-    for _ in progressbar(pool.imap_unordered(test_configuration, hyperparameter_configs), desc='Running hyperparameter search', total=len(hyperparameter_configs)):
+    for _ in progressbar(pool.imap_unordered(test_configuration, hyperparameter_configs), desc='Running hyperparameter search', start=args.num_configs - remaining_num_configs, total=args.num_configs):
         pass
     
     logger.info('Finished hyperparameter search of %d randomly sampled configurations.' % args.num_configs)

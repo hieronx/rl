@@ -30,7 +30,7 @@ def resume_previous_run(args, new_settings):
 
             else:
                 continue_previous_run = True
-                logger.info('Resuming from previous hyperparameter search, for the remaining %d/%d configurations.' % (remaining_num_configs, args.num_configs))
+                logger.info('Resuming from previous hyperparameter search.')
     
     return continue_previous_run, remaining_num_configs
 
