@@ -38,7 +38,7 @@ def run_trueskill(args):
     
     game_inputs = [(process_id, config['board_size'], config['game_count'], args.config, p1, p2, args.disable_tt) for process_id, (p1, p2) in enumerate(player_permutations)]
 
-    thread_count = min(args.max_threads or cpu_count(), len(game_inputs))
+    thread_count = min(args.max_threads or (4 * cpu_count()), len(game_inputs))
     logger.info('Creating %d threads for parallel search.' % thread_count)
 
     pool = Pool(thread_count)
