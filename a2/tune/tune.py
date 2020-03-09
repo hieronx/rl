@@ -33,7 +33,7 @@ def run_hyperparameter_search(args):
     hyperparameter_configs = [(i, random.uniform(N_min, N_max), random.uniform(Cp_min, Cp_max), args.num_games, args.size) for i in range(remaining_num_configs)]
 
     # Start the multi-threaded hyperparameter search
-    thread_count = min(args.threads or cpu_count(), remaining_num_configs)
+    thread_count = min(args.max_threads or cpu_count(), remaining_num_configs)
     logger.info('Creating %d threads for parallel search.' % thread_count)
 
     pool = Pool(thread_count)

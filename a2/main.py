@@ -34,7 +34,7 @@ if __name__ == '__main__':
     trueskill.add_argument('--disable-tt', action='store_true', help='If added, disables the transposition table')
 
     tune = subparsers.add_parser('tune', help='Run a hyperparameter search for MCTS')
-    tune.add_argument('--threads', type=int, help='Set the number of threads')
+    tune.add_argument('--max-threads', type=int, help='Set the maximum number of threads')
     tune.add_argument('--size', type=int, default=3, help='Set the board size')
     tune.add_argument('--num-configs', type=int, default=10, help='Set the number of configurations to try')
     tune.add_argument('--num-games', type=int, default=10, help='Set the number of games to play per configuration')
