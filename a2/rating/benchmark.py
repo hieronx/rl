@@ -12,10 +12,10 @@ logger = logging.getLogger(__name__)
 
 def run_benchmark():
     """Runs a certain amount of games to test performance. Afterwards the results will be printed"""
-    game_count = 100
+    game_count = 1000
     game_times = []
 
-    for i in progressbar(range(game_count), 'Running benchmark'):
+    for i in progressbar(range(game_count), desc='Running benchmark'):
         start_time = time.time()
 
         board_size = 3

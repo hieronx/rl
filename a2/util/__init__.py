@@ -1,6 +1,7 @@
 import os
 import sys
 import time
+import math
 
 def cls():
     """Clears the screen, depending on the OS level call, this is merely a small utility function"""
@@ -14,24 +15,29 @@ def progressbar(it, desc="", position=None, size=None, start=0, total=None, file
 
     count = total or len(it)
 
-    def show(j, ips):
+    def show(j, ips, sec_elapsed_total):
         _, columns = os.popen('stty size', 'r').read().split()
 
-        # Terminal width - description length - spacing - completed count - spacing - total count - spacing - ips
-        width = size or (int(columns) - len(desc) - 5 - len(str(start + j)) - 1 - len(str(count)) - 1 - 8) 
+        # Terminal width - description length - spacing - completed count - spacing - total count - spacing - time - ips
+        width = size or (int(columns) - len(desc) - 5 - len(str(start + j)) - 1 - len(str(count)) - 2 - 11 - 12) 
+
+        min_elapsed, sec_elapsed = divmod(sec_elapsed_total, 60)
+        sec_total = math.ceil(count / ips) - sec_elapsed_total if ips > 0 else 0
+        min_rem, sec_rem = divmod(sec_total, 60)
         
         x = int(width * (start + j) / count)
         if position: moveto(file, position)
-        file.write("%s: |%s%s| %i/%i %.2fit/s\r" % (desc, "█" * x, " " * (width - x), start + j, count, ips))
+        file.write("%s: |%s%s| %i/%i [%02d:%02d<%02d:%02d, %.2fit/s]\r" % (desc, "█" * x, " " * (width - x), start + j, count, min_elapsed, sec_elapsed, min_rem, sec_rem, ips))
         file.flush()
         if position: moveto(file, -position)
 
     start_time = time.time()
-    show(0, 0)
+    show(0, 0, 0)
     for i, item in enumerate(it):
         yield item
-        ips = (i + 1) / (time.time() - start_time)
-        show(i + 1, ips)
+        sec_elapsed = time.time() - start_time
+        ips = (i + 1) / sec_elapsed
+        show(i + 1, ips, sec_elapsed)
     
     file.write("\n")
     file.flush()
