@@ -22,7 +22,7 @@ def run_hyperparameter_search(args):
     Cp_min, Cp_max = 0.5, 2.0
 
     # Ability to resume hyperparameter search runs
-    new_settings = (args.num_configs, args.num_games, args.size, N_min, N_max, Cp_min, Cp_max)
+    new_settings = (args.num_games, args.size, N_min, N_max, Cp_min, Cp_max)
     continue_previous_run, remaining_num_configs = resume_previous_run(args, new_settings)
 
     if not continue_previous_run:
