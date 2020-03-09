@@ -26,13 +26,13 @@ def resume_previous_run(args, new_settings):
     remaining_num_configs = args.num_configs
     if not args.overwrite:
         cached_settings = load_search_settings()
-        if cached_settings is not None and cached_settings == new_settings:
+        if cached_settings is not None and cached_settings == new_settings and os.path.isfile('output/hyperparameter-search.csv'):
             completed_num_configs = sum(1 for line in open('output/hyperparameter-search.csv')) - 1
             remaining_num_configs = args.num_configs - completed_num_configs
 
             if remaining_num_configs <= 0:
                 logger.critical('Hyperparameter search was already completed, call with --overwrite to re-run.')
-                load_results()
+                print_results()
                 exit()
 
             else:
