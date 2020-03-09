@@ -35,7 +35,7 @@ class TestSearch(unittest.TestCase):
 
         self.assertFalse(board.game_over())
 
-        mcts = MCTS(3, dijkstra, False)
+        mcts = MCTS(0.5, 0.5, 3, dijkstra, False)
         move = mcts.get_next_move(board, HexBoard.RED)
         self.assertEqual(move, (0, 2))
 
