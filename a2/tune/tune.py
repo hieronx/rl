@@ -9,7 +9,7 @@ from search.minimax import Minimax
 from search.mcts import MCTS
 from evaluate.dijkstra import Dijkstra
 from util import progressbar
-from tune.export import save_configuration_result, print_results, save_search_settings, load_search_settings, resume_previous_run
+from tune.export import save_configuration_result, print_results, save_plots, save_search_settings, load_search_settings, resume_previous_run
 from rating.simulate import simulate_single_game
 
 logger = logging.getLogger(__name__)
@@ -41,9 +41,11 @@ def run_hyperparameter_search(args):
         pass
     
     logger.info('Finished hyperparameter search of %d randomly sampled configurations.' % args.num_configs)
-    print_results()
     logger.info('Saved output/hyperparameter-search.csv')
 
+    print_results()
+    save_plots()
+    
 def test_configuration(config_input):
     process_id, N, Cp, num_games, board_size = config_input
 

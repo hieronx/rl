@@ -9,7 +9,7 @@ from rating.benchmark import run_benchmark
 from rating.configs import configs
 from tune.tune import run_hyperparameter_search
 
-logging.basicConfig(format = '%(asctime)s - %(levelname)s - %(name)s -   %(message)s',
+logging.basicConfig(format = '%(asctime)s - %(levelname)s - %(message)s',
                     datefmt = '%m/%d/%Y %H:%M:%S',
                     level = logging.INFO)
 logger = logging.getLogger(__name__)

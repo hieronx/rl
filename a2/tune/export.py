@@ -17,9 +17,28 @@ def save_configuration_result(data, clear=False):
         fd.write(','.join(map(str, data)) + '\n')
 
 def print_results():
-    df = pd.read_csv("output/hyperparameter-search.csv", index_col=None, header=0)
+    df = pd.read_csv('output/hyperparameter-search.csv', index_col=None, header=0)
     optimal = df.iloc[df['config_mu'].idxmax()]
     logger.info(u'Optimal hyperparameters: N = %.2f, Cp = %.2f' % (optimal.N, optimal.Cp))
+
+def save_plots():
+    df = pd.read_csv('output/hyperparameter-search.csv', index_col=None, header=0)
+
+    # N
+    ax = df.plot(x='N', y='config_mu', kind='scatter', figsize=(8,5))
+    ax.set_xlabel('N')
+    ax.set_ylabel('TrueSkill μ-value')    
+    fn = 'output/hyperparameter-search_N.png'
+    ax.get_figure().savefig(fn)
+    logger.info('Saved %s' % fn)
+
+    # Cp
+    ax = df.plot(x='Cp', y='config_mu', kind='scatter', figsize=(8,5))
+    ax.set_xlabel('Cp')
+    ax.set_ylabel('TrueSkill μ-value')    
+    fn = 'output/hyperparameter-search_Cp.png'
+    ax.get_figure().savefig(fn)
+    logger.info('Saved %s' % fn)
 
 def resume_previous_run(args, new_settings):
     continue_previous_run = False
@@ -31,8 +50,9 @@ def resume_previous_run(args, new_settings):
             remaining_num_configs = args.num_configs - completed_num_configs
 
             if remaining_num_configs <= 0:
-                logger.critical('Hyperparameter search was already completed, call with --overwrite to re-run.')
+                logger.info('Hyperparameter search was already completed, call with --overwrite to re-run.')
                 print_results()
+                save_plots()
                 exit()
 
             else:
