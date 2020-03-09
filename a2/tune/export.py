@@ -2,6 +2,7 @@ import os
 import glob
 import logging
 import pickle
+import pandas as pd
 
 logger = logging.getLogger(__name__)
 
@@ -15,6 +16,11 @@ def save_configuration_result(data, clear=False):
     with open(fn,'a') as fd:
         fd.write(','.join(map(str, data)) + '\n')
 
+def print_results():
+    df = pd.read_csv("output/hyperparameter-search.csv", index_col=None, header=0)
+    optimal = df.iloc[df['config_mu'].idxmax()]
+    logger.info(u'Optimal hyperparameters: N = %.2f, Cp = %.2f' % (optimal.N, optimal.Cp))
+
 def resume_previous_run(args, new_settings):
     continue_previous_run = False
     remaining_num_configs = args.num_configs
@@ -26,6 +32,7 @@ def resume_previous_run(args, new_settings):
 
             if remaining_num_configs <= 0:
                 logger.critical('Hyperparameter search was already completed, call with --overwrite to re-run.')
+                load_results()
                 exit()
 
             else:
