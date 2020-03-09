@@ -22,8 +22,9 @@ if __name__ == '__main__':
     play.add_argument('--disable-tt', action='store_true', help='If added, disables the transposition table')
     play.add_argument('--search', choices=['Minimax', 'MCTS'], default='MCTS', help='Set the search method')
     play.add_argument('--size', type=int, default=4, help='Set the board size')
-    play.add_argument('--depth', type=int, default=None, help='Set the search depth')
-    play.add_argument('--time-limit', type=float, default=None, help='Set the time limit')
+    play.add_argument('--depth', type=int, default=None, help='Set the search depth for Minimax')
+    play.add_argument('--time-limit', type=float, default=None, help='Set the time limit for Minimax')
+    play.add_argument('--num-simulations', type=int, default=None, help='Set the number of simulations for MCTS')
     play.add_argument('--eval', choices=['Dijkstra', 'random', 'AStar'], default='Dijkstra', help='Choose the evaluation method')
 
     trueskill = subparsers.add_parser('trueskill', help='Evaluate the RL algorithm using TrueSkill')
@@ -44,15 +45,15 @@ if __name__ == '__main__':
     # Play command
     if args.command == 'play':
         if args.search == 'Minimax' and not (args.depth or args.time_limit):
-            logger.critical('Either depth or time limit needs to be set when using Minimax search.')
+            logger.critical('Either --depth or --time-limit needs to be set when using Minimax search.')
             exit()
 
-        if args.search == 'MCTS' and not args.time_limit:
-            logger.critical('Time limit needs to be set when using MCTS search.')
+        if args.search == 'MCTS' and not args.num_simulations:
+            logger.critical('--num-simulations needs to be set when using MCTS search.')
             exit()
 
         if args.depth and args.time_limit:
-            logger.critical('Depth and time limit cannot both be set.')
+            logger.critical('--depth and --time-limit cannot both be set.')
             exit()
 
         logger.info('Booting gameplay script...')

@@ -14,3 +14,12 @@ To print the instructions on how to use the program:
 To run the unit tests:
 
 ```python test.py```
+
+## Section 2 - MCTS Hex
+```python main.py play --search MCTS```
+
+## Section 3 - Experiment
+```python main.py trueskill --config Minimax-vs-MCTS```
+
+## Section 4 - Tune
+```python main.py tune```
