@@ -1,15 +1,13 @@
 import logging
 import random
-from multiprocessing import Pool, freeze_support
+from multiprocessing import Pool, freeze_support, cpu_count
 from trueskill import Rating, rate_1vs1
 
 from util.hexboard import HexBoard
 from search.minimax import Minimax
 from search.mcts import MCTS
-from rating.configs import configs
 from evaluate.dijkstra import Dijkstra
 from util import progressbar
-
 from tune.export import save_configuration_result
 
 logger = logging.getLogger(__name__)
@@ -30,10 +28,14 @@ def run_hyperparameter_search(args):
 
     save_configuration_result(('N', 'Cp', 'num_games', 'baseline_mu', 'baseline_sigma', 'config_mu', 'config_sigma'), clear=True)
 
-    pool = Pool()
-    pool.map(test_configuration, hyperparameter_configs)
+    thread_count = args.threads or cpu_count()
+    logger.info('Creating %d threads for parallel search.' % thread_count)
 
-    logger.info('Finished hyperparameter search.')
+    pool = Pool(thread_count)
+    for _ in progressbar(pool.imap_unordered(test_configuration, hyperparameter_configs), desc='Running hyperparameter search', total=len(hyperparameter_configs)):
+        pass
+    
+    logger.info('Finished hyperparameter search of %d randomly sampled configurations.' % args.num_configs)
 
 # TODO: most of this code is duplicated from the rating module,
 # so it should be refactored into a separate calculate_ratings() method.
@@ -47,7 +49,7 @@ def test_configuration(config_input):
     r1_col, r2_col = HexBoard.RED, HexBoard.BLUE
     r1_first = True
 
-    for game_id in progressbar(range(1, num_games + 1), desc='N=%.2f, Cp=%.2f' % (N, Cp), position=process_id):
+    for game_id in range(1, num_games + 1):
         m1, m2 = baseline, MCTS(N, Cp, board_size, Dijkstra(), False)
         board = HexBoard(board_size)
 

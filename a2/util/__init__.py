@@ -10,8 +10,8 @@ def cls():
         temp = os.system('clear')
 
 # Based on https://stackoverflow.com/questions/3160699/python-progress-bar
-def progressbar(it, desc="", position=None, size=80, file = sys.stdout):
-    count = len(it)
+def progressbar(it, desc="", position=None, size=80, total=None, file = sys.stdout):
+    count = total or len(it)
 
     def show(j, ips):
         x = int(size*j/count)
