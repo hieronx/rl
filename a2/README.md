@@ -19,7 +19,7 @@ To run the unit tests:
 ```python main.py play --search MCTS```
 
 ## Section 3 - Experiment
-```python main.py trueskill --config Minimax-vs-MCTS```
+```python main.py trueskill --config Minimax-vs-MCTS --plot```
 
 ## Section 4 - Tune
 ```python main.py tune```

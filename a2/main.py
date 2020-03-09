@@ -28,6 +28,7 @@ if __name__ == '__main__':
     play.add_argument('--eval', choices=['Dijkstra', 'random', 'AStar'], default='Dijkstra', help='Choose the evaluation method')
 
     trueskill = subparsers.add_parser('trueskill', help='Evaluate the RL algorithm using TrueSkill')
+    trueskill.add_argument('--threads', type=int, help='Set the number of threads')
     trueskill.add_argument('--config', choices=configs.keys(), default=None, help='If added, evaluate using TrueSkill using the chosen configuration set')
     trueskill.add_argument('--plot', action='store_true', help='If added, save the plots of the TrueSkill evaluations')
     trueskill.add_argument('--disable-tt', action='store_true', help='If added, disables the transposition table')
