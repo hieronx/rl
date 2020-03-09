@@ -37,6 +37,7 @@ if __name__ == '__main__':
     tune.add_argument('--size', type=int, default=3, help='Set the board size')
     tune.add_argument('--num-configs', type=int, default=10, help='Set the number of configurations to try')
     tune.add_argument('--num-games', type=int, default=10, help='Set the number of games to play per configuration')
+    tune.add_argument('--overwrite', action='store_true', help='Whether to overwrite the previous run')
 
     benchmark = subparsers.add_parser('benchmark', help='Run a standardized benchmarking script')
 
