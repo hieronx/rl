@@ -34,7 +34,6 @@ def resume_previous_run(args, new_settings):
     
     return continue_previous_run, remaining_num_configs
 
-
 def save_search_settings(settings):
     if not os.path.exists('output'): os.makedirs('output')
 

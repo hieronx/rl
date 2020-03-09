@@ -25,14 +25,15 @@ def run_hyperparameter_search(args):
     new_settings = (args.num_configs, args.num_games, args.size, N_min, N_max, Cp_min, Cp_max)
     continue_previous_run, remaining_num_configs = resume_previous_run(args, new_settings)
 
-    if not continue_previous_run: save_search_settings(new_settings)
-    save_configuration_result(('N', 'Cp', 'num_games', 'baseline_mu', 'baseline_sigma', 'config_mu', 'config_sigma'), clear=not continue_previous_run)
+    if not continue_previous_run:
+        save_search_settings(new_settings)
+        save_configuration_result(('N', 'Cp', 'num_games', 'baseline_mu', 'baseline_sigma', 'config_mu', 'config_sigma'), clear=True)
 
     # Create the randomly sampled configurations
     hyperparameter_configs = [(i, random.uniform(N_min, N_max), random.uniform(Cp_min, Cp_max), args.num_games, args.size) for i in range(remaining_num_configs)]
 
     # Start the multi-threaded hyperparameter search
-    thread_count = args.threads or cpu_count()
+    thread_count = min(args.threads or cpu_count(), remaining_num_configs)
     logger.info('Creating %d threads for parallel search.' % thread_count)
 
     pool = Pool(thread_count)
@@ -50,7 +51,7 @@ def test_configuration(config_input):
     r1_color, r2_color = HexBoard.RED, HexBoard.BLUE
     r1_first = True
 
-    for _ in range(num_games + 1):
+    for _ in range(num_games):
         m1, m2 = Minimax(board_size, None, 0.1, Dijkstra(), False, False), MCTS(N, Cp, board_size, Dijkstra(), False)
         r1, r2, r1_first = simulate_single_game(board_size, r1, r2, m1, m2, r1_first, r1_color, r2_color)
         
