@@ -1,8 +1,10 @@
 import logging
 import random
 import math
+import time
 from collections import defaultdict
 
+from util import cls
 from util.hexboard import HexBoard
 from . import HexSearchMethod
 
@@ -22,6 +24,8 @@ class MCTS(HexSearchMethod):
         self.children = dict()
 
     def get_next_move(self, board, color):
+        self.start_time = time.time()
+
         for _ in range(self.N):
             selected_path, selected_leaf = self.select(board, color)
             # print('Selected_leaf (hash=' + str(selected_leaf) + '):')
@@ -41,6 +45,13 @@ class MCTS(HexSearchMethod):
         self.visits.pop(board.hash_code(color), None) # NOTE: This is different from the reference implementation
         best_hash_code = max(self.visits, key=(lambda key: self.visits[key]))
         # HexBoard.from_hash_code(best_hash_code).print()
+
+
+        if self.live_play:
+            elapsed_time = time.time() - self.start_time
+            cls()
+            print("Generation of this next move took %f seconds." % elapsed_time)
+
         return board.get_move_between_boards(HexBoard.from_hash_code(best_hash_code))
         
     def select(self, board, color):

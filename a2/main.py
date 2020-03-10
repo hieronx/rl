@@ -24,7 +24,7 @@ if __name__ == '__main__':
     play.add_argument('--size', type=int, default=4, help='Set the board size')
     play.add_argument('--depth', type=int, default=None, help='Set the search depth for Minimax')
     play.add_argument('--time-limit', type=float, default=None, help='Set the time limit for Minimax')
-    play.add_argument('--num-simulations', type=int, default=None, help='Set the number of simulations for MCTS')
+    play.add_argument('--num-simulations', type=int, default=500, help='Set the number of simulations for MCTS')
     play.add_argument('--eval', choices=['Dijkstra', 'random', 'AStar'], default='Dijkstra', help='Choose the evaluation method')
 
     trueskill = subparsers.add_parser('trueskill', help='Evaluate the RL algorithm using TrueSkill')
