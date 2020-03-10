@@ -31,7 +31,6 @@ class TestSearch(unittest.TestCase):
         board = HexBoard(3)
 
         board.board[(0, 0)] = HexBoard.RED
-        board.board[(0, 1)] = HexBoard.RED
 
         self.assertFalse(board.game_over())
 

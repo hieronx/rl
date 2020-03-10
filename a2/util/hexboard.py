@@ -162,12 +162,15 @@ class HexBoard:
     
     def get_reward(self, color):
         """Returns the reward for the specified color, -1 if it loses, 1 if it wins, 0 on a draw"""
+        if not self.game_over():
+            logger.error('get_reward() called on a board that hasn\'t ended yet.')
+
         color_won = self.check_win(color)
         other_won = self.check_win(self.get_opposite_color(color))
         if not other_won and not color_won:
-            return 0
+            return 0.5
         else:
-            return 1 if color_won else -1
+            return 1 if color_won else 0
 
     @classmethod
     def from_hash_code(cls, hash_code):
