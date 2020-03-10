@@ -31,7 +31,7 @@ def run_hyperparameter_search(args):
 
     # Create the randomly sampled configurations
     random.seed(1)
-    hyperparameter_configs = [(i, random.uniform(N_min, N_max), random.uniform(Cp_min, Cp_max), args.num_games, args.size) for i in range(remaining_num_configs)]
+    hyperparameter_configs = [(i, int(random.uniform(N_min, N_max)), round(random.uniform(Cp_min, Cp_max), 4), args.num_games, args.size) for i in range(remaining_num_configs)]
 
     # Start the multi-threaded hyperparameter search
     thread_count = min(args.max_threads or (4 * cpu_count()), remaining_num_configs)
@@ -56,8 +56,7 @@ def test_configuration(config_input):
     r1_first = True
 
     for _ in range(num_games):
-        time_limit = Cp / 32 # TODO: this should be set to a fixed value
-        m1, m2 = Minimax(board_size, None, time_limit, Dijkstra(), False, False), MCTS(N, Cp, board_size, Dijkstra(), False)
+        m1, m2 = Minimax(board_size, None, 0.01, Dijkstra(), False, False), MCTS(N, Cp, board_size, Dijkstra(), False)
         r1, r2, r1_first = simulate_single_game(board_size, r1, r2, m1, m2, r1_first, r1_color, r2_color)
         
     save_configuration_result((N, Cp, num_games, r1.mu, r1.sigma, r2.mu, r2.sigma))

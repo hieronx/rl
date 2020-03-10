@@ -19,7 +19,7 @@ def save_configuration_result(data, clear=False):
 def print_results():
     df = pd.read_csv('output/hyperparameter-search.csv', index_col=None, header=0)
     optimal = df.iloc[df['config_mu'].idxmax()]
-    logger.info(u'Optimal hyperparameters: N = %.2f, Cp = %.2f' % (optimal.N, optimal.Cp))
+    logger.info(u'Optimal hyperparameters: N = %d, Cp = %.4f' % (optimal.N, optimal.Cp))
 
 def save_plots():
     df = pd.read_csv('output/hyperparameter-search.csv', index_col=None, header=0)
@@ -52,7 +52,6 @@ def resume_previous_run(args, new_settings):
             if remaining_num_configs <= 0:
                 logger.info('Hyperparameter search was already completed, call with --overwrite to re-run.')
                 print_results()
-                save_plots()
                 exit()
 
             else:
