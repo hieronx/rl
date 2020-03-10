@@ -26,6 +26,7 @@ class MCTS(HexSearchMethod):
     def get_next_move(self, board, color):
         self.start_time = time.time()
 
+        # Run the main Select-Expand-Simulate-Backpropagate loop N times
         for _ in range(self.N):
             selected_path, selected_leaf = self.select(board, color) # Select
             selected_board = HexBoard.from_hash_code(selected_leaf)
@@ -37,7 +38,7 @@ class MCTS(HexSearchMethod):
         # If the root node wasn't visited, then return a random move (not sure why it wouldn't be visited?)
         if board.hash_code(color) not in self.children:
             return random.choice(self.get_possible_moves(board))
-            
+        
         if self.live_play:
             elapsed_time = time.time() - self.start_time
             cls()
@@ -52,6 +53,7 @@ class MCTS(HexSearchMethod):
     def select(self, board, color):
         path = []
         node = board.hash_code(color)
+        
         while True:
             path.append(node)
 
@@ -60,11 +62,10 @@ class MCTS(HexSearchMethod):
                 return path, path[-1]
             
             # Every key in self.children is a visited node, while every child without these parents is an unvisited node
-            unexplored = self.children[node] - self.children.keys()
+            unvisited = self.children[node] - self.children.keys()
 
-            if unexplored:
-                n = unexplored.pop()
-                path.append(n)
+            if unvisited:
+                path.append(unvisited.pop())
                 return path, path[-1]
             
             node = self.uct_select(node)
@@ -104,9 +105,13 @@ class MCTS(HexSearchMethod):
     def uct_select(self, hash_code):
         """Calculate the UCB1 value for all moves and return the move with the highest value"""
 
+        # TODO: remove this line
+        # All children of node should already be expanded:
+        assert all(n in self.children for n in self.children[hash_code])
+
         # TODO: fix this, self.visits[hash_code] should always be > 0
         ln_N = math.log(self.visits[hash_code]) if self.visits[hash_code] > 0 else math.log(1)
-        
+
         def uct(hash_code):
             return self.rewards[hash_code] / self.visits[hash_code] + self.Cp * math.sqrt(ln_N / self.visits[hash_code])
         
