@@ -35,9 +35,19 @@ class TestSearch(unittest.TestCase):
 
         self.assertFalse(board.game_over())
 
-        mcts = MCTS(0.5, 0.5, 3, dijkstra, False)
+        mcts = MCTS(50, 0.5, 3, dijkstra, False)
         move = mcts.get_next_move(board, HexBoard.RED)
         self.assertEqual(move, (0, 2))
+
+    def test_simulate(self):
+        """Tests the board simulation function. Since this is random playout we can't be sure of the result"""
+        dijkstra = Dijkstra()
+        board = HexBoard(3)
+        
+        mcts = MCTS(0.5, 0.5, 3, dijkstra, False)
+        simulate_result = mcts.simulate(board, HexBoard.RED, HexBoard.BLUE)
+        
+        self.assertTrue(simulate_result in range(-1, 1))
 
     def test_minimax_top_left(self):
         """"Another scenario which tests a specific minimax scenario"""
