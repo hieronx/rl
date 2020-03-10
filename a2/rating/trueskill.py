@@ -60,7 +60,7 @@ def play_game(game_input):
     r1_first = True
 
     for game_id in progressbar(range(1, game_cnt + 1), desc="Processor %d" % (process_id + 1), position=process_id):
-        m1, m2 = Minimax(board_size, p1['depth'], p1['time_limit'], get_eval_class(p1['eval']), False, disable_tt=disable_tt), Minimax(board_size, p2['depth'], p2['time_limit'], get_eval_class(p2['eval']), False, disable_tt=disable_tt)
+        m1, m2 = Minimax(p1['depth'], p1['time_limit'], get_eval_class(p1['eval']), False, disable_tt=disable_tt), Minimax(p2['depth'], p2['time_limit'], get_eval_class(p2['eval']), False, disable_tt=disable_tt)
         r1, r2, r1_first = simulate_single_game(board_size, r1, r2, m1, m2, r1_first, r1_color, r2_color)
         save_result(config, (p1['search'], p1['depth'], p1['time_limit'], p1['eval'], p2['search'], p2['depth'], p2['time_limit'], p2['eval'], game_id, r1.mu, r1.sigma, r2.mu, r2.sigma))
         

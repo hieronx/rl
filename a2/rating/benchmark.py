@@ -22,7 +22,7 @@ def run_benchmark():
         board = HexBoard(board_size)
 
         evaluate = Dijkstra()
-        minimax = Minimax(board_size, 3, None, evaluate, False)
+        minimax = Minimax(3, None, evaluate, False)
 
         next_color = HexBoard.RED
         while not board.game_over():

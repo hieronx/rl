@@ -13,10 +13,9 @@ logger = logging.getLogger(__name__)
 class MCTS(HexSearchMethod):
     """This object houses all the code necessary for the MCTS implementation"""
 
-    def __init__(self, N, Cp, evaluate_class, live_play = True):
+    def __init__(self, N, Cp, live_play = True):
         self.N = N
         self.Cp = Cp
-        self.evaluate_class = evaluate_class
         self.live_play = live_play
 
         self.visits = defaultdict(int)
@@ -33,6 +32,9 @@ class MCTS(HexSearchMethod):
 
             self.expand(selected_leaf, selected_board, color) # Expand
             reward = self.simulate(selected_board, color, board.get_opposite_color(color)) # Simulate
+
+            
+
             self.backpropagate(selected_path, reward, color) # Backpropagate
 
         # If the root node wasn't visited, then return a random move (not sure why it wouldn't be visited?)
@@ -80,17 +82,15 @@ class MCTS(HexSearchMethod):
             
     def simulate(self, selected_board, color, opposite_color):
         """Simulates a board until a terminal node is reached"""
-        invert_reward = True
         player = color
         while True:
             if selected_board.game_over():
                 reward = selected_board.get_reward(player)
-                return 1 - reward if invert_reward else reward
+                return reward
             
             move = random.choice(self.get_possible_moves(selected_board))
             selected_board = selected_board.make_move(move, player)
 
-            invert_reward = not invert_reward
             player = color if player == opposite_color else opposite_color
 
         logger.critical('Oops, this should not have happened.')

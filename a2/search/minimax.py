@@ -8,11 +8,10 @@ from . import HexSearchMethod
 class Minimax(HexSearchMethod):
     """This object houses all the code necessary for the minimax implementation"""
 
-    def __init__(self, size, depth, time_limit, evaluate_class, live_play = True, disable_tt = False):
+    def __init__(self, depth, time_limit, evaluate_class, live_play = True, disable_tt = False):
         """Initializes a new minimax object that is either depth-bound or time-limit bound"""
         assert depth is not None or time_limit is not None
 
-        self.board_size = size
         self.depth = depth
         self.time_limit = time_limit
         self.evaluate = evaluate_class

@@ -38,7 +38,7 @@ class TestEval(unittest.TestCase):
         self.assertEqual(astar.get_score(board, (0, 0), [(0, 3)], HexBoard.RED, HexBoard.BLUE), 3)
         self.assertEqual(astar.get_score(board, (3, 0), [(0, 3)], HexBoard.RED, HexBoard.BLUE), 2)
 
-        minimax = Minimax(3, 2, None, astar, False)
+        minimax = Minimax(2, None, astar, False)
         move = minimax.get_next_move(board, HexBoard.RED)
         self.assertEqual(move, (0, 1))
 

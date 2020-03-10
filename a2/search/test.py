@@ -21,13 +21,12 @@ class TestSearch(unittest.TestCase):
 
         self.assertFalse(board.game_over())
 
-        minimax = Minimax(3, 3, None, dijkstra, False)
+        minimax = Minimax(3, None, dijkstra, False)
         move = minimax.get_next_move(board, HexBoard.RED)
         self.assertEqual(move, (0, 2))
 
     def test_mcts(self):
         """"Tests to see if MCTS returns the expected best moves for specific board states"""
-        dijkstra = Dijkstra()
         board = HexBoard(3)
 
         board.board[(0, 0)] = HexBoard.RED
@@ -35,16 +34,15 @@ class TestSearch(unittest.TestCase):
 
         self.assertFalse(board.game_over())
 
-        mcts = MCTS(500, 0.5, dijkstra, False)
+        mcts = MCTS(1000, 1.0, False)
         move = mcts.get_next_move(board, HexBoard.RED)
         self.assertEqual(move, (0, 2))
 
     def test_simulate(self):
         """Tests the board simulation function. Since this is random playout we can't be sure of the result"""
-        dijkstra = Dijkstra()
         board = HexBoard(3)
         
-        mcts = MCTS(3, 0.5, dijkstra, False)
+        mcts = MCTS(3, 0.5, False)
         simulate_result = mcts.simulate(board, HexBoard.RED, HexBoard.BLUE)
         
         self.assertTrue(simulate_result >= 0.0 and simulate_result <= 1.0)
@@ -69,15 +67,30 @@ class TestSearch(unittest.TestCase):
 
         self.assertTrue(eval_good_board > eval_bad_board)
 
-        minimax = Minimax(4, 3, None, dijkstra, False)
+        minimax = Minimax(3, None, dijkstra, False)
         move = minimax.get_next_move(board, HexBoard.RED)
+        self.assertEqual(move, (1, 3))
+
+    def test_mcts_top_left(self):
+        """"Another scenario which tests a specific MCTS scenario"""
+        board = HexBoard(4)
+
+        board.board[(1, 0)] = HexBoard.RED
+        board.board[(1, 1)] = HexBoard.RED
+        board.board[(1, 2)] = HexBoard.RED
+        board.board[(0, 1)] = HexBoard.BLUE
+        board.board[(0, 2)] = HexBoard.BLUE
+        board.board[(0, 3)] = HexBoard.BLUE
+
+        mcts = MCTS(1000, 1.0, False)
+        move = mcts.get_next_move(board, HexBoard.RED)
         self.assertEqual(move, (1, 3))
 
     def test_tp_table(self):
         """Tests if the transposition table is working as intended"""
         dijkstra = Dijkstra()
         board = HexBoard(3)
-        minimax = Minimax(3, 3, None, dijkstra, False)
+        minimax = Minimax(3, None, dijkstra, False)
 
         board.board[(0, 0)] = HexBoard.RED
         board.board[(0, 1)] = HexBoard.RED
