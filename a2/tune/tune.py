@@ -56,7 +56,7 @@ def test_configuration(config_input):
     r1_first = True
 
     for _ in range(num_games):
-        m1, m2 = Minimax(board_size, None, 0.01, Dijkstra(), False, False), MCTS(N, Cp, board_size, Dijkstra(), False)
+        m1, m2 = Minimax(board_size, None, 0.01, Dijkstra(), False, False), MCTS(N, Cp, Dijkstra(), False)
         r1, r2, r1_first = simulate_single_game(board_size, r1, r2, m1, m2, r1_first, r1_color, r2_color)
         
     save_configuration_result((N, Cp, num_games, r1.mu, r1.sigma, r2.mu, r2.sigma))

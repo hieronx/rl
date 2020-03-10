@@ -1,6 +1,6 @@
 from copy import deepcopy
 from functools import lru_cache
-
+import math
 
 class HexBoard:
     """This class holds all the data for a single board state"""
@@ -159,3 +159,39 @@ class HexBoard:
             code += value * multiplier
             multiplier *= 10
         return code
+    
+    def get_reward(self, color):
+        """Returns the reward for the specified color, -1 if it loses, 1 if it wins, 0 on a draw"""
+        color_won = self.check_win(color)
+        other_won = self.check_win(self.get_opposite_color(color))
+        if not other_won and not color_won:
+            return 0
+        else:
+            return 1 if color_won else -1
+
+    @classmethod
+    def from_hash_code(cls, hash_code):
+        color = int(str(hash_code)[-1])
+        pos = str(hash_code)[:len(str(hash_code))-1][::-1]
+        board_size = int(math.sqrt(len(pos)))
+        board = cls(board_size)
+
+        i = 0
+        for x in range(board_size):
+            for y in range(board_size):
+                board.board[x, y] = int(pos[i])
+                i += 1
+        
+        return board
+    
+    def get_move_between_boards(self, other_board):
+        if self.size is not other_board.size:
+            logger.error('Trying to get the move between two boards of different sizes.')
+            return (None, None)
+
+        for x in range(self.size):
+            for y in range(self.size):
+                if self.board[x, y] != other_board.board[x, y]:
+                    return (x, y)
+        
+        return (None, None)

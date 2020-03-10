@@ -69,6 +69,37 @@ class TestUtil(unittest.TestCase):
         self.assertEqual(board.hash_code(HexBoard.BLUE), 3331333321)
         self.assertEqual(board.hash_code(HexBoard.RED), 3331333322)
 
+    def test_reward(self):
+        board = HexBoard(3)
+
+        board.board[(0, 0)] = HexBoard.BLUE
+        board.board[(1, 0)] = HexBoard.BLUE
+        board.board[(2, 0)] = HexBoard.BLUE
+
+        self.assertEqual(board.get_reward(HexBoard.BLUE), 1)
+
+    def test_from_hash_code(self):
+        board = HexBoard(3)
+
+        board.board[(0, 0)] = HexBoard.RED
+        board.board[(1, 2)] = HexBoard.BLUE
+
+        self.assertEqual(board.hash_code(HexBoard.BLUE), 3331333321)
+
+        new_board = HexBoard.from_hash_code(3331333321)
+        self.assertEqual(new_board.hash_code(HexBoard.BLUE), 3331333321)
+
+    def get_move_between_boards(self):
+        board1 = HexBoard(3)
+        board.board[(0, 0)] = HexBoard.RED
+
+        board2 = HexBoard(3)
+        board2.board[(0, 0)] = HexBoard.RED
+        board2.board[(1, 2)] = HexBoard.BLUE
+
+        self.assertEqual(board.get_move_between_boards(board2), (1, 2))
+
+
 
 if __name__ == '__main__':
     unittest.main()
