@@ -40,7 +40,7 @@ class MCTS(HexSearchMethod):
             
         self.visits.pop(board.hash_code(color), None) # NOTE: This is different from the reference implementation
         best_hash_code = max(self.visits, key=(lambda key: self.visits[key]))
-        HexBoard.from_hash_code(best_hash_code).print()
+        # HexBoard.from_hash_code(best_hash_code).print()
         return board.get_move_between_boards(HexBoard.from_hash_code(best_hash_code))
         
     def select(self, board, color):

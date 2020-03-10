@@ -31,10 +31,11 @@ class TestSearch(unittest.TestCase):
         board = HexBoard(3)
 
         board.board[(0, 0)] = HexBoard.RED
+        board.board[(0, 1)] = HexBoard.RED
 
         self.assertFalse(board.game_over())
 
-        mcts = MCTS(50, 0.5, dijkstra, False)
+        mcts = MCTS(500, 0.5, dijkstra, False)
         move = mcts.get_next_move(board, HexBoard.RED)
         self.assertEqual(move, (0, 2))
 
@@ -46,7 +47,7 @@ class TestSearch(unittest.TestCase):
         mcts = MCTS(3, 0.5, dijkstra, False)
         simulate_result = mcts.simulate(board, HexBoard.RED, HexBoard.BLUE)
         
-        self.assertTrue(simulate_result in range(-1, 1))
+        self.assertTrue(simulate_result >= 0.0 and simulate_result <= 1.0)
 
     def test_minimax_top_left(self):
         """"Another scenario which tests a specific minimax scenario"""
