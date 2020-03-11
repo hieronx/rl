@@ -206,8 +206,7 @@ class HexBoard:
 
     @classmethod
     def from_hash_code(cls, hash_code):
-        color = int(str(hash_code)[-1])
-        pos = str(hash_code)[:len(str(hash_code))-1][::-1]
+        pos = str(hash_code)[:-1][::-1]
         board_size = int(math.sqrt(len(pos)))
         board = cls(board_size)
 

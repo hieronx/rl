@@ -10,6 +10,20 @@ from evaluate.astar import AStar
 class TestUtil(unittest.TestCase):
     """All unit tests for util used to determine if the code we wrote is still running as intended"""
 
+    def test_from_cache(self):
+        board = HexBoard(3)
+        board.board[(0,0)] = HexBoard.RED
+        board.board[(1,1)] = HexBoard.BLUE
+        board.board[(0,1)] = HexBoard.BLUE
+
+        hash_code = board.hash_code()
+
+        new_board = HexBoard.from_hash_code(hash_code)
+
+        board.print()
+        new_board.print()
+        assertEqual(board.hash_code(), new_board.hash_code())
+
     def test_win_detection(self):
         """Checks if the detection for win states is working as expected by creating a win scenario"""
         for i in range(0, 2):
