@@ -18,11 +18,11 @@ configs = {
         ]
     },
     'minimax-vs-mcts': {
-        'board_size': 3,
+        'board_size': 4,
         'game_count': 100,
         'players': [
-            { 'depth': None, 'time_limit': 0.1, 'search': 'minimax', 'eval': 'Dijkstra' },
-            { 'depth': None, 'time_limit': 0.1, 'search': 'mcts', 'eval': None },
+            { 'depth': 3, 'time_limit': None, 'search': 'minimax', 'eval': 'Dijkstra' },
+            { 'depth': 5000, 'time_limit': None, 'search': 'mcts', 'eval': None },
         ]
     },
     'dijkstra-performance': {
