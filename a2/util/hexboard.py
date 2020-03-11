@@ -151,7 +151,28 @@ class HexBoard:
 
         print("   -----------------------")
 
-    def hash_code(self, color):
+    def __str__(self):
+        """Outputs the board pieces to the console"""
+        output = "["
+
+        for y in range(self.size):
+            output += ""
+			
+            for x in range(self.size):
+                piece = self.board[x, y]
+                if piece == HexBoard.BLUE:
+                    output += "b"
+                elif piece == HexBoard.RED:
+                    output += "r"
+                else:
+                    output += "."
+            
+            if y is not self.size - 1: output += " "
+
+        output += "]"
+        return output
+
+    def hash_code(self, color=3):
         """Generates a hash code that mirrors the current board state as seen by the provided player"""
         multiplier = 10
         code = color
