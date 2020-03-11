@@ -37,8 +37,6 @@ class MCTS(HexSearchMethod):
         return HexBoard.get_move_between_boards(self.root.board, next_board)
 
     def select_and_expand(self):
-        """From root (R) to leaf (L). Leaf is any gamestate with no simulation and that is not terminal."""
-
         current_node = self.root
         while not current_node.board.game_over():
             if not current_node.is_fully_expanded():
@@ -69,9 +67,6 @@ class MCTSNode:
         return self._untried_moves
 
     def expand(self):
-        """unless L ends the game decisively, create child nodes of L and choose node C from one of them. (randomly?) 
-        Child nodes are any valid moves from the game position defined by L."""
-        
         move = self.untried_moves.pop() # TODO: should be cached
         next_board = self.board.make_move(move, self.player)
         child_node = MCTSNode(next_board, parent=self, player=self.player)
@@ -79,8 +74,6 @@ class MCTSNode:
         return child_node
     
     def simulate(self):
-        """complete one random playout from node C. Return the reward from the perspective of the search player."""
-
         current_board = self.board
         while not current_board.game_over():
             move = random.choice(current_board.get_possible_moves()) # TODO: should be cached
@@ -88,12 +81,10 @@ class MCTSNode:
         return current_board.get_reward(self.player)
 
     def backpropagate(self, reward):
-        """use the result of the playout to update information in the nodes on the path from C to R."""
-
         self.num_visits += 1
         self.reward += reward
         if self.parent is not None:
-            self.parent.backpropagate(1 - reward)
+            self.parent.backpropagate(reward)
 
     def best_child(self, Cp):
         ln_N = math.log(self.num_visits)

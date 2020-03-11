@@ -32,7 +32,7 @@ class HexGame:
         if args.search == 'Minimax':
             self.search = Minimax(args.depth, args.time_limit, eval_class, disable_tt=args.disable_tt)
         elif args.search == 'MCTS':
-            self.search = MCTS(args.num_simulations, 1.0, True)
+            self.search = MCTS(args.num_simulations, 1.4, True)
 
     def run_interactively(self, board):
         """Runs the game interactively, this starts a while loop that will only stop once the game is won or a draw is detected"""

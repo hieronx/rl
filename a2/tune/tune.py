@@ -19,7 +19,7 @@ def run_hyperparameter_search(args):
 
     # Ranges for the hyperparameters
     N_min, N_max = 10, 1000
-    Cp_min, Cp_max = 0.5, 0.5
+    Cp_min, Cp_max = 1.4, 1.4
 
     # Ability to resume hyperparameter search runs
     new_settings = (args.num_games, args.size, N_min, N_max, Cp_min, Cp_max)
