@@ -106,4 +106,4 @@ class MCTSNode:
 
     def best_child(self, Cp):
         ln_N = log_n(self.num_visits)
-        return max(self.children, key=lambda x: util.uct(self.reward, self.num_visits, Cp, ln_N))
+        return max(self.children, key=lambda x: util.uct(x.reward, x.num_visits, Cp, ln_N))
