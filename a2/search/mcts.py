@@ -101,21 +101,27 @@ class MCTS(HexSearchMethod):
         """Simulates a board until a terminal node is reached"""
         player = color
 
-        if self.debug: self.log(1, 'Simulate', selected_board)
-        while True:
-            if selected_board.game_over():
-                if self.debug: self.log(2, 'Simulate - terminal', selected_board)
-                reward = selected_board.get_reward(player)
-                return reward
-            
-            if self.debug: self.log(2, 'Simulate', selected_board)
+        children = self.children[selected_board.hash_code()]
 
-            move = random.choice(self.get_possible_moves(selected_board))
-            selected_board = selected_board.make_move(move, player)
+        if len(children) > 0:
+            node = HexBoard.from_hash_code(random.choice(children))
 
-            player = color if player == opposite_color else opposite_color
+            if self.debug: self.log(1, 'Simulate', node)
+            while True:
+                if node.game_over():
+                    if self.debug: self.log(2, 'Simulate - terminal', node)
+                    reward = node.get_reward(player)
+                    return reward
+                
+                if self.debug: self.log(2, 'Simulate', node)
 
-        logger.critical('Oops, this should not have happened.')
+                move = random.choice(self.get_possible_moves(node))
+                node = node.make_move(move, player)
+
+                player = color if player == opposite_color else opposite_color
+        
+        return 0
+
 
     def backpropagate(self, path, reward):
         if self.debug: self.log(1, 'Backpropagate')
@@ -126,14 +132,14 @@ class MCTS(HexSearchMethod):
             reward = 1 - reward
             if self.debug: self.log(2, 'Backpropagate', HexBoard.from_hash_code(node_hc))
 
-    def uct_select(self, hash_code):
+    def uct_select(self, root_hc):
         """Calculate the UCB1 value for all moves and return the move with the highest value"""
-        ln_N = math.log(self.visits[hash_code])
+        ln_N = math.log(self.visits[root_hc])
 
-        def uct(hash_code):
-            return self.rewards[hash_code] / self.visits[hash_code] + self.Cp * math.sqrt(ln_N / self.visits[hash_code])
+        def uct(node_hc):
+            return self.rewards[node_hc] / self.visits[node_hc] + self.Cp * math.sqrt(ln_N / self.visits[node_hc])
         
-        return max(self.children[hash_code], key=uct)
+        return max(self.children[root_hc], key=uct)
     
     def log(self, level = None, desc = None, hc = ''):
         if self.debug:
