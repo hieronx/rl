@@ -68,18 +68,12 @@ class MCTSNode:
         self.player = player
         self.parent = parent
         self.children = []
-        self._untried_moves = None
+        self.untried_moves = self.board.get_possible_moves()
         self.num_visits = 0
         self.reward = 0
 
     def is_fully_expanded(self):
         return len(self.untried_moves) == 0
-
-    @property
-    def untried_moves(self):
-        if self._untried_moves is None:
-            self._untried_moves = self.board.get_possible_moves()
-        return self._untried_moves
 
     def expand(self):
         move = self.untried_moves.pop() # TODO: should be cached
