@@ -4,7 +4,7 @@ logger = logging.getLogger(__name__)
 
 def log_tree(node, level=0):
     output = []
-    output.append((level, str(node.reward) + '/' + str(node.num_visits) + ' ' + str(node.board)))
+    output.append((level, str(node.reward) + '/' + str(node.num_visits) + ' | ' + str(node.amaf_reward) + '/' + str(node.num_amaf_visits) + ' ' + str(node.board)))
 
     for child in node.children:
         output = output + log_tree(child, level + 1)
