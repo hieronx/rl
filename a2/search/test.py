@@ -25,28 +25,19 @@ class TestSearch(unittest.TestCase):
         move = minimax.get_next_move(board, HexBoard.RED)
         self.assertEqual(move, (0, 2))
 
-    # def test_mcts(self):
-    #     """"Tests to see if MCTS returns the expected best moves for specific board states"""
-    #     board = HexBoard(3)
+    def test_mcts(self):
+        """"Tests to see if MCTS returns the expected best moves for specific board states"""
+        board = HexBoard(3)
 
-    #     board.board[(0, 0)] = HexBoard.RED
-    #     board.board[(0, 1)] = HexBoard.RED
+        board.board[(0, 0)] = HexBoard.RED
+        board.board[(0, 1)] = HexBoard.RED
 
-    #     self.assertFalse(board.game_over())
+        self.assertFalse(board.game_over())
 
-    #     mcts = MCTS(1000, 1.0, False)
-    #     move = mcts.get_next_move(board, HexBoard.RED)
-    #     self.assertEqual(move, (0, 2))
-
-    # def test_simulate(self):
-    #     """Tests the board simulation function. Since this is random playout we can't be sure of the result"""
-    #     board = HexBoard(3)
+        mcts = MCTS(1000, 1.0, False)
+        move = mcts.get_next_move(board, HexBoard.RED)
+        self.assertEqual(move, (0, 2))
         
-    #     mcts = MCTS(3, 0.5, False)
-    #     simulate_result = mcts.simulate(board, HexBoard.RED, HexBoard.BLUE)
-        
-    #     self.assertTrue(simulate_result >= 0.0 and simulate_result <= 1.0)
-
     def test_minimax_top_left(self):
         """"Another scenario which tests a specific minimax scenario"""
         dijkstra = Dijkstra()
@@ -73,8 +64,8 @@ class TestSearch(unittest.TestCase):
         board.board[(0, 1)] = HexBoard.BLUE
         board.board[(0, 2)] = HexBoard.BLUE
         board.board[(0, 3)] = HexBoard.BLUE
-        board.print()
-        print(str(board)) # Target: [.r.. br.. br.. br..]
+        # board.print()
+        # print(str(board)) # Target: [.r.. br.. br.. br..]
 
         mcts = MCTS(1000, 1.0, False)
         move = mcts.get_next_move(board, HexBoard.RED)

@@ -38,7 +38,15 @@ def run_hyperparameter_search(args):
     logger.info('Creating %d threads for parallel search.' % thread_count)
 
     pool = Pool(thread_count)
+    finished_count = args.num_configs - remaining_num_configs
     for _ in progressbar(pool.imap_unordered(test_configuration, hyperparameter_configs), desc='Running hyperparameter search', start=args.num_configs - remaining_num_configs, total=args.num_configs):
+        finished_count += 1
+        
+        # Print results and save plots every once in a while
+        if args.plot_steps and finished_count % args.plot_steps == 0:
+            print_results()
+            save_plots()
+
         pass
     
     logger.info('Finished hyperparameter search of %d randomly sampled configurations.' % args.num_configs)

@@ -39,6 +39,7 @@ if __name__ == '__main__':
     tune.add_argument('--num-configs', type=int, default=10, help='Set the number of configurations to try')
     tune.add_argument('--num-games', type=int, default=10, help='Set the number of games to play per configuration')
     tune.add_argument('--overwrite', action='store_true', help='Whether to overwrite the previous run')
+    tune.add_argument('--plot-steps', type=int, default=None, help='Save plots every X number of configurations')
 
     benchmark = subparsers.add_parser('benchmark', help='Run a standardized benchmarking script')
 
