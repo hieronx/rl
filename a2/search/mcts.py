@@ -57,7 +57,8 @@ class MCTS(HexSearchMethod):
             [self.log(1, 'Visits = %d, rewards = %d' % (sorted_visits[hc], self.rewards[hc]), HexBoard.from_hash_code(hc)) for hc in sorted_visits]
             self.save_debug_output()
 
-        best_hash_code = max(self.visits, key=(lambda key: self.visits[key]))
+        board_hash = board.hash_code()
+        best_hash_code = max(self.visits, key=(lambda key: self.visits[key] if key in self.children[board_hash] else -1))
         return board.get_move_between_boards(HexBoard.from_hash_code(best_hash_code))
         
     def select(self, board):
@@ -110,7 +111,7 @@ class MCTS(HexSearchMethod):
             while True:
                 if node.game_over():
                     if self.debug: self.log(2, 'Simulate - terminal', node)
-                    reward = node.get_reward(player)
+                    reward = node.get_reward(color)
                     return reward
                 
                 if self.debug: self.log(2, 'Simulate', node)
