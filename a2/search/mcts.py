@@ -8,6 +8,7 @@ from operator import attrgetter
 from util import cls
 from util.hexboard import HexBoard
 from . import HexSearchMethod
+from search.debug import log_tree
 
 logger = logging.getLogger(__name__)
 
@@ -18,9 +19,8 @@ class MCTS(HexSearchMethod):
         self.iterations = iterations
         self.Cp = Cp
         self.live_play = live_play
-        self.debug_output = []
         
-    def get_next_move(self, board, color):
+    def get_next_move(self, board, color, debug=True):
         self.start_time = time.time()
         self.root = MCTSNode(board, parent=None, player=color)
 
@@ -35,8 +35,7 @@ class MCTS(HexSearchMethod):
             cls()
             print("Generation of this next move took %f seconds." % elapsed_time)
         
-        # self.log_tree(self.root)
-        # self.save_log_tree()
+        if debug: log_tree(self.root)
 
         next_board = self.root.best_child(0.0).board
         return HexBoard.get_move_between_boards(self.root.board, next_board)
@@ -49,25 +48,6 @@ class MCTS(HexSearchMethod):
             else:
                 current_node = current_node.best_child(self.Cp) # UCT select
         return current_node
-        
-    def log_tree(self, node, level=0):
-        self.debug_output.append((level, str(node.reward) + '/' + str(node.num_visits) + ' ' + str(node.board)))
-
-        for child in node.children:
-            self.log_tree(child, level + 1)
-
-    def save_log_tree(self):
-        fn = 'output/mcts-debug.txt'
-        with open(fn, 'w+', encoding='utf8') as output_file:
-            for log in self.debug_output:
-                if log[0] is None:
-                    output_file.write('\n')
-                else:
-                    out = ('\t' * log[0]) + log[1] + '\n'
-                    output_file.write(out)
-        
-        logger.info('Saved %s' % fn)
-
 
 class MCTSNode:
 
