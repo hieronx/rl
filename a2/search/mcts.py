@@ -85,10 +85,10 @@ class MCTSNode:
     def simulate(self):
         current_board = self.board.copy()
         all_moves = current_board.get_possible_moves()
+        random.shuffle(all_moves)
         turn = self.player
         while not current_board.game_over():
-            move = random.choice(all_moves)
-            all_moves.remove(move)
+            move = all_moves.pop()
             current_board.board[move] = turn
 
             turn = HexBoard.RED if turn == HexBoard.BLUE else HexBoard.RED
