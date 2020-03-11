@@ -91,7 +91,7 @@ class MCTSNode:
             all_moves.remove(move)
             current_board.board[move] = turn
 
-            turn = current_board.get_opposite_color(self.player) if turn == self.player else self.player
+            turn = HexBoard.RED if turn == HexBoard.BLUE else HexBoard.RED
 
         return current_board.get_reward(self.player)
 
