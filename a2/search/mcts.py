@@ -13,8 +13,8 @@ logger = logging.getLogger(__name__)
 class MCTS(HexSearchMethod):
     """This object houses all the code necessary for the MCTS implementation"""
 
-    def __init__(self, N, Cp, live_play = True):
-        self.N = N
+    def __init__(self, iterations, Cp, live_play = True):
+        self.iterations = iterations
         self.Cp = Cp
         self.live_play = live_play
 
@@ -30,8 +30,8 @@ class MCTS(HexSearchMethod):
 
         if self.debug: self.log(0, 'Root', board)
 
-        # Run the main MCTS loop N times
-        for _ in range(self.N):
+        # Run the main MCTS loop iterations times
+        for _ in range(self.iterations):
             selected_path, selected_leaf = self.select(board) # Select
             selected_board = HexBoard.from_hash_code(selected_leaf)
             self.expand(selected_leaf, selected_board, color) # Expand
