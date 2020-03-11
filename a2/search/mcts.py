@@ -90,9 +90,11 @@ class MCTSNode:
     
     def simulate(self):
         current_board = self.board
+        all_moves = current_board.get_possible_moves()
         turn = self.player
         while not current_board.game_over():
-            move = random.choice(current_board.get_possible_moves()) # TODO: should be cached
+            move = random.choice(all_moves)
+            all_moves.remove(move)
             current_board = current_board.make_move(move, turn)
 
             turn = current_board.get_opposite_color(self.player) if turn == self.player else self.player
