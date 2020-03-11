@@ -33,13 +33,13 @@ class HexBoard:
 
     def make_move(self, coordinates, color):
         """Should return the new board without modifying the existing board"""
-        new_board = deepcopy(self)
+        new_board = self.copy()
         new_board.board[coordinates] = color
         return new_board
     
     def copy(self):
         """Returns an exact deep copy of itself"""
-        return deepcopy(self)
+        return HexBoard.from_hash_code(self.hash_code())
 
     @lru_cache(maxsize=4)
     def get_opposite_color(self, current_color):
