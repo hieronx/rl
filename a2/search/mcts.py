@@ -91,7 +91,7 @@ class MCTSNode:
         while not current_board.game_over():
             move = all_moves.pop()
             current_board.board[move] = turn
-            turn = HexBoard.RED if turn == HexBoard.BLUE else HexBoard.RED
+            turn = HexBoard.RED if turn == HexBoard.BLUE else HexBoard.BLUE
 
         return current_board.get_reward(self.player)
 

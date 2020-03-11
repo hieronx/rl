@@ -22,7 +22,7 @@ class TestUtil(unittest.TestCase):
 
         board.print()
         new_board.print()
-        assertEqual(board.hash_code(), new_board.hash_code())
+        self.assertEqual(board.hash_code(), new_board.hash_code())
 
     def test_win_detection(self):
         """Checks if the detection for win states is working as expected by creating a win scenario"""

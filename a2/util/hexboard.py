@@ -96,11 +96,13 @@ class HexBoard:
         if self.cached_hash == self.hash_code():
             return self.cached_win_result[color]
         
-        self.cached_win_result[color] = False
-        for move in self.get_source_coordinates(color):
-            if self.traverse(color, move, {}):
-                self.cached_win_result[color] = True
-                break
+        self.cached_win_result[HexBoard.BLUE] = False
+        self.cached_win_result[HexBoard.RED] = False
+        for col in (HexBoard.BLUE, HexBoard.RED):
+            for move in self.get_source_coordinates(col):
+                if self.traverse(col, move, {}):
+                    self.cached_win_result[col] = True
+                    break
         
         self.cached_hash = self.hash_code()
         return self.cached_win_result[color]
@@ -195,7 +197,7 @@ class HexBoard:
     def get_reward(self, color):
         """Returns the reward for the specified color, -1 if it loses, 1 if it wins, 0 on a draw"""
         if not self.game_over():
-            logger.error('get_reward() called on a board that hasn\'t ended yet.')
+            print('get_reward() called on a board that hasn\'t ended yet.')
 
         if self.check_win(color):
             return 1
@@ -220,7 +222,7 @@ class HexBoard:
     
     def get_move_between_boards(self, other_board):
         if self.size is not other_board.size:
-            logger.error('Trying to get the move between two boards of different sizes.')
+            print('Trying to get the move between two boards of different sizes.')
             return (None, None)
 
         for x in range(self.size):
