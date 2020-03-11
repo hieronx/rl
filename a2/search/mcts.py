@@ -30,7 +30,7 @@ class MCTS(HexSearchMethod):
 
         if self.debug: self.log(0, 'Root', board)
 
-        # Run the main Select-Expand-Simulate-Backpropagate loop N times
+        # Run the main MCTS loop N times
         for _ in range(self.N):
             selected_path, selected_leaf = self.select(board) # Select
             selected_board = HexBoard.from_hash_code(selected_leaf)
@@ -39,16 +39,15 @@ class MCTS(HexSearchMethod):
             self.backpropagate(selected_path, reward) # Backpropagate
             if self.debug: self.log()
 
-        # If the root node wasn't visited, then return a random move (not sure why it wouldn't be visited?)
-        if board.hash_code() not in self.children:
-            return random.choice(self.get_possible_moves(board))
-        
         if self.live_play:
             elapsed_time = time.time() - self.start_time
             cls()
             print("Generation of this next move took %f seconds." % elapsed_time)
 
-
+        # If the root node wasn't visited, then return a random move (not sure why it wouldn't be visited?)
+        if board.hash_code() not in self.children:
+            return random.choice(self.get_possible_moves(board))
+        
         # Return move with the highest number of visits
         # NOTE: This first line is different from the reference implementation, so it should be fixed and removed
         self.visits.pop(board.hash_code(), None)
@@ -127,13 +126,6 @@ class MCTS(HexSearchMethod):
 
     def uct_select(self, hash_code):
         """Calculate the UCB1 value for all moves and return the move with the highest value"""
-
-        # TODO: remove this line
-        # All children of node should already be expanded:
-        assert all(n in self.children for n in self.children[hash_code])
-
-        # TODO: fix this, self.visits[hash_code] should always be > 0
-        # assert self.visits[hash_code] > 0
         ln_N = math.log(self.visits[hash_code])
 
         def uct(hash_code):
