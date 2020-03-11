@@ -61,6 +61,7 @@ class MCTS(HexSearchMethod):
         return board.get_move_between_boards(HexBoard.from_hash_code(best_hash_code))
         
     def select(self, board):
+        self.log(1, 'Select')
         path = []
         node = board.hash_code()
         
@@ -69,7 +70,7 @@ class MCTS(HexSearchMethod):
 
             # First visit the root node
             if node not in self.children or not self.children[node]:
-                if self.debug: self.log(1, 'Select - root node', HexBoard.from_hash_code(path[-1]))
+                if self.debug: self.log(2, 'Select - root node', HexBoard.from_hash_code(path[-1]))
                 return path, path[-1]
             
             # Every key in self.children is a visited node, while every child without these parents is an unvisited node
@@ -77,9 +78,10 @@ class MCTS(HexSearchMethod):
 
             if unvisited:
                 path.append(unvisited.pop())
-                if self.debug: self.log(1, 'Select - unvisited', HexBoard.from_hash_code(path[-1]))
+                if self.debug: self.log(2, 'Select - found unvisited', HexBoard.from_hash_code(path[-1]))
                 return path, path[-1]
             
+            if self.debug: self.log(2, 'Select - add to path', HexBoard.from_hash_code(path[-1]))
             node = self.uct_select(node)
 
     def expand(self, selected_leaf, selected_board, color):
@@ -87,7 +89,7 @@ class MCTS(HexSearchMethod):
             if self.debug: self.log(1, 'Expand - already visited')
             return
         
-        if self.debug: self.log(1, 'Expand - not yet visited')
+        if self.debug: self.log(1, 'Expand')
 
         # Add the children of the leaf to the store
         new_children = [selected_board.make_move(move, color).hash_code() for move in self.get_possible_moves(selected_board)]
