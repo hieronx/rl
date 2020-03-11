@@ -15,30 +15,42 @@ logger = logging.getLogger(__name__)
 class MCTS(HexSearchMethod):
     """This object houses all the code necessary for the MCTS implementation"""
 
-    def __init__(self, iterations, Cp, live_play = True):
-        self.iterations = iterations
+    def __init__(self, num_iterations, time_limit = None, Cp = 1.4, live_play = True):
+        self.num_iterations = num_iterations
+        self.time_limit = time_limit
         self.Cp = Cp
         self.live_play = live_play
         
     def get_next_move(self, board, color, debug=False):
-        self.start_time = time.time()
+        start_time = time.time()
         self.root = MCTSNode(board, parent=None, player=color)
 
-        # Run the main MCTS loop iterations times
-        for _ in range(self.iterations):
-            node = self.select_and_expand()
-            reward = node.simulate()
-            node.backpropagate(reward)
+        # Run the main MCTS loop num_iterations times
+        i = 0
+        if self.num_iterations:
+            for _ in range(self.num_iterations):
+                self.run_iteration()
+                i += 1
+        else:
+            while (time.time() - start_time) < self.time_limit:
+                self.run_iteration()
+                i += 1
+
 
         if self.live_play:
-            elapsed_time = time.time() - self.start_time
+            elapsed_time = time.time() - start_time
             cls()
-            print("Generation of this next move took %f seconds." % elapsed_time)
+            print("Generation of this next move took %.2f seconds, ran %d iterations." % (elapsed_time, i))
         
         if debug: log_tree(self.root)
 
         next_board = self.root.child_with_most_visits().board
         return HexBoard.get_move_between_boards(self.root.board, next_board)
+    
+    def run_iteration(self):
+        node = self.select_and_expand()
+        reward = node.simulate()
+        node.backpropagate(reward)
 
     def select_and_expand(self):
         current_node = self.root

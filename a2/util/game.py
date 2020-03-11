@@ -20,7 +20,6 @@ class HexGame:
     def __init__(self, args):
         """Creates a new HexGame using the provided boardsize, search depth for dijkstra and evaluation method"""
         self.board_size = args.size
-        self.search_depth = args.depth
 
         if args.eval == 'Dijkstra':
             eval_class = Dijkstra()
@@ -29,10 +28,10 @@ class HexGame:
         elif args.eval == 'random':
             eval_class = RandomEval()
 
-        if args.search == 'Minimax':
+        if args.search == 'minimax':
             self.search = Minimax(args.depth, args.time_limit, eval_class, disable_tt=args.disable_tt)
-        elif args.search == 'MCTS':
-            self.search = MCTS(args.num_simulations, 1.4, True)
+        elif args.search == 'mcts':
+            self.search = MCTS(args.num_iterations, args.time_limit, 1.4, True)
 
     def run_interactively(self, board):
         """Runs the game interactively, this starts a while loop that will only stop once the game is won or a draw is detected"""

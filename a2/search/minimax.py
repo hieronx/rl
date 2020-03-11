@@ -45,7 +45,7 @@ class Minimax(HexSearchMethod):
 
             cls()
             print("Searched to depth %d, evaluated %d nodes, experienced %d cutoffs, and used %d TT lookups." % (max_depth, self.stats['nodes_searched'], self.stats['cutoffs'], self.stats['tt_lookups']))
-            print("Generation of this next move took %f seconds." % elapsed_time)
+            print("Generation of this next move took %.2f seconds." % elapsed_time)
         
         self.stats = { 'nodes_searched': 0, 'cutoffs': 0, 'tt_lookups': 0 }
 

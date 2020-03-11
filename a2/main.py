@@ -19,13 +19,20 @@ if __name__ == '__main__':
     subparsers = parser.add_subparsers(dest='command')
 
     play = subparsers.add_parser('play', help='Play against the RL algorithm')
-    play.add_argument('--disable-tt', action='store_true', help='If added, disables the transposition table')
-    play.add_argument('--search', choices=['Minimax', 'MCTS'], default='MCTS', help='Set the search method')
-    play.add_argument('--size', type=int, default=4, help='Set the board size')
-    play.add_argument('--depth', type=int, default=None, help='Set the search depth for Minimax')
-    play.add_argument('--time-limit', type=float, default=None, help='Set the time limit for Minimax')
-    play.add_argument('--num-simulations', type=int, default=5000, help='Set the number of simulations for MCTS')
-    play.add_argument('--eval', choices=['Dijkstra', 'random', 'AStar'], default='Dijkstra', help='Choose the evaluation method')
+    search_sp = play.add_subparsers(dest='search')
+
+    minimax = search_sp.add_parser('minimax', help='Play against Minimax')
+    minimax.add_argument('--disable-tt', action='store_true', help='If added, disables the transposition table')
+    minimax.add_argument('--size', type=int, default=4, help='Set the board size')
+    minimax.add_argument('--depth', type=int, default=None, help='Set the search depth for Minimax')
+    minimax.add_argument('--time-limit', type=float, default=None, help='Set the time limit for Minimax')
+    minimax.add_argument('--eval', choices=['Dijkstra', 'random', 'AStar'], default='Dijkstra', help='Choose the evaluation method')
+    
+    mcts = search_sp.add_parser('mcts', help='Play against MCTS')
+    mcts.add_argument('--num-iterations', type=int, default=None, help='Set the number of iterations for MCTS')
+    mcts.add_argument('--time-limit', type=float, default=None, help='Set the time limit for MCTS')
+    mcts.add_argument('--size', type=int, default=4, help='Set the board size')
+    mcts.add_argument('--eval', choices=['Dijkstra', 'random', 'AStar'], default='Dijkstra', help='Choose the evaluation method')
 
     trueskill = subparsers.add_parser('trueskill', help='Evaluate the RL algorithm using TrueSkill')
     trueskill.add_argument('--max-threads', type=int, help='Set the maximum number of threads')
@@ -47,17 +54,22 @@ if __name__ == '__main__':
 
     # Play command
     if args.command == 'play':
-        if args.search == 'Minimax' and not (args.depth or args.time_limit):
-            logger.critical('Either --depth or --time-limit needs to be set when using Minimax search.')
-            exit()
+        if args.search == 'minimax':
+            if not (args.depth or args.time_limit):
+                logger.critical('Either --depth or --time-limit needs to be set when using Minimax search.')
+                exit()
 
-        if args.search == 'MCTS' and not args.num_simulations:
-            logger.critical('--num-simulations needs to be set when using MCTS search.')
-            exit()
+            if args.depth and args.time_limit:
+                logger.critical('--depth and --time-limit cannot both be set.')
+                exit()
+        elif args.search == 'mcts':
+            if not (args.num_iterations or args.time_limit):
+                logger.critical('Either --num-iterations or --time-limit needs to be set when using MCTS search.')
+                exit()
 
-        if args.depth and args.time_limit:
-            logger.critical('--depth and --time-limit cannot both be set.')
-            exit()
+            if args.num_iterations and args.time_limit:
+                logger.critical('--num-iterations and --time-limit cannot both be set.')
+                exit()
 
         logger.info('Booting gameplay script...')
         game = HexGame(args)
