@@ -36,6 +36,10 @@ class HexBoard:
         new_board = deepcopy(self)
         new_board.board[coordinates] = color
         return new_board
+    
+    def copy(self):
+        """Returns an exact deep copy of itself"""
+        return deepcopy(self)
 
     @lru_cache(maxsize=4)
     def get_opposite_color(self, current_color):
@@ -111,7 +115,7 @@ class HexBoard:
         if self.game_over(): return []
         return [coord for coord, color in self.board.items() if color == HexBoard.EMPTY]
         
-    # @lru_cache(maxsize=2)
+    @lru_cache(maxsize=2)
     def get_source_coordinates(self, color):
         """Returns the coordinates of the left border (for blue) or the top border (for red)"""
         if color == HexBoard.BLUE:
