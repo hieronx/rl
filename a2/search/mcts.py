@@ -4,8 +4,9 @@ import math
 import time
 from collections import defaultdict
 from operator import attrgetter
+import util
 
-from util import cls
+from util import cls, log_n
 from util.hexboard import HexBoard
 from . import HexSearchMethod
 from search.debug import log_tree
@@ -104,7 +105,5 @@ class MCTSNode:
         return max(self.children, key=attrgetter('num_visits'))
 
     def best_child(self, Cp):
-        ln_N = math.log(self.num_visits)
-        def uct(c):
-            return (c.reward / c.num_visits) + Cp * math.sqrt((2 * ln_N / c.num_visits))
-        return max(self.children, key=uct)
+        ln_N = log_n(self.num_visits)
+        return max(self.children, key=lambda x: util.uct(self.reward, self.num_visits, Cp, ln_N))
