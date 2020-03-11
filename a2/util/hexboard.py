@@ -94,7 +94,7 @@ class HexBoard:
 
     def check_win(self, color):
         """Check if we have made a snake from the source side to the opposing side for the provided color"""
-        for move in self.get_source_coordinates(self):			
+        for move in self.get_source_coordinates(color):	
             if self.traverse(color, move, {}):
                 return True
         return False
@@ -105,6 +105,11 @@ class HexBoard:
             if color == HexBoard.EMPTY: return False
         return True
 
+    def get_possible_moves(self):
+        """Compiles a list of all empty hexes in the current hexboard"""
+        if self.game_over(): return []
+        return [coord for coord, color in self.board.items() if color == HexBoard.EMPTY]
+        
     @lru_cache(maxsize=2)
     def get_source_coordinates(self, color):
         """Returns the coordinates of the left border (for blue) or the top border (for red)"""

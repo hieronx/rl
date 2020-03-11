@@ -40,6 +40,16 @@ class TestHexMinimax(unittest.TestCase):
         self.assertEqual(endable_board.check_win(HexBoard.RED), True)
         self.assertEqual(endable_board.check_win(HexBoard.BLUE), False)
 
+    def test_game_win(self):
+        """Checks if the detection for gameover states is working as expected by filling all hexes with one color"""
+        board = HexBoard(3)
+
+        board.board[(1, 0)] = HexBoard.RED
+        board.board[(2, 0)] = HexBoard.BLUE
+        self.assertEqual(board.check_win(HexBoard.RED), False)
+        self.assertEqual(board.check_win(HexBoard.BLUE), False)
+        self.assertEqual(board.check_draw(), False)
+
     def test_source_coordinates(self):
         """Let's see if the source coordinates are all correct and as we think they should be"""
         board = HexBoard(4)

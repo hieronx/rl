@@ -41,6 +41,11 @@ class TestUtil(unittest.TestCase):
         self.assertEqual(endable_board.check_win(HexBoard.RED), True)
         self.assertEqual(endable_board.check_win(HexBoard.BLUE), False)
 
+    def test_weird_win_detection_edge_case(self):
+        board = HexBoard(3)
+        board.board[(2, 0)] = HexBoard.BLUE
+        self.assertEqual(board.check_win(HexBoard.BLUE), False)
+
     def test_source_coordinates(self):
         """Let's see if the source coordinates are all correct and as we think they should be"""
         board = HexBoard(4)

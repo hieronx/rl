@@ -7,4 +7,6 @@ class HexSearchMethod:
     
     def get_possible_moves(self, board):
         """Compiles a list of all empty hexes in the current hexboard"""
+        if board.game_over(): return []
+
         return [coord for coord, color in board.board.items() if color == HexBoard.EMPTY]

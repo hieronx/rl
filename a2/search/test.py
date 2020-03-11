@@ -74,6 +74,7 @@ class TestSearch(unittest.TestCase):
         board.board[(0, 2)] = HexBoard.BLUE
         board.board[(0, 3)] = HexBoard.BLUE
         board.print()
+        print(str(board)) # Target: [.r.. br.. br.. br..]
 
         mcts = MCTS(1000, 1.0, False)
         move = mcts.get_next_move(board, HexBoard.RED)
