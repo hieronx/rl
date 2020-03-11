@@ -18,7 +18,7 @@ def run_hyperparameter_search(args):
     freeze_support()
 
     # Ranges for the hyperparameters
-    N_min, N_max = 10, 1000
+    N_min, N_max = 10, 10000
     Cp_min, Cp_max = 1.4, 1.4
 
     # Ability to resume hyperparameter search runs

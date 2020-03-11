@@ -29,14 +29,15 @@ class TestSearch(unittest.TestCase):
         """"Tests to see if MCTS returns the expected best moves for specific board states"""
         board = HexBoard(3)
 
-        board.board[(0, 0)] = HexBoard.RED
-        board.board[(0, 1)] = HexBoard.RED
+        board.board[(1, 0)] = HexBoard.RED
+        board.board[(1, 1)] = HexBoard.RED
+        board.print()
 
         self.assertFalse(board.game_over())
 
         mcts = MCTS(5000, 1.4, False)
         move = mcts.get_next_move(board, HexBoard.RED)
-        self.assertEqual(move, (0, 2))
+        self.assertEqual(move, (1, 2))
         
     def test_minimax_top_left(self):
         """"Another scenario which tests a specific minimax scenario"""

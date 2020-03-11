@@ -20,7 +20,7 @@ class MCTS(HexSearchMethod):
         self.Cp = Cp
         self.live_play = live_play
         
-    def get_next_move(self, board, color, debug=True):
+    def get_next_move(self, board, color, debug=False):
         self.start_time = time.time()
         self.root = MCTSNode(board, parent=None, player=color)
 
@@ -37,7 +37,7 @@ class MCTS(HexSearchMethod):
         
         if debug: log_tree(self.root)
 
-        next_board = self.root.best_child(0.0).board
+        next_board = self.root.child_with_most_visits().board
         return HexBoard.get_move_between_boards(self.root.board, next_board)
 
     def select_and_expand(self):
