@@ -16,10 +16,10 @@ To run the unit tests:
 ```python test.py```
 
 ## Section 2 - MCTS Hex
-```python main.py play --search MCTS```
+```python main.py play MCTS --num_iterations 5000```
 
 ## Section 3 - Experiment
-```python main.py trueskill --config Minimax-vs-MCTS --plot```
+```python main.py trueskill --config minimax-vs-mcts --plot```
 
 ## Section 4 - Tune
 ```python main.py tune```
