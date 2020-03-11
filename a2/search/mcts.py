@@ -76,20 +76,20 @@ class MCTSNode:
         return len(self.untried_moves) == 0
 
     def expand(self):
-        move = self.untried_moves.pop() # TODO: should be cached
+        move = self.untried_moves.pop() 
         next_board = self.board.make_move(move, self.player)
         child_node = MCTSNode(next_board, parent=self, player=self.player)
         self.children.append(child_node)
         return child_node
     
     def simulate(self):
-        current_board = self.board
+        current_board = self.board.copy()
         all_moves = current_board.get_possible_moves()
         turn = self.player
         while not current_board.game_over():
             move = random.choice(all_moves)
             all_moves.remove(move)
-            current_board = current_board.make_move(move, turn)
+            current_board.board[move] = turn
 
             turn = current_board.get_opposite_color(self.player) if turn == self.player else self.player
 
