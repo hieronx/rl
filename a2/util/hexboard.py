@@ -94,9 +94,10 @@ class HexBoard:
 
     def check_win(self, color):
         """Check if we have made a snake from the source side to the opposing side for the provided color"""
-        for move in self.get_source_coordinates(color):	
+        for move in self.get_source_coordinates(color):
             if self.traverse(color, move, {}):
                 return True
+        
         return False
 
     def check_draw(self):
@@ -110,7 +111,7 @@ class HexBoard:
         if self.game_over(): return []
         return [coord for coord, color in self.board.items() if color == HexBoard.EMPTY]
         
-    @lru_cache(maxsize=2)
+    # @lru_cache(maxsize=2)
     def get_source_coordinates(self, color):
         """Returns the coordinates of the left border (for blue) or the top border (for red)"""
         if color == HexBoard.BLUE:
@@ -191,12 +192,12 @@ class HexBoard:
         if not self.game_over():
             logger.error('get_reward() called on a board that hasn\'t ended yet.')
 
-        color_won = self.check_win(color)
-        other_won = self.check_win(self.get_opposite_color(color))
-        if not other_won and not color_won:
-            return 0.5
+        if self.check_win(color):
+            return 1
+        elif self.check_win(self.get_opposite_color(color)):
+            return -1
         else:
-            return 1 if color_won else 0
+            return 0
 
     @classmethod
     def from_hash_code(cls, hash_code):

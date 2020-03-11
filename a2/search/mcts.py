@@ -3,6 +3,7 @@ import random
 import math
 import time
 from collections import defaultdict
+from operator import attrgetter
 
 from util import cls
 from util.hexboard import HexBoard
@@ -17,6 +18,7 @@ class MCTS(HexSearchMethod):
         self.iterations = iterations
         self.Cp = Cp
         self.live_play = live_play
+        self.debug_output = []
         
     def get_next_move(self, board, color):
         self.start_time = time.time()
@@ -32,8 +34,11 @@ class MCTS(HexSearchMethod):
             elapsed_time = time.time() - self.start_time
             cls()
             print("Generation of this next move took %f seconds." % elapsed_time)
+        
+        # self.log_tree(self.root)
+        # self.save_log_tree()
 
-        next_board = self.root.best_child(0.0).board # Only exploitation to return best move
+        next_board = self.root.best_child(0.0).board
         return HexBoard.get_move_between_boards(self.root.board, next_board)
 
     def select_and_expand(self):
@@ -44,6 +49,24 @@ class MCTS(HexSearchMethod):
             else:
                 current_node = current_node.best_child(self.Cp) # UCT select
         return current_node
+        
+    def log_tree(self, node, level=0):
+        self.debug_output.append((level, str(node.reward) + '/' + str(node.num_visits) + ' ' + str(node.board)))
+
+        for child in node.children:
+            self.log_tree(child, level + 1)
+
+    def save_log_tree(self):
+        fn = 'output/mcts-debug.txt'
+        with open(fn, 'w+', encoding='utf8') as output_file:
+            for log in self.debug_output:
+                if log[0] is None:
+                    output_file.write('\n')
+                else:
+                    out = ('\t' * log[0]) + log[1] + '\n'
+                    output_file.write(out)
+        
+        logger.info('Saved %s' % fn)
 
 
 class MCTSNode:
@@ -75,9 +98,13 @@ class MCTSNode:
     
     def simulate(self):
         current_board = self.board
+        turn = self.player
         while not current_board.game_over():
             move = random.choice(current_board.get_possible_moves()) # TODO: should be cached
-            current_board = current_board.make_move(move, self.player)
+            current_board = current_board.make_move(move, turn)
+
+            turn = current_board.get_opposite_color(self.player) if turn == self.player else self.player
+
         return current_board.get_reward(self.player)
 
     def backpropagate(self, reward):
@@ -85,6 +112,9 @@ class MCTSNode:
         self.reward += reward
         if self.parent is not None:
             self.parent.backpropagate(reward)
+    
+    def child_with_most_visits(self):
+        return max(self.children, key=attrgetter('num_visits'))
 
     def best_child(self, Cp):
         ln_N = math.log(self.num_visits)
