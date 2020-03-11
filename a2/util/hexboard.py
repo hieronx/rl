@@ -15,9 +15,7 @@ class HexBoard:
         self.board = {}
         possible_moves = []
         self.size = board_size
-        self.cached_win_result = {HexBoard.BLUE: False, HexBoard.RED: False}
-        self.cached_hash = None
-
+        
         for x in range(board_size):
             for y in range(board_size):
                 self.board[x, y] = HexBoard.EMPTY
@@ -93,19 +91,11 @@ class HexBoard:
 
     def check_win(self, color):
         """Check if we have made a snake from the source side to the opposing side for the provided color"""
-        if self.cached_hash == self.hash_code():
-            return self.cached_win_result[color]
+        for move in self.get_source_coordinates(color):
+            if self.traverse(color, move, {}):
+                return  True
         
-        self.cached_win_result[HexBoard.BLUE] = False
-        self.cached_win_result[HexBoard.RED] = False
-        for col in (HexBoard.BLUE, HexBoard.RED):
-            for move in self.get_source_coordinates(col):
-                if self.traverse(col, move, {}):
-                    self.cached_win_result[col] = True
-                    break
-        
-        self.cached_hash = self.hash_code()
-        return self.cached_win_result[color]
+        return False
 
     def check_draw(self):
         """Checks if we have any empty hexes left on the board"""
