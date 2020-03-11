@@ -8,6 +8,7 @@ class HexBoard:
     BLUE = 1
     RED = 2
     EMPTY = 3
+    POSSIBLE_NEIGHBORS = ((-1, 0), (1, 0), (-1, 1), (1, -1), (0, 1), (0, -1))
 
     def __init__(self, board_size):
         """Creates a new empty board with the provided size"""
@@ -50,22 +51,13 @@ class HexBoard:
     def get_neighbors(self, coordinates):
         """Returns a list with the coordinates of every possible/valid neighbor."""
         (cx, cy) = coordinates
-        neighbors = []
-
-        if cx-1 >= 0:
-            neighbors.append((cx-1, cy))
-        if cx+1 < self.size:
-            neighbors.append((cx+1, cy))
-        if cx-1 >= 0 and cy+1 < self.size-1:
-            neighbors.append((cx-1, cy+1))
-        if cx+1 < self.size and cy-1 >= 0:
-            neighbors.append((cx+1, cy-1))
-        if cy+1 < self.size:
-            neighbors.append((cx, cy+1))
-        if cy-1 >= 0:
-            neighbors.append((cx, cy-1))
-
+        neighbors = [(x + cx, y + cy) for x, y in HexBoard.POSSIBLE_NEIGHBORS if self.in_bounds(cx + x) and self.in_bounds(cy + y)]
         return neighbors
+    
+    @lru_cache(maxsize=128)
+    def in_bounds(self, num):
+        """Returns if a number is still within the required constraints for the board size"""
+        return num >= 0 and num < self.size
 
     def border(self, color, move):
         """Returns if we have reached the border (goal) for a specific color"""
