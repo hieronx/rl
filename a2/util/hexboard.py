@@ -15,6 +15,9 @@ class HexBoard:
         self.board = {}
         self.size = board_size
         
+        self.target_coords = {HexBoard.BLUE: HexBoard.get_target_coordinates(HexBoard.BLUE, board_size), HexBoard.RED: HexBoard.get_target_coordinates(HexBoard.RED, board_size)}
+        self.source_coords = {HexBoard.BLUE: HexBoard.get_source_coordinates(HexBoard.BLUE, board_size), HexBoard.RED: HexBoard.get_source_coordinates(HexBoard.RED, board_size)}
+        
         for x in range(board_size):
             for y in range(board_size):
                 self.board[x, y] = HexBoard.EMPTY
@@ -64,7 +67,6 @@ class HexBoard:
         visited[move] = True
         for n in HexBoard.get_neighbors(move, self.size):
             if self.board[n] != color or n in visited: continue
-
             if self.traverse(color, n, visited):
                 return True
 		
@@ -77,13 +79,13 @@ class HexBoard:
     def check_win(self, color):
         """Check if we have made a snake from the source side to the opposing side for the provided color"""
         useful_to_check = False
-        for move in HexBoard.get_target_coordinates(color, self.size):
+        for move in self.target_coords[color]:
             if self.board[move] == color:
                 useful_to_check = True
                 break
         if not useful_to_check: return False
 
-        for move in HexBoard.get_source_coordinates(color, self.size):
+        for move in self.source_coords[color]:
             if self.board[move] != color: continue
             if self.traverse(color, move, {}):
                 return True        

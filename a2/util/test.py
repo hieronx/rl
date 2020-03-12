@@ -60,7 +60,7 @@ class TestUtil(unittest.TestCase):
     def test_source_coordinates(self):
         """Let's see if the source coordinates are all correct and as we think they should be"""
         board = HexBoard(4)
-        source_coordinates = HexBoard.get_source_coordinates(HexBoard.RED, board.size)
+        source_coordinates = board.source_coords[HexBoard.RED]
         actual_sources = [(0, 0), (1, 0), (2, 0), (3, 0)]
 
         for actual_source in actual_sources:

@@ -39,8 +39,8 @@ class HexEvalMethod:
 
     def find_shortest_path_to_border(self, board, color):
         """Returns the length of the shortest possible path to the border for the specified color"""
-        source_coords = HexBoard.get_source_coordinates(color, board.size)
-        target_coords = HexBoard.get_target_coordinates(color, board.size)
+        source_coords = board.source_coords[color]
+        target_coords = board.target_coords[color]
         opposite_color = HexBoard.get_opposite_color(color)
         
         min_score = board.size**2
