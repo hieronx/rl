@@ -13,7 +13,6 @@ class HexBoard:
     def __init__(self, board_size):
         """Creates a new empty board with the provided size"""
         self.board = {}
-        possible_moves = []
         self.size = board_size
         
         for x in range(board_size):
@@ -83,7 +82,7 @@ class HexBoard:
                 useful_to_check = True
                 break
         if not useful_to_check: return False
-        
+
         for move in HexBoard.get_source_coordinates(color, self.size):
             if self.board[move] != color: continue
             if self.traverse(color, move, {}):
