@@ -49,6 +49,7 @@ class HexBoard:
     def copy(self):
         """Returns an exact deep copy of itself"""
         new_board = HexBoard(self.size, target_coords=self.target_coords, source_coords=self.source_coords, overwrite = True)
+        new_board.moves_made = self.moves_made
         new_board.board = {k:v for k,v in self.board.items()}
         return new_board
 
