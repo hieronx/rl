@@ -22,9 +22,8 @@ class HexEvalMethod:
             return 0
 
     def evaluate_board(self, board, color):
-        if board.check_draw() or (board.check_win(color) and board.check_win(HexBoard.get_opposite_color(color))): return 0
-        if board.check_win(color): return 1000
-        if board.check_win(HexBoard.get_opposite_color(color)): return -1000
+        winner = board.get_winner()
+        return HexBoard.get_reward(color, winner) * 1000
         
         player_sp = self.find_shortest_path_to_border(board, color)
         opponent_sp = self.find_shortest_path_to_border(board, HexBoard.get_opposite_color(color))

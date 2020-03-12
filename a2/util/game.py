@@ -58,7 +58,7 @@ class HexGame:
             board = board.make_move((char_to_row_idx[x], int(y)), HexBoard.BLUE)
             winner = board.get_winner()
 
-        if board.check_win(HexBoard.RED):
+        if winner == HexBoard.RED:
             print('The AI won.')
         else:
             print('You won.')
