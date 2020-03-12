@@ -36,8 +36,9 @@ class HexBoard:
 
     def place(self, coordinates, color):
         """Places the provided color at the provided coord"""
+        if self.board[coordinates] == HexBoard.EMPTY:
+            self.moves_made += 1
         self.board[coordinates] = color
-        self.moves_made += 1
 
     def make_move(self, coordinates, color):
         """Should return the new board without modifying the existing board"""
@@ -81,9 +82,9 @@ class HexBoard:
     def get_winner(self):
         """Check if the game has ended, and returns the winner. If None is returned the game is ongoing"""
         if self.moves_made < self.size: return None
-        elif self.check_draw(): return HexBoard.EMPTY
         elif self.check_win(HexBoard.RED): return HexBoard.RED
         elif self.check_win(HexBoard.BLUE): return HexBoard.BLUE
+        elif self.check_draw(): return HexBoard.EMPTY
         return None
 
     def check_win(self, color):

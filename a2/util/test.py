@@ -47,10 +47,10 @@ class TestUtil(unittest.TestCase):
 
         winner = endable_board.get_winner()
         while winner is None:
-            endable_board.place((random.randint(0, 4), random.randint(0, 4)), HexBoard.RED)
+            endable_board.place((random.randint(0, 3), random.randint(0, 3)), HexBoard.RED)
             winner = endable_board.get_winner()
 
-        self.assertEqual(endable_board.get_winner(), HexBoard.RED)
+        self.assertEqual(winner, HexBoard.RED)
 
     def test_weird_win_detection_edge_case(self):
         board = HexBoard(3)
