@@ -23,7 +23,7 @@ class HexEvalMethod:
 
     def evaluate_board(self, board, color):
         winner = board.get_winner()
-        return HexBoard.get_reward(color, winner) * 1000
+        if winner is not None: return HexBoard.get_reward(color, winner) * 1000
         
         player_sp = self.find_shortest_path_to_border(board, color)
         opponent_sp = self.find_shortest_path_to_border(board, HexBoard.get_opposite_color(color))
