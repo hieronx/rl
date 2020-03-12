@@ -45,10 +45,10 @@ class TestUtil(unittest.TestCase):
         """Checks if the detection for gameover states is working as expected by filling all hexes with one color"""
         endable_board = HexBoard(4)
 
-        winner = board.get_winner()
+        winner = endable_board.get_winner()
         while winner is None:
             endable_board.place((random.randint(0, 4), random.randint(0, 4)), HexBoard.RED)
-            winner = board.get_winner()
+            winner = endable_board.get_winner()
 
         self.assertEqual(endable_board.get_winner(), HexBoard.RED)
 
@@ -69,7 +69,7 @@ class TestUtil(unittest.TestCase):
     def test_target_coordinates(self):
         """Does the same thing as test_source coordinates, only checks for the target coordinates"""
         board = HexBoard(4)
-        target_coordinates = board.get_target_coordinates(HexBoard.RED, board.size)
+        target_coordinates = board.target_coords[HexBoard.RED]
         actual_targets = [(0, 3), (1, 3), (2, 3), (3,3)]
 
         for actual_target in actual_targets:

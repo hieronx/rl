@@ -74,7 +74,7 @@ class Minimax(HexSearchMethod):
             self.stats['nodes_searched'] += 1
             return (None, score)
 
-        moves = self.get_possible_moves(board)
+        moves = board.get_possible_moves()
         
         if cached_best_move is not None:
             moves.insert(0, cached_best_move)

@@ -223,7 +223,7 @@ class HexBoard:
         i = 0
         for x in range(board_size):
             for y in range(board_size):
-                board.place(x, y, int(pos[i]))
+                board.place((x, y), int(pos[i]))
                 i += 1
         
         return board
