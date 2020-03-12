@@ -53,11 +53,13 @@ class MCTS(HexSearchMethod):
 
     def select_and_expand(self):
         current_node = self.root
-        while not current_node.board.game_over():
+        winner = current_node.board.get_winner()
+        while winner is None:
             if not current_node.is_fully_expanded():
                 return current_node.expand()
             else:
                 current_node = current_node.best_child(self.Cp) # UCT select
+            winner = current_node.board.get_winner()
         return current_node
 
 class MCTSNode:
@@ -90,12 +92,14 @@ class MCTSNode:
         all_moves = current_board.get_possible_moves()
         random.shuffle(all_moves)
         turn = self.player
-        while not current_board.game_over():
+        winner = current_board.get_winner()
+        while winner is None:
             move = all_moves.pop()
             current_board.place(move, turn)
             turn = HexBoard.RED if turn == HexBoard.BLUE else HexBoard.BLUE
+            winner = current_board.get_winner()
 
-        return current_board.get_reward(self.player)
+        return HexBoard.get_reward(self.player, winner)
 
     def backpropagate(self, reward):
         self.num_visits += 1

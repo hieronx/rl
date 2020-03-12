@@ -19,7 +19,7 @@ class TestSearch(unittest.TestCase):
         board.place((0, 0), HexBoard.RED)
         board.place((0, 1), HexBoard.RED)
 
-        self.assertFalse(board.game_over())
+        self.assertEquals(board.get_winner(), None)
 
         minimax = Minimax(3, None, dijkstra, False)
         move = minimax.get_next_move(board, HexBoard.RED)
@@ -32,7 +32,7 @@ class TestSearch(unittest.TestCase):
         board.place((1, 0), HexBoard.RED)
         board.place((1, 1), HexBoard.RED)
 
-        self.assertFalse(board.game_over())
+        self.assertEquals(board.get_winner(), None)
 
         mcts = MCTS(20000, None, 1.4, False)
         move = mcts.get_next_move(board, HexBoard.RED)

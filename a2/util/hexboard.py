@@ -67,7 +67,7 @@ class HexBoard:
         and if we reach the otherside that way we return true as well.
         """
         # if we have reached the border (target) for a specific color
-        if (color == HexBoard.BLUE and move[0] == self.size-1) or (color == HexBoard.RED and move[1] == self.size-1):
+        if HexBoard.is_at_border(color, move, self.size):
             return True
 
         visited[move] = True
@@ -78,10 +78,13 @@ class HexBoard:
 		
         return False
 
-    def game_over(self):
-        """Check if the game has ended, either by a win or by a draw"""
-        if self.moves_made < self.size: return False
-        return self.check_win(HexBoard.RED) or self.check_win(HexBoard.BLUE) or self.check_draw()
+    def get_winner(self):
+        """Check if the game has ended, and returns the winner. If None is returned the game is ongoing"""
+        if self.moves_made < self.size: return None
+        if self.check_draw(): return HexBoard.EMPTY
+        if self.check_win(HexBoard.RED): return HexBoard.RED
+        if self.check_win(HexBoard.BLUE): return HexBoard.BLUE
+        return None
 
     def check_win(self, color):
         """Check if we have made a snake from the source side to the opposing side for the provided color"""
@@ -104,7 +107,7 @@ class HexBoard:
 
     def get_possible_moves(self):
         """Compiles a list of all empty hexes in the current hexboard"""
-        if self.game_over(): return []
+        if self.get_winner() is not None: return []
         return [coord for coord, color in self.board.items() if color == HexBoard.EMPTY]
 
     def print(self):
@@ -167,17 +170,21 @@ class HexBoard:
             multiplier *= 10
         return code
     
-    def get_reward(self, color):
+    @classmethod
+    @lru_cache(maxsize=16)
+    def get_reward(cls, color, winner):
         """Returns the reward for the specified color, -1 if it loses, 1 if it wins, 0 on a draw"""
-        if not self.game_over():
-            print('get_reward() called on a board that hasn\'t ended yet.')
-
-        if self.check_win(color):
+        if color == winner:
             return 1
-        elif self.check_win(HexBoard.get_opposite_color(color)):
-            return -1
-        else:
+        elif winner == HexBoard.EMPTY:
             return 0
+        else:
+            return -1
+
+    @classmethod
+    @lru_cache(maxsize=512)
+    def is_at_border(cls, color, move, size):
+        return (color == HexBoard.BLUE and move[0] == size-1) or (color == HexBoard.RED and move[1] == size-1)
 
     @classmethod          
     @lru_cache(maxsize=32)

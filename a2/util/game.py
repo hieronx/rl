@@ -35,14 +35,15 @@ class HexGame:
 
     def run_interactively(self, board):
         """Runs the game interactively, this starts a while loop that will only stop once the game is won or a draw is detected"""
-        while not board.game_over():
+        winner = board.get_winner()
+        while winner is None:
             print("Waiting for CPU move...")
             move = self.search.get_next_move(board, HexBoard.RED)
             board = board.make_move(move, HexBoard.RED)
             board.print()
             print('\n')
 
-            if board.game_over():
+            if board.get_winner() is not None:
                 break
 
             while True:
@@ -55,6 +56,7 @@ class HexGame:
                             break
 
             board = board.make_move((char_to_row_idx[x], int(y)), HexBoard.BLUE)
+            winner = board.get_winner()
 
         if board.check_win(HexBoard.RED):
             print('The AI won.')

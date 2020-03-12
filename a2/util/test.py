@@ -45,12 +45,12 @@ class TestUtil(unittest.TestCase):
         """Checks if the detection for gameover states is working as expected by filling all hexes with one color"""
         endable_board = HexBoard(4)
 
-        while not endable_board.game_over():
+        winner = board.get_winner()
+        while winner is None:
             endable_board.place((random.randint(0, 4), random.randint(0, 4)), HexBoard.RED)
+            winner = board.get_winner()
 
-        self.assertEqual(endable_board.game_over(), True)
-        self.assertEqual(endable_board.check_win(HexBoard.RED), True)
-        self.assertEqual(endable_board.check_win(HexBoard.BLUE), False)
+        self.assertEqual(endable_board.get_winner(), HexBoard.RED)
 
     def test_weird_win_detection_edge_case(self):
         board = HexBoard(3)
@@ -92,7 +92,7 @@ class TestUtil(unittest.TestCase):
         board.place((1, 0), HexBoard.BLUE)
         board.place((2, 0), HexBoard.BLUE)
 
-        self.assertEqual(board.get_reward(HexBoard.BLUE), 1)
+        self.assertEqual(HexBoard.get_reward(HexBoard.BLUE, board.get_winner()), 1)
 
     def test_from_hash_code(self):
         board = HexBoard(3)

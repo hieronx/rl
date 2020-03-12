@@ -69,7 +69,7 @@ class Minimax(HexSearchMethod):
                 else:
                     cached_best_move = self.tp_table[hash_code][1]
         
-        if depth == 0 or board.game_over():
+        if depth == 0 or board.get_winner() is not None:
             score = self.evaluate.evaluate_board(board, color)
             self.stats['nodes_searched'] += 1
             return (None, score)
