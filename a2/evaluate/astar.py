@@ -25,7 +25,7 @@ class AStar(HexEvalMethod):
             if node in target_coords:
                 return node_g
 
-            for neighbor in board.get_neighbors(node):
+            for neighbor in HexBoard.get_neighbors(node, board.size):
                 new_g = node_g + self.distance_to(board.board[neighbor], opposite_color)
 
                 if neighbor not in checked:

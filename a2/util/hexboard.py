@@ -43,23 +43,13 @@ class HexBoard:
         """Returns an exact deep copy of itself"""
         return HexBoard.from_hash_code(self.hash_code())
 
+    @classmethod
     @lru_cache(maxsize=512) # caching this to create lower lookup times, technically can't have more than board.size ** 2 options
-    def get_neighbors(self, coordinates):
+    def get_neighbors(cls, coordinates, size):
         """Returns a list with the coordinates of every possible/valid neighbor."""
         (cx, cy) = coordinates
-        neighbors = [(x + cx, y + cy) for x, y in HexBoard.POSSIBLE_NEIGHBORS if HexBoard.in_bounds(cx + x, cy + y, self.size)]
+        neighbors = [(x + cx, y + cy) for x, y in HexBoard.POSSIBLE_NEIGHBORS if HexBoard.in_bounds(cx + x, cy + y, size)]
         return neighbors
-    
-    @classmethod
-    @lru_cache(maxsize=512)
-    def in_bounds(cls, numx, numy, size):
-        """Returns if a number is still within the required constraints for the board size"""
-        return numx >= 0 and numx < size and numy >= 0 and numy < size
-
-    def border(self, color, move):
-        """Returns if we have reached the border (goal) for a specific color"""
-        (nx, ny) = move
-        return (color == HexBoard.BLUE and nx == self.size-1) or (color == HexBoard.RED and ny == self.size-1)
 
     def traverse(self, color, move, visited):
         """
@@ -71,11 +61,12 @@ class HexBoard:
         if not self.board[move] == color or (move in visited):
             return False
 
-        if self.border(color, move):
+        # if we have reached the border (target) for a specific color
+        if (color == HexBoard.BLUE and move[0] == self.size-1) or (color == HexBoard.RED and move[1] == self.size-1):
             return True
 
         visited[move] = True
-        for n in self.get_neighbors(move):
+        for n in self.get_neighbors(move, self.size):
             if self.traverse(color, n, visited):
                 return True
 		
@@ -223,3 +214,9 @@ class HexBoard:
                     return (x, y)
         
         return (None, None)
+
+    @classmethod
+    @lru_cache(maxsize=512)
+    def in_bounds(cls, numx, numy, size):
+        """Returns if a number is still within the required constraints for the board size"""
+        return numx >= 0 and numx < size and numy >= 0 and numy < size

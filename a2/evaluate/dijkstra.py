@@ -26,7 +26,7 @@ class Dijkstra(HexEvalMethod):
             if node in target_coords:
                 return dist[node]
 
-            for neighbor in board.get_neighbors(node):
+            for neighbor in board.get_neighbors(node, board.size):
                 new_dist = node_dist + self.distance_to(board.board[neighbor], opposite_color)
                 if new_dist < dist[neighbor]:
                     dist[neighbor] = new_dist
