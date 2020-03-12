@@ -14,13 +14,12 @@ class HexBoard:
         """Creates a new empty board with the provided size"""
         self.board = {}
         self.size = board_size
+        self.useful_to_check_win = False
 
         self.target_coords = HexBoard.get_target_coordinates(board_size) if target_coords is None else target_coords
         self.source_coords = HexBoard.get_source_coordinates(board_size) if source_coords is None else source_coords
         
-        for x in range(board_size):
-            for y in range(board_size):
-                self.board[x, y] = HexBoard.EMPTY
+        self.board = {k:v for k, v in HexBoard.get_empty_board(board_size).items()}
 
     def is_empty(self, coordinates):
         """Returns if the board is empty at the provided coordinate"""
@@ -79,12 +78,12 @@ class HexBoard:
 
     def check_win(self, color):
         """Check if we have made a snake from the source side to the opposing side for the provided color"""
-        useful_to_check = False
-        for move in self.target_coords[color]:
-            if self.board[move] == color:
-                useful_to_check = True
-                break
-        if not useful_to_check: return False
+        if not self.useful_to_check_win:
+            for move in self.target_coords[color]:
+                if self.board[move] == color:
+                    self.useful_to_check_win = True
+                    break
+        if not self.useful_to_check_win: return False
 
         for move in self.source_coords[color]:
             if self.board[move] != color: continue
@@ -240,3 +239,13 @@ class HexBoard:
     def in_bounds(cls, numx, numy, size):
         """Returns if a number is still within the required constraints for the board size"""
         return numx >= 0 and numx < size and numy >= 0 and numy < size
+
+    @classmethod
+    @lru_cache(maxsize=128)
+    def get_empty_board(cls, size):
+        """Returns an empty board that we can use to create new HexBoard instances"""
+        board = {}
+        for x in range(size):
+            for y in range(size):
+                board[x, y] = HexBoard.EMPTY
+        return board
