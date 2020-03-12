@@ -27,7 +27,7 @@ class Minimax(HexSearchMethod):
         self.start_time = time.time()
         alpha = -math.inf
         beta = math.inf
-        opposite_color = board.get_opposite_color(color)
+        opposite_color = HexBoard.get_opposite_color(color)
 
         max_depth = self.depth or 1
         if self.depth:

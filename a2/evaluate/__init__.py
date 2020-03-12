@@ -22,12 +22,12 @@ class HexEvalMethod:
             return 0
 
     def evaluate_board(self, board, color):
-        if board.check_draw() or (board.check_win(color) and board.check_win(board.get_opposite_color(color))): return 0
+        if board.check_draw() or (board.check_win(color) and board.check_win(HexBoard.get_opposite_color(color))): return 0
         if board.check_win(color): return 1000
-        if board.check_win(board.get_opposite_color(color)): return -1000
+        if board.check_win(HexBoard.get_opposite_color(color)): return -1000
         
         player_sp = self.find_shortest_path_to_border(board, color)
-        opponent_sp = self.find_shortest_path_to_border(board, board.get_opposite_color(color))
+        opponent_sp = self.find_shortest_path_to_border(board, HexBoard.get_opposite_color(color))
 
         if player_sp == math.inf: player_sp = 0
         if opponent_sp == math.inf: opponent_sp = 0
@@ -41,7 +41,7 @@ class HexEvalMethod:
         """Returns the length of the shortest possible path to the border for the specified color"""
         source_coords = board.get_source_coordinates(color)
         target_coords = board.get_target_coordinates(color)
-        opposite_color = board.get_opposite_color(color)
+        opposite_color = HexBoard.get_opposite_color(color)
         
         min_score = board.size**2
 

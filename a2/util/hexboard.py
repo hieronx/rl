@@ -43,11 +43,6 @@ class HexBoard:
         """Returns an exact deep copy of itself"""
         return HexBoard.from_hash_code(self.hash_code())
 
-    @lru_cache(maxsize=4)
-    def get_opposite_color(self, current_color):
-        """Returns the opposite color of the provided color. Returns BLUE if the color is not recognized"""
-        return HexBoard.RED if current_color == HexBoard.BLUE else HexBoard.BLUE
-
     @lru_cache(maxsize=512) # caching this to create lower lookup times, technically can't have more than board.size ** 2 options
     def get_neighbors(self, coordinates):
         """Returns a list with the coordinates of every possible/valid neighbor."""
@@ -191,7 +186,7 @@ class HexBoard:
 
         if self.check_win(color):
             return 1
-        elif self.check_win(self.get_opposite_color(color)):
+        elif self.check_win(HexBoard.get_opposite_color(color)):
             return -1
         else:
             return 0
@@ -209,6 +204,12 @@ class HexBoard:
                 i += 1
         
         return board
+
+    @classmethod
+    @lru_cache(maxsize=4)
+    def get_opposite_color(cls, color):
+        """Returns the opposite color of the provided color. Returns BLUE if the color is not recognized"""
+        return HexBoard.RED if color == HexBoard.BLUE else HexBoard.BLUE
     
     def get_move_between_boards(self, other_board):
         if self.size is not other_board.size:
