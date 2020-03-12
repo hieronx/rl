@@ -10,13 +10,13 @@ class HexBoard:
     EMPTY = 3
     POSSIBLE_NEIGHBORS = ((-1, 0), (1, 0), (-1, 1), (1, -1), (0, 1), (0, -1))
 
-    def __init__(self, board_size):
+    def __init__(self, board_size, source_coords=None, target_coords=None):
         """Creates a new empty board with the provided size"""
         self.board = {}
         self.size = board_size
 
-        self.target_coords = HexBoard.get_target_coordinates(board_size)
-        self.source_coords = HexBoard.get_source_coordinates(board_size)
+        self.target_coords = HexBoard.get_target_coordinates(board_size) if target_coords is None else target_coords
+        self.source_coords = HexBoard.get_source_coordinates(board_size) if source_coords is None else source_coords
         
         for x in range(board_size):
             for y in range(board_size):
@@ -42,7 +42,9 @@ class HexBoard:
     
     def copy(self):
         """Returns an exact deep copy of itself"""
-        return HexBoard.from_hash_code(self.hash_code())
+        new_board = HexBoard(self.size, target_coords=self.target_coords, source_coords=self.source_coords)
+        new_board.board = {k:v for k,v in self.board.items()}
+        return new_board
 
     @classmethod
     @lru_cache(maxsize=512) # caching this to create lower lookup times, technically can't have more than board.size ** 2 options
