@@ -42,7 +42,7 @@ class MCTS(HexSearchMethod):
             elapsed_time = time.time() - start_time
             cls()
             print("Generation of this next move took %.2f seconds, ran %d iterations." % (elapsed_time, i))
-        
+            
         if debug: log_tree(self.root)
 
         next_board = self.root.child_with_most_visits().board
