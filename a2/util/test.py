@@ -40,6 +40,27 @@ class TestUtil(unittest.TestCase):
 
             self.assertEqual(board.check_win(winner), True)
             self.assertEqual(board.check_win(looser), False)
+        
+    def test_win_detection_stuff(self):
+        """Used to do debugging on the weird bugs we have in the simulate loop"""
+        blue = HexBoard.BLUE
+        empty = HexBoard.EMPTY
+        red = HexBoard.RED
+
+        board = HexBoard(3)
+        self.assertEqual(board.get_winner(), None)
+
+        board = HexBoard(3)
+        board.place((0, 0), blue)
+        board.place((1, 0), blue)
+        board.place((2, 0), blue)
+        self.assertEqual(board.get_winner(), blue)
+
+        board = HexBoard(3)
+        board.place((0, 0), red)
+        board.place((0, 1), red)
+        board.place((0, 2), red)
+        self.assertEqual(board.get_winner(), red)
 
     def test_game_end(self):
         """Checks if the detection for gameover states is working as expected by filling all hexes with one color"""

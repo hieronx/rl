@@ -27,7 +27,6 @@ class TestSearch(unittest.TestCase):
 
     def test_mcts(self):
         """"Tests to see if MCTS returns the expected best moves for specific board states"""
-        return
         board = HexBoard(3)
 
         board.place((1, 0), HexBoard.RED)
