@@ -9,7 +9,6 @@ class HexBoard:
     RED = 2
     EMPTY = 3
     POSSIBLE_NEIGHBORS = ((-1, 0), (1, 0), (-1, 1), (1, -1), (0, 1), (0, -1))
-    terminal_boards = {}
 
     def __init__(self, board_size):
         """Creates a new empty board with the provided size"""
@@ -88,13 +87,8 @@ class HexBoard:
 
     def check_win(self, color):
         """Check if we have made a snake from the source side to the opposing side for the provided color"""
-        hash_code = self.hash_code()
-        if hash_code in HexBoard.terminal_boards:
-            return HexBoard.terminal_boards[hash_code] == color
-
         for move in self.get_source_coordinates(color):
             if self.traverse(color, move, {}):
-                HexBoard.add_known_terminal_board(hash_code, color)
                 return  True
         
         return False
@@ -211,10 +205,6 @@ class HexBoard:
                 i += 1
         
         return board
-
-    @classmethod
-    def add_known_terminal_board(cls, hash_code, color):
-        HexBoard.terminal_boards[hash_code] = color
 
     @classmethod
     @lru_cache(maxsize=4)
