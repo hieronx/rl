@@ -10,7 +10,7 @@ class HexBoard:
     EMPTY = 3
     POSSIBLE_NEIGHBORS = ((-1, 0), (1, 0), (-1, 1), (1, -1), (0, 1), (0, -1))
 
-    def __init__(self, board_size, source_coords=None, target_coords=None, moves_made=None):
+    def __init__(self, board_size, source_coords=None, target_coords=None, moves_made=None, overwrite = False):
         """Creates a new empty board with the provided size"""
         self.board = {}
         self.size = board_size
@@ -20,8 +20,8 @@ class HexBoard:
         self.target_coords = HexBoard.get_target_coordinates(board_size) if target_coords is None else target_coords
         self.source_coords = HexBoard.get_source_coordinates(board_size) if source_coords is None else source_coords
         
-        self.board = {k:v for k, v in HexBoard.get_empty_board(board_size).items()}
-
+        self.board = {k:v for k, v in HexBoard.get_empty_board(board_size).items()} if not overwrite else None
+        
     def is_empty(self, coordinates):
         """Returns if the board is empty at the provided coordinate"""
         return self.board[coordinates] == HexBoard.EMPTY
@@ -47,7 +47,7 @@ class HexBoard:
     
     def copy(self):
         """Returns an exact deep copy of itself"""
-        new_board = HexBoard(self.size, target_coords=self.target_coords, source_coords=self.source_coords)
+        new_board = HexBoard(self.size, target_coords=self.target_coords, source_coords=self.source_coords, overwrite = True)
         new_board.board = {k:v for k,v in self.board.items()}
         return new_board
 
@@ -81,9 +81,9 @@ class HexBoard:
     def get_winner(self):
         """Check if the game has ended, and returns the winner. If None is returned the game is ongoing"""
         if self.moves_made < self.size: return None
-        if self.check_draw(): return HexBoard.EMPTY
-        if self.check_win(HexBoard.RED): return HexBoard.RED
-        if self.check_win(HexBoard.BLUE): return HexBoard.BLUE
+        elif self.check_draw(): return HexBoard.EMPTY
+        elif self.check_win(HexBoard.RED): return HexBoard.RED
+        elif self.check_win(HexBoard.BLUE): return HexBoard.BLUE
         return None
 
     def check_win(self, color):
