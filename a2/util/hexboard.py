@@ -47,13 +47,14 @@ class HexBoard:
     def get_neighbors(self, coordinates):
         """Returns a list with the coordinates of every possible/valid neighbor."""
         (cx, cy) = coordinates
-        neighbors = [(x + cx, y + cy) for x, y in HexBoard.POSSIBLE_NEIGHBORS if self.in_bounds(cx + x) and self.in_bounds(cy + y)]
+        neighbors = [(x + cx, y + cy) for x, y in HexBoard.POSSIBLE_NEIGHBORS if HexBoard.in_bounds(cx + x, cy + y, self.size)]
         return neighbors
     
-    @lru_cache(maxsize=128)
-    def in_bounds(self, num):
+    @classmethod
+    @lru_cache(maxsize=512)
+    def in_bounds(cls, numx, numy, size):
         """Returns if a number is still within the required constraints for the board size"""
-        return num >= 0 and num < self.size
+        return numx >= 0 and numx < size and numy >= 0 and numy < size
 
     def border(self, color, move):
         """Returns if we have reached the border (goal) for a specific color"""
