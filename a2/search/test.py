@@ -16,8 +16,8 @@ class TestSearch(unittest.TestCase):
         dijkstra = Dijkstra()
         board = HexBoard(3)
 
-        board.board[(0, 0)] = HexBoard.RED
-        board.board[(0, 1)] = HexBoard.RED
+        board.place((0, 0), HexBoard.RED)
+        board.place((0, 1), HexBoard.RED)
 
         self.assertFalse(board.game_over())
 
@@ -29,8 +29,8 @@ class TestSearch(unittest.TestCase):
         """"Tests to see if MCTS returns the expected best moves for specific board states"""
         board = HexBoard(3)
 
-        board.board[(1, 0)] = HexBoard.RED
-        board.board[(1, 1)] = HexBoard.RED
+        board.place((1, 0), HexBoard.RED)
+        board.place((1, 1), HexBoard.RED)
 
         self.assertFalse(board.game_over())
 
@@ -44,12 +44,12 @@ class TestSearch(unittest.TestCase):
         dijkstra = Dijkstra()
         board = HexBoard(4)
 
-        board.board[(1, 0)] = HexBoard.RED
-        board.board[(1, 1)] = HexBoard.RED
-        board.board[(1, 2)] = HexBoard.RED
-        board.board[(0, 1)] = HexBoard.BLUE
-        board.board[(0, 2)] = HexBoard.BLUE
-        board.board[(0, 3)] = HexBoard.BLUE
+        board.place((1, 0), HexBoard.RED)
+        board.place((1, 1), HexBoard.RED)
+        board.place((1, 2), HexBoard.RED)
+        board.place((0, 1), HexBoard.BLUE)
+        board.place((0, 2), HexBoard.BLUE)
+        board.place((0, 3), HexBoard.BLUE)
 
         minimax = Minimax(3, None, dijkstra, False)
         move = minimax.get_next_move(board, HexBoard.RED)
@@ -59,12 +59,12 @@ class TestSearch(unittest.TestCase):
     #     """"Another scenario which tests a specific MCTS scenario"""
     #     board = HexBoard(4)
 
-    #     board.board[(1, 0)] = HexBoard.RED
-    #     board.board[(1, 1)] = HexBoard.RED
-    #     board.board[(1, 2)] = HexBoard.RED
-    #     board.board[(0, 1)] = HexBoard.BLUE
-    #     board.board[(0, 2)] = HexBoard.BLUE
-    #     board.board[(0, 3)] = HexBoard.BLUE
+    #     board.place((1, 0), HexBoard.RED)
+    #     board.place((1, 1), HexBoard.RED)
+    #     board.place((1, 2), HexBoard.RED)
+    #     board.place((0, 1), HexBoard.BLUE)
+    #     board.place((0, 2), HexBoard.BLUE)
+    #     board.place((0, 3), HexBoard.BLUE)
 
     #     mcts = MCTS(5000, None, 1.4, False)
     #     move = mcts.get_next_move(board, HexBoard.RED)
@@ -76,8 +76,8 @@ class TestSearch(unittest.TestCase):
         board = HexBoard(3)
         minimax = Minimax(3, None, dijkstra, False)
 
-        board.board[(0, 0)] = HexBoard.RED
-        board.board[(0, 1)] = HexBoard.RED
+        board.place((0, 0), HexBoard.RED)
+        board.place((0, 1), HexBoard.RED)
         self.assertEqual(minimax.tp_table, {})
         
         move = minimax.get_next_move(board, HexBoard.RED)

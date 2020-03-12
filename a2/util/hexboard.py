@@ -10,11 +10,12 @@ class HexBoard:
     EMPTY = 3
     POSSIBLE_NEIGHBORS = ((-1, 0), (1, 0), (-1, 1), (1, -1), (0, 1), (0, -1))
 
-    def __init__(self, board_size, source_coords=None, target_coords=None):
+    def __init__(self, board_size, source_coords=None, target_coords=None, moves_made=None):
         """Creates a new empty board with the provided size"""
         self.board = {}
         self.size = board_size
         self.useful_to_check_win = False
+        self.moves_made = 0 if moves_made is None else moves_made
 
         self.target_coords = HexBoard.get_target_coordinates(board_size) if target_coords is None else target_coords
         self.source_coords = HexBoard.get_source_coordinates(board_size) if source_coords is None else source_coords
@@ -33,10 +34,15 @@ class HexBoard:
         """Returns the color at the provided board coordinate"""
         return self.board[coordinates]
 
+    def place(self, coordinates, color):
+        """Places the provided color at the provided coord"""
+        self.board[coordinates] = color
+        self.moves_made += 1
+
     def make_move(self, coordinates, color):
         """Should return the new board without modifying the existing board"""
         new_board = self.copy()
-        new_board.board[coordinates] = color
+        new_board.place(coordinates, color)
         return new_board
     
     def copy(self):
@@ -74,6 +80,7 @@ class HexBoard:
 
     def game_over(self):
         """Check if the game has ended, either by a win or by a draw"""
+        if self.moves_made < self.size: return False
         return self.check_win(HexBoard.RED) or self.check_win(HexBoard.BLUE) or self.check_draw()
 
     def check_win(self, color):
@@ -93,9 +100,7 @@ class HexBoard:
 
     def check_draw(self):
         """Checks if we have any empty hexes left on the board"""
-        for _, color in self.board.items():
-            if color == HexBoard.EMPTY: return False
-        return True
+        return self.moves_made >= self.size ** 2
 
     def get_possible_moves(self):
         """Compiles a list of all empty hexes in the current hexboard"""
@@ -211,7 +216,7 @@ class HexBoard:
         i = 0
         for x in range(board_size):
             for y in range(board_size):
-                board.board[x, y] = int(pos[i])
+                board.place(x, y, int(pos[i]))
                 i += 1
         
         return board

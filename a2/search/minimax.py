@@ -84,9 +84,9 @@ class Minimax(HexSearchMethod):
             best_move = None
 
             for move in moves:
-                board.board[move] = color
+                board.place(move, color)
                 _, score = self.alpha_beta_search(board, depth - 1, color, opposite_color, alpha, beta, False)
-                board.board[move] = HexBoard.EMPTY
+                board.place(move, HexBoard.EMPTY)
 
                 if score == None:
                     return (None, None)
@@ -108,9 +108,9 @@ class Minimax(HexSearchMethod):
             best_move = None
 
             for move in moves:
-                board.board[move] = opposite_color
+                board.place(move, opposite_color)
                 _, score = self.alpha_beta_search(board, depth - 1, color, opposite_color, alpha, beta, True)
-                board.board[move] = HexBoard.EMPTY
+                board.place(move, HexBoard.EMPTY)
 
                 if score == None:
                     return (None, None)

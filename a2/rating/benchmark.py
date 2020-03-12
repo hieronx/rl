@@ -26,7 +26,7 @@ def run_benchmark():
 
         next_color = HexBoard.RED
         while not board.game_over():
-            board.board[minimax.get_next_move(board, next_color)] = next_color
+            board.place(minimax.get_next_move(board, next_color), next_color)
             next_color = HexBoard.BLUE if next_color == HexBoard.RED else HexBoard.RED
         
         game_times.append(time.time() - start_time)

@@ -12,7 +12,7 @@ def simulate_single_game(board_size, r1, r2, m1, m2, r1_first, r1_color, r2_colo
     
     while not board.game_over():
         move = (m1 if r1_turn else m2).get_next_move(board, r1_color if r1_turn else r2_color)
-        board.board[move] = r1_color if r1_turn else r2_color
+        board.place(move, r1_color if r1_turn else r2_color)
         r1_turn = False if r1_turn else True
 
     if board.check_draw():

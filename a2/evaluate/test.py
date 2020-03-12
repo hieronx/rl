@@ -15,8 +15,8 @@ class TestEval(unittest.TestCase):
         dijkstra = Dijkstra()
         board = HexBoard(3)
 
-        board.board[(0, 0)] = HexBoard.BLUE
-        board.board[(1, 0)] = HexBoard.BLUE
+        board.place((0, 0), HexBoard.BLUE)
+        board.place((1, 0), HexBoard.BLUE)
 
         self.assertEqual(dijkstra.get_score(board, (0,0), [(2,0)], HexBoard.BLUE, HexBoard.RED), 1)
 
@@ -25,14 +25,14 @@ class TestEval(unittest.TestCase):
         astar = AStar()
         board = HexBoard(4)
 
-        board.board[(1, 0)] = HexBoard.RED
-        board.board[(2, 0)] = HexBoard.RED
-        board.board[(3, 0)] = HexBoard.RED
-        board.board[(0, 2)] = HexBoard.RED
+        board.place((1, 0), HexBoard.RED)
+        board.place((2, 0), HexBoard.RED)
+        board.place((3, 0), HexBoard.RED)
+        board.place((0, 2), HexBoard.RED)
 
-        board.board[(1, 1)] = HexBoard.BLUE
-        board.board[(2, 1)] = HexBoard.BLUE
-        board.board[(3, 1)] = HexBoard.BLUE
+        board.place((1, 1), HexBoard.BLUE)
+        board.place((2, 1), HexBoard.BLUE)
+        board.place((3, 1), HexBoard.BLUE)
 
         self.assertEqual(astar.get_score(board, (0, 1), [(3, 1)], HexBoard.BLUE, HexBoard.RED), 1)
         self.assertEqual(astar.get_score(board, (0, 0), [(0, 3)], HexBoard.RED, HexBoard.BLUE), 3)
@@ -47,15 +47,15 @@ class TestEval(unittest.TestCase):
         dijkstra = Dijkstra()
         board = HexBoard(3)
         
-        board.board[(0, 0)] = HexBoard.BLUE
-        board.board[(1, 0)] = HexBoard.BLUE
+        board.place((0, 0), HexBoard.BLUE)
+        board.place((1, 0), HexBoard.BLUE)
 
         self.assertTrue(dijkstra.evaluate_board(board, HexBoard.BLUE) > dijkstra.evaluate_board(board, HexBoard.RED))
 
         board = HexBoard(3)
 
-        board.board[(0, 0)] = HexBoard.RED
-        board.board[(0, 1)] = HexBoard.RED
+        board.place((0, 0), HexBoard.RED)
+        board.place((0, 1), HexBoard.RED)
 
         self.assertTrue(dijkstra.evaluate_board(board, HexBoard.RED) > dijkstra.evaluate_board(board, HexBoard.BLUE))
 

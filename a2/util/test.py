@@ -12,9 +12,9 @@ class TestUtil(unittest.TestCase):
 
     def test_from_cache(self):
         board = HexBoard(3)
-        board.board[(0,0)] = HexBoard.RED
-        board.board[(1,1)] = HexBoard.BLUE
-        board.board[(0,1)] = HexBoard.BLUE
+        board.place((0,0), HexBoard.RED)
+        board.place((1,1), HexBoard.BLUE)
+        board.place((0,1), HexBoard.BLUE)
 
         hash_code = board.hash_code()
 
@@ -28,15 +28,15 @@ class TestUtil(unittest.TestCase):
             looser = HexBoard.BLUE if i == 0 else HexBoard.RED
             board = HexBoard(3)
 
-            board.board[(1, 1)] = looser
-            board.board[(2, 1)] = looser
-            board.board[(1, 2)] = looser
-            board.board[(2, 2)] = looser
-            board.board[(0, 0)] = winner
-            board.board[(1, 0)] = winner
-            board.board[(2, 0)] = winner
-            board.board[(0, 1)] = winner
-            board.board[(0, 2)] = winner
+            board.place((1, 1), looser)
+            board.place((2, 1), looser)
+            board.place((1, 2), looser)
+            board.place((2, 2), looser)
+            board.place((0, 0), winner)
+            board.place((1, 0), winner)
+            board.place((2, 0), winner)
+            board.place((0, 1), winner)
+            board.place((0, 2), winner)
 
             self.assertEqual(board.check_win(winner), True)
             self.assertEqual(board.check_win(looser), False)
@@ -46,7 +46,7 @@ class TestUtil(unittest.TestCase):
         endable_board = HexBoard(4)
 
         while not endable_board.game_over():
-            endable_board.board[(random.randint(0, 4), random.randint(0, 4))] = HexBoard.RED
+            endable_board.place((random.randint(0, 4), random.randint(0, 4)), HexBoard.RED)
 
         self.assertEqual(endable_board.game_over(), True)
         self.assertEqual(endable_board.check_win(HexBoard.RED), True)
@@ -54,7 +54,7 @@ class TestUtil(unittest.TestCase):
 
     def test_weird_win_detection_edge_case(self):
         board = HexBoard(3)
-        board.board[(2, 0)] = HexBoard.BLUE
+        board.place((2, 0), HexBoard.BLUE)
         self.assertEqual(board.check_win(HexBoard.BLUE), False)
 
     def test_source_coordinates(self):
@@ -79,8 +79,8 @@ class TestUtil(unittest.TestCase):
         """Makes sure the hashcode that we're generating is indeed what we expect it to be"""
         board = HexBoard(3)
 
-        board.board[(0, 0)] = HexBoard.RED
-        board.board[(1, 2)] = HexBoard.BLUE
+        board.place((0, 0), HexBoard.RED)
+        board.place((1, 2), HexBoard.BLUE)
 
         self.assertEqual(board.hash_code(HexBoard.BLUE), 3331333321)
         self.assertEqual(board.hash_code(HexBoard.RED), 3331333322)
@@ -88,17 +88,17 @@ class TestUtil(unittest.TestCase):
     def test_reward(self):
         board = HexBoard(3)
 
-        board.board[(0, 0)] = HexBoard.BLUE
-        board.board[(1, 0)] = HexBoard.BLUE
-        board.board[(2, 0)] = HexBoard.BLUE
+        board.place((0, 0), HexBoard.BLUE)
+        board.place((1, 0), HexBoard.BLUE)
+        board.place((2, 0), HexBoard.BLUE)
 
         self.assertEqual(board.get_reward(HexBoard.BLUE), 1)
 
     def test_from_hash_code(self):
         board = HexBoard(3)
 
-        board.board[(0, 0)] = HexBoard.RED
-        board.board[(1, 2)] = HexBoard.BLUE
+        board.place((0, 0), HexBoard.RED)
+        board.place((1, 2), HexBoard.BLUE)
 
         self.assertEqual(board.hash_code(HexBoard.BLUE), 3331333321)
 
@@ -107,11 +107,11 @@ class TestUtil(unittest.TestCase):
 
     def get_move_between_boards(self):
         board1 = HexBoard(3)
-        board.board[(0, 0)] = HexBoard.RED
+        board.place((0, 0), HexBoard.RED)
 
         board2 = HexBoard(3)
-        board2.board[(0, 0)] = HexBoard.RED
-        board2.board[(1, 2)] = HexBoard.BLUE
+        board2.place((0, 0), HexBoard.RED)
+        board2.place((1, 2), HexBoard.BLUE)
 
         self.assertEqual(board.get_move_between_boards(board2), (1, 2))
 
