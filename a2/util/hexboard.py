@@ -167,7 +167,7 @@ class HexBoard:
             return 0
 
     @classmethod          
-    @lru_cache(maxsize=128)
+    @lru_cache(maxsize=32)
     def get_target_coordinates(cls, color, size):
         """Returns the coordinates of the right border (for blue) or the left border (for red)"""
         if color == HexBoard.BLUE:
@@ -176,7 +176,7 @@ class HexBoard:
             return [(i, self.size - 1) for i in range(size)] 
 
     @classmethod
-    @lru_cache(maxsize=128)
+    @lru_cache(maxsize=32)
     def get_source_coordinates(cls, color, size):
         """Returns the coordinates of the left border (for blue) or the top border (for red)"""
         if color == HexBoard.BLUE:
@@ -199,7 +199,7 @@ class HexBoard:
         return board
 
     @classmethod
-    @lru_cache(maxsize=4)
+    @lru_cache(maxsize=2)
     def get_opposite_color(cls, color):
         """Returns the opposite color of the provided color. Returns BLUE if the color is not recognized"""
         return HexBoard.RED if color == HexBoard.BLUE else HexBoard.BLUE
