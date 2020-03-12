@@ -19,9 +19,6 @@ class TestUtil(unittest.TestCase):
         hash_code = board.hash_code()
 
         new_board = HexBoard.from_hash_code(hash_code)
-
-        board.print()
-        new_board.print()
         self.assertEqual(board.hash_code(), new_board.hash_code())
 
     def test_win_detection(self):

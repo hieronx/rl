@@ -4,19 +4,19 @@ import math
 import time
 from collections import defaultdict
 from operator import attrgetter
-import util
 
-from util import cls, log_n
+from util import cls
 from util.hexboard import HexBoard
-from . import HexSearchMethod
+from search import HexSearchMethod
 from search.debug import log_tree
+from search import selection_rules
 
 logger = logging.getLogger(__name__)
 
 class MCTS(HexSearchMethod):
     """This object houses all the code necessary for the MCTS implementation"""
 
-    def __init__(self, num_iterations, time_limit = None, Cp = 1.4, live_play = True):
+    def __init__(self, num_iterations, time_limit = None, Cp = 1.4, live_play=True):
         self.num_iterations = num_iterations
         self.time_limit = time_limit
         self.Cp = Cp
@@ -68,10 +68,14 @@ class MCTSNode:
         self.board = board
         self.player = player
         self.parent = parent
+        
         self.children = []
         self.untried_moves = self.board.get_possible_moves()
-        self.num_visits = 0
-        self.reward = 0
+
+        self.num_visits, self.num_amaf_visits = 0, 0
+        self.reward, self.amaf_reward = 0, 0
+
+        self.amaf_alpha = 0.0
 
     def is_fully_expanded(self):
         return len(self.untried_moves) == 0
@@ -98,12 +102,32 @@ class MCTSNode:
     def backpropagate(self, reward):
         self.num_visits += 1
         self.reward += reward
+
+        # AMAF
+        # the AMAF update adjusts the counts at the backpropagated nodes
+        # as well as all siblings of the backpropagated nodes that correspond to a move made by the same player later in the play-out
+
+        # https://ris.utwente.nl/ws/portalfiles/portal/5338883/polyy.pdf
+        #  The indirect pair maintains the cumulative wins iw and samples is of all playouts made from any sibling of n where the move corresponding to n was played in the playout by the player who’s turn it is
+
+        # https://durhamgo.club/GoByGo.pdf
+        # When using AMAF, all the moves played out during the simulation phase need to be remembered. When it then comes to updating the tree, the algorithm not only updates the nodes that were visited, but also increments the AMAF scores for any sibling nodes which represent moves that were played at some point further on in that game.
+
         if self.parent is not None:
+            # Run All-Moves-As-First
+            for sibling in self.parent.children:
+                sibling.num_amaf_visits += 1
+                sibling.amaf_reward += reward
+
             self.parent.backpropagate(reward)
     
     def child_with_most_visits(self):
         return max(self.children, key=attrgetter('num_visits'))
 
     def best_child(self, Cp):
-        ln_N = log_n(self.num_visits)
-        return max(self.children, key=lambda x: util.uct(x.reward, x.num_visits, Cp, ln_N))
+        ln_N = selection_rules.log_n(self.num_visits)
+
+        if self.amaf_alpha > 0.0:
+            return max(self.children, key=lambda child: selection_rules.alpha_amaf_score(child, self.amaf_alpha, Cp, ln_N))
+        else:
+            return max(self.children, key=lambda child: selection_rules.uct_score(child.reward, child.num_visits, Cp, ln_N))
