@@ -31,12 +31,12 @@ class TestSearch(unittest.TestCase):
 
         board.board[(1, 0)] = HexBoard.RED
         board.board[(1, 1)] = HexBoard.RED
-        board.print()
 
         self.assertFalse(board.game_over())
 
-        mcts = MCTS(5000)
+        mcts = MCTS(20000, None, 1.4, False)
         move = mcts.get_next_move(board, HexBoard.RED)
+        new_board = board.make_move(move, HexBoard.RED)
         self.assertEqual(move, (1, 2))
         
     def test_minimax_top_left(self):
@@ -66,7 +66,7 @@ class TestSearch(unittest.TestCase):
     #     board.board[(0, 2)] = HexBoard.BLUE
     #     board.board[(0, 3)] = HexBoard.BLUE
 
-    #     mcts = MCTS(5000)
+    #     mcts = MCTS(5000, None, 1.4, False)
     #     move = mcts.get_next_move(board, HexBoard.RED)
     #     self.assertEqual(move, (1, 3))
 

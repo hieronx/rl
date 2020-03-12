@@ -37,7 +37,6 @@ class MCTS(HexSearchMethod):
                 self.run_iteration()
                 i += 1
 
-
         if self.live_play:
             elapsed_time = time.time() - start_time
             cls()
