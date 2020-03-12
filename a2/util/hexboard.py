@@ -77,6 +77,13 @@ class HexBoard:
 
     def check_win(self, color):
         """Check if we have made a snake from the source side to the opposing side for the provided color"""
+        useful_to_check = False
+        for move in HexBoard.get_target_coordinates(color, self.size):
+            if self.board[move] == color:
+                useful_to_check = True
+                break
+        if not useful_to_check: return False
+        
         for move in HexBoard.get_source_coordinates(color, self.size):
             if self.board[move] != color: continue
             if self.traverse(color, move, {}):
@@ -167,7 +174,7 @@ class HexBoard:
             return 0
 
     @classmethod          
-    @lru_cache(maxsize=128)
+    @lru_cache(maxsize=32)
     def get_target_coordinates(cls, color, size):
         """Returns the coordinates of the right border (for blue) or the left border (for red)"""
         if color == HexBoard.BLUE:
@@ -176,7 +183,7 @@ class HexBoard:
             return [(i, size - 1) for i in range(size)] 
 
     @classmethod
-    @lru_cache(maxsize=128)
+    @lru_cache(maxsize=32)
     def get_source_coordinates(cls, color, size):
         """Returns the coordinates of the left border (for blue) or the top border (for red)"""
         if color == HexBoard.BLUE:
@@ -199,7 +206,7 @@ class HexBoard:
         return board
 
     @classmethod
-    @lru_cache(maxsize=4)
+    @lru_cache(maxsize=2)
     def get_opposite_color(cls, color):
         """Returns the opposite color of the provided color. Returns BLUE if the color is not recognized"""
         return HexBoard.RED if color == HexBoard.BLUE else HexBoard.BLUE
