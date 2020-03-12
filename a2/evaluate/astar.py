@@ -1,6 +1,7 @@
 import math
 from heapq import heappop, heappush
 from functools import lru_cache
+from util.hexboard import HexBoard
 
 from . import HexEvalMethod
 

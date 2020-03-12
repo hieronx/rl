@@ -94,12 +94,7 @@ class MCTSNode:
         turn = self.player
         winner = current_board.get_winner()
         while winner is None:
-            try:
-                move = all_moves.pop()
-            except:
-                current_board.print()
-                print(current_board.get_winner())
-                exit()
+            move = all_moves.pop()
             current_board.place(move, turn)
             turn = HexBoard.RED if turn == HexBoard.BLUE else HexBoard.BLUE
             winner = current_board.get_winner()

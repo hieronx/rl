@@ -93,6 +93,7 @@ class TestUtil(unittest.TestCase):
         board.place((2, 0), HexBoard.BLUE)
 
         self.assertEqual(HexBoard.get_reward(HexBoard.BLUE, board.get_winner()), 1)
+        self.assertEqual(HexBoard.get_reward(HexBoard.RED, board.get_winner()), -1)
 
     def test_from_hash_code(self):
         board = HexBoard(3)
