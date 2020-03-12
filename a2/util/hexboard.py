@@ -14,14 +14,13 @@ class HexBoard:
         """Creates a new empty board with the provided size"""
         self.board = {}
         self.size = board_size
-        
-        self.target_coords = {HexBoard.BLUE: HexBoard.get_target_coordinates(HexBoard.BLUE, board_size), HexBoard.RED: HexBoard.get_target_coordinates(HexBoard.RED, board_size)}
-        self.source_coords = {HexBoard.BLUE: HexBoard.get_source_coordinates(HexBoard.BLUE, board_size), HexBoard.RED: HexBoard.get_source_coordinates(HexBoard.RED, board_size)}
+
+        self.target_coords = HexBoard.get_target_coordinates(board_size)
+        self.source_coords = HexBoard.get_source_coordinates(board_size)
         
         for x in range(board_size):
             for y in range(board_size):
                 self.board[x, y] = HexBoard.EMPTY
-
 
     def is_empty(self, coordinates):
         """Returns if the board is empty at the provided coordinate"""
@@ -176,16 +175,26 @@ class HexBoard:
 
     @classmethod          
     @lru_cache(maxsize=32)
-    def get_target_coordinates(cls, color, size):
+    def get_target_coordinates_for_color(cls, color, size):
         """Returns the coordinates of the right border (for blue) or the left border (for red)"""
         if color == HexBoard.BLUE:
             return [(size - 1, i) for i in range(size)]
         else:
             return [(i, size - 1) for i in range(size)] 
 
+    @classmethod          
+    @lru_cache(maxsize=32)
+    def get_target_coordinates(cls, size):
+        return {HexBoard.BLUE: HexBoard.get_target_coordinates_for_color(HexBoard.BLUE, size), HexBoard.RED: HexBoard.get_target_coordinates_for_color(HexBoard.RED, size)}
+
+    @classmethod          
+    @lru_cache(maxsize=32)
+    def get_source_coordinates(cls, size):
+        return {HexBoard.BLUE: HexBoard.get_source_coordinates_for_color(HexBoard.BLUE, size), HexBoard.RED: HexBoard.get_source_coordinates_for_color(HexBoard.RED, size)}
+
     @classmethod
     @lru_cache(maxsize=32)
-    def get_source_coordinates(cls, color, size):
+    def get_source_coordinates_for_color(cls, color, size):
         """Returns the coordinates of the left border (for blue) or the top border (for red)"""
         if color == HexBoard.BLUE:
             return [(0, i) for i in range(size)]
