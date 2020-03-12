@@ -171,9 +171,9 @@ class HexBoard:
     def get_target_coordinates(cls, color, size):
         """Returns the coordinates of the right border (for blue) or the left border (for red)"""
         if color == HexBoard.BLUE:
-            return [(self.size - 1, i) for i in range(size)]
+            return [(size - 1, i) for i in range(size)]
         else:
-            return [(i, self.size - 1) for i in range(size)] 
+            return [(i, size - 1) for i in range(size)] 
 
     @classmethod
     @lru_cache(maxsize=128)
