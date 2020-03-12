@@ -77,11 +77,10 @@ class HexBoard:
 
     def check_win(self, color):
         """Check if we have made a snake from the source side to the opposing side for the provided color"""
-        for move in self.get_source_coordinates(color):
+        for move in HexBoard.get_source_coordinates(color, self.size):
             if self.board[move] != color: continue
             if self.traverse(color, move, {}):
-                return  True
-        
+                return True        
         return False
 
     def check_draw(self):
@@ -94,22 +93,6 @@ class HexBoard:
         """Compiles a list of all empty hexes in the current hexboard"""
         if self.game_over(): return []
         return [coord for coord, color in self.board.items() if color == HexBoard.EMPTY]
-        
-    @lru_cache(maxsize=2)
-    def get_source_coordinates(self, color):
-        """Returns the coordinates of the left border (for blue) or the top border (for red)"""
-        if color == HexBoard.BLUE:
-            return [(0, i) for i in range(self.size)]
-        else:
-            return [(i, 0) for i in range(self.size)]
-            
-    @lru_cache(maxsize=2)
-    def get_target_coordinates(self, color):
-        """Returns the coordinates of the right border (for blue) or the left border (for red)"""
-        if color == HexBoard.BLUE:
-            return [(self.size - 1, i) for i in range(self.size)]
-        else:
-            return [(i, self.size - 1) for i in range(self.size)]
 
     def print(self):
         """Outputs the board pieces to the console"""
@@ -182,6 +165,24 @@ class HexBoard:
             return -1
         else:
             return 0
+
+    @classmethod          
+    @lru_cache(maxsize=128)
+    def get_target_coordinates(cls, color, size):
+        """Returns the coordinates of the right border (for blue) or the left border (for red)"""
+        if color == HexBoard.BLUE:
+            return [(self.size - 1, i) for i in range(size)]
+        else:
+            return [(i, self.size - 1) for i in range(size)] 
+
+    @classmethod
+    @lru_cache(maxsize=128)
+    def get_source_coordinates(cls, color, size):
+        """Returns the coordinates of the left border (for blue) or the top border (for red)"""
+        if color == HexBoard.BLUE:
+            return [(0, i) for i in range(size)]
+        else:
+            return [(i, 0) for i in range(size)]
 
     @classmethod
     def from_hash_code(cls, hash_code):
