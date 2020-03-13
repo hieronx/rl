@@ -27,7 +27,7 @@ def save_plots():
     # N
     ax = df.plot(x='N', y='config_mu', kind='scatter', figsize=(8,5))
     ax.set_xlabel('N')
-    ax.set_ylabel('TrueSkill μ-value')    
+    ax.set_ylabel('TrueSkill μ-value')
     fn = 'output/hyperparameter-search_N.png'
     ax.get_figure().savefig(fn)
     logger.info('Saved %s' % fn)

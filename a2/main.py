@@ -7,7 +7,8 @@ from util.game import HexGame
 from rating.trueskill import run_trueskill
 from rating.benchmark import run_benchmark
 from rating.configs import configs
-from tune.tune import run_hyperparameter_search
+from tune.tune import run_searches
+from tune.configs import tune_configs
 
 logging.basicConfig(format = '%(asctime)s - %(levelname)s - %(message)s',
                     datefmt = '%H:%M:%S',
@@ -36,16 +37,17 @@ if __name__ == '__main__':
     mcts.add_argument('--eval', choices=['Dijkstra', 'random', 'AStar'], default='Dijkstra', help='Choose the evaluation method')
 
     trueskill = subparsers.add_parser('trueskill', help='Evaluate the RL algorithm using TrueSkill')
+    trueskill.add_argument('--config', choices=configs.keys(), required=True, help='If added, evaluate using TrueSkill using the chosen configuration set')
     trueskill.add_argument('--max-threads', type=int, help='Set the maximum number of threads')
-    trueskill.add_argument('--config', choices=configs.keys(), default=None, help='If added, evaluate using TrueSkill using the chosen configuration set')
     trueskill.add_argument('--plot', action='store_true', help='If added, save the plots of the TrueSkill evaluations')
     trueskill.add_argument('--disable-tt', action='store_true', help='If added, disables the transposition table')
 
     tune = subparsers.add_parser('tune', help='Run a hyperparameter search for MCTS')
+    tune.add_argument('--config', choices=tune_configs.keys(), help='If added, run hyperparameter search for the chosen configuration set')
+    tune.add_argument('--all-configs', action='store_true', help='Whether to run all configurations')
     tune.add_argument('--max-threads', type=int, help='Set the maximum number of threads')
-    tune.add_argument('--size', type=int, default=3, help='Set the board size')
-    tune.add_argument('--num-configs', type=int, default=10, help='Set the number of configurations to try')
-    tune.add_argument('--num-games', type=int, default=10, help='Set the number of games to play per configuration')
+    tune.add_argument('--num-configs', type=int, default=50, help='Set the number of configurations to try')
+    tune.add_argument('--num-games', type=int, default=50, help='Set the number of games to play per configuration')
     tune.add_argument('--overwrite', action='store_true', help='Whether to overwrite the previous run')
     tune.add_argument('--plot-steps', type=int, default=None, help='Save plots every X number of configurations')
 
@@ -79,17 +81,17 @@ if __name__ == '__main__':
     
     # TrueSkill command
     elif args.command == 'trueskill':
-        if not args.config:
-            logger.critical('--config needs to be set.')
-            exit()
-
         logger.info('Booting TrueSkill rating script...')
         run_trueskill(args)
     
     # Tune command
     elif args.command == 'tune':
+        if not args.config and not args.all_configs:
+            logger.critical('--config or --all-configs needs to be set.')
+            exit()
+
         logger.info('Booting hyperparameter tuning script...')
-        run_hyperparameter_search(args)
+        run_searches(args)
     
     # Benchmark command
     elif args.command == 'benchmark':
