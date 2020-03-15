@@ -3,6 +3,7 @@ import random
 from multiprocessing import Pool, freeze_support, cpu_count
 from trueskill import Rating, rate_1vs1
 import pickle
+import time
 
 from util.hexboard import HexBoard
 from search.mcts import MCTS
@@ -34,7 +35,7 @@ def run_hyperparameter_search(args):
     # Ability to resume hyperparameter search runs
     already_finished, continue_previous_run, remaining_num_configs = resume_previous_run(args)
     if already_finished: return
-    if not continue_previous_run: save_configuration_result(args.search, ('N', 'Cp', 'num_games', 'baseline_mu', 'baseline_sigma', 'config_mu', 'config_sigma'), clear=True)
+    if not continue_previous_run: save_configuration_result(args.search, ('N', 'Cp', 'num_games', 'avg_time_per_game', 'baseline_mu', 'baseline_sigma', 'config_mu', 'config_sigma'), clear=True)
 
     # Create the randomly sampled configurations
     random.seed(1)
@@ -70,6 +71,8 @@ def test_configuration(config_input):
     r1_color, r2_color = HexBoard.RED, HexBoard.BLUE
     r1_first = True
 
+    start_time = time.time()
+
     if confidence_threshold:
         actual_num_games = 0
         while r1.sigma > confidence_threshold or r2.sigma > confidence_threshold:
@@ -77,8 +80,15 @@ def test_configuration(config_input):
             r1, r2, r1_first = simulate_single_game(board_size, r1, r2, m1, m2, r1_first, r1_color, r2_color)
             actual_num_games += 1
 
-    for _ in range(num_games):
-        m1, m2 = baseline, MCTS(N, None, Cp, False)
-        r1, r2, r1_first = simulate_single_game(board_size, r1, r2, m1, m2, r1_first, r1_color, r2_color)
+            if actual_num_games > 100:
+                logger.info('Breaking configuration search at TrueSkill σ=%.2f after 100 games, for N=%d and Cp=%.2f.' % (r1.sigma, N, Cp))
+                break
+    else:
+        for _ in range(num_games):
+            m1, m2 = baseline, MCTS(N, None, Cp, False)
+            r1, r2, r1_first = simulate_single_game(board_size, r1, r2, m1, m2, r1_first, r1_color, r2_color)
+
+    elapsed_time = time.time() - start_time
+    avg_time_per_game = elapsed_time / (actual_num_games or num_games)
         
-    save_configuration_result(search_name, (N, Cp, actual_num_games or num_games, r1.mu, r1.sigma, r2.mu, r2.sigma))
+    save_configuration_result(search_name, (N, Cp, actual_num_games or num_games, avg_time_per_game, r1.mu, r1.sigma, r2.mu, r2.sigma))
