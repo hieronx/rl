@@ -4,6 +4,8 @@ import logging
 import pickle
 import pandas as pd
 
+from tune.searches import searches
+
 logger = logging.getLogger(__name__)
 
 def save_configuration_result(search_name, data, clear=False):
@@ -21,24 +23,16 @@ def print_results(search_name):
     optimal = df.iloc[df['config_mu'].idxmax()]
     logger.info(u'Optimal hyperparameters: N = %d, Cp = %.4f' % (optimal.N, optimal.Cp))
 
-def save_plots(search_name):
+def save_plots(search_name, search):
     df = pd.read_csv('output/search_%s.csv' % search_name, index_col=None, header=0)
 
-    # N
-    ax = df.plot(x='N', y='config_mu', kind='scatter', figsize=(8,5))
-    ax.set_xlabel('N')
-    ax.set_ylabel('TrueSkill μ-value')
-    fn = 'output/search_%s_N.png' % search_name
-    ax.get_figure().savefig(fn)
-    logger.info('Saved %s' % fn)
-
-    # Cp
-    ax = df.plot(x='Cp', y='config_mu', kind='scatter', figsize=(8,5))
-    ax.set_xlabel('Cp')
-    ax.set_ylabel('TrueSkill μ-value')    
-    fn = 'output/search_%s_Cp.png' % search_name
-    ax.get_figure().savefig(fn)
-    logger.info('Saved %s' % fn)
+    for i, plot in enumerate(search['plots']):
+        ax = plot['create'](df)
+        ax.set_xlabel(plot['xlabel'])
+        ax.set_ylabel(plot['ylabel'])
+        fn = 'output/search_%s_%d.png' % (search_name, i)
+        ax.get_figure().savefig(fn)
+        logger.info('Saved %s' % fn)
 
 def resume_previous_run(args):
     continue_previous_run = False
@@ -51,10 +45,11 @@ def resume_previous_run(args):
             if remaining_num_configs <= 0:
                 logger.info('Hyperparameter search was already completed, call with --overwrite to re-run.')
                 print_results(args.search)
-                exit()
+                save_plots(args.search, searches[args.search])
+                return True, False, False
 
             else:
                 continue_previous_run = True
                 logger.info('Resuming from previous hyperparameter search.')
     
-    return continue_previous_run, remaining_num_configs
+    return False, continue_previous_run, remaining_num_configs

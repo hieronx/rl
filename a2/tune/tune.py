@@ -22,7 +22,7 @@ def run_tune(args):
             if 'num-configs' in searches[search_name]: args.num_configs = searches[search_name]['num-configs']
             if 'confidence-threshold' in searches[search_name]: args.confidence_threshold = searches[search_name]['confidence-threshold']
             run_hyperparameter_search(args)
-            print('\n')
+            print()
 
 def run_hyperparameter_search(args):
     freeze_support()
@@ -32,7 +32,8 @@ def run_hyperparameter_search(args):
     logger.info('Searching %s: N=[%d, %d] and Cp=[%.2f, %.2f] for board size %d.' % (args.search, search['N']['min'], search['N']['max'], search['Cp']['min'], search['Cp']['max'], search['size']))
 
     # Ability to resume hyperparameter search runs
-    continue_previous_run, remaining_num_configs = resume_previous_run(args)
+    already_finished, continue_previous_run, remaining_num_configs = resume_previous_run(args)
+    if already_finished: return
     if not continue_previous_run: save_configuration_result(args.search, ('N', 'Cp', 'num_games', 'baseline_mu', 'baseline_sigma', 'config_mu', 'config_sigma'), clear=True)
 
     # Create the randomly sampled configurations
@@ -51,7 +52,7 @@ def run_hyperparameter_search(args):
         # Print results and save plots every once in a while
         if args.plot_steps and finished_count % args.plot_steps == 0:
             print_results(args.search)
-            save_plots(args.search)
+            save_plots(args.search, search)
 
         pass
     
@@ -59,7 +60,7 @@ def run_hyperparameter_search(args):
     logger.info('Saved output/hyperparameter-search_%s.csv' % args.search)
 
     print_results(args.search)
-    save_plots(args.search)
+    save_plots(args.search, search)
     
 def test_configuration(config_input):
     process_id, search_name, N, Cp, num_games, confidence_threshold, board_size, baseline = config_input
