@@ -22,4 +22,4 @@ To run the unit tests:
 ```python main.py trueskill --config minimax-vs-mcts --plot```
 
 ## Section 4 - Tune
-```python main.py tune```
+```python main.py tune --all```
