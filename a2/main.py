@@ -7,8 +7,8 @@ from util.game import HexGame
 from rating.trueskill import run_trueskill
 from rating.benchmark import run_benchmark
 from rating.configs import configs
-from tune.tune import run_searches
-from tune.configs import tune_configs
+from tune.tune import run_tune
+from tune.searches import searches
 
 logging.basicConfig(format = '%(asctime)s - %(levelname)s - %(message)s',
                     datefmt = '%H:%M:%S',
@@ -43,11 +43,12 @@ if __name__ == '__main__':
     trueskill.add_argument('--disable-tt', action='store_true', help='If added, disables the transposition table')
 
     tune = subparsers.add_parser('tune', help='Run a hyperparameter search for MCTS')
-    tune.add_argument('--config', choices=tune_configs.keys(), help='If added, run hyperparameter search for the chosen configuration set')
-    tune.add_argument('--all-configs', action='store_true', help='Whether to run all configurations')
+    tune.add_argument('--search', choices=searches.keys(), help='If added, run hyperparameter search for the chosen settings')
+    tune.add_argument('--all', action='store_true', help='Whether to run all saved searches')
     tune.add_argument('--max-threads', type=int, help='Set the maximum number of threads')
     tune.add_argument('--num-configs', type=int, default=50, help='Set the number of configurations to try')
     tune.add_argument('--num-games', type=int, default=50, help='Set the number of games to play per configuration')
+    tune.add_argument('--confidence-threshold', type=float, default=None, help='Set the sigma confidence threshold')
     tune.add_argument('--overwrite', action='store_true', help='Whether to overwrite the previous run')
     tune.add_argument('--plot-steps', type=int, default=None, help='Save plots every X number of configurations')
 
@@ -86,12 +87,16 @@ if __name__ == '__main__':
     
     # Tune command
     elif args.command == 'tune':
-        if not args.config and not args.all_configs:
-            logger.critical('--config or --all-configs needs to be set.')
+        if not args.search and not args.all:
+            logger.critical('--search or --all needs to be set.')
+            exit()
+
+        if args.num_games and args.confidence_threshold:
+            logger.critical('--num-games and --confidence-threshold cannot both be set.')
             exit()
 
         logger.info('Booting hyperparameter tuning script...')
-        run_searches(args)
+        run_tune(args)
     
     # Benchmark command
     elif args.command == 'benchmark':
