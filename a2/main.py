@@ -8,6 +8,7 @@ from rating.trueskill import run_trueskill
 from rating.benchmark import run_benchmark
 from rating.configs import configs
 from tune.tune import run_tune
+from tune.ffa import run_tune_ffa
 from tune.searches import searches
 
 logging.basicConfig(format = '%(asctime)s - %(levelname)s - %(message)s',
@@ -44,6 +45,7 @@ if __name__ == '__main__':
 
     tune = subparsers.add_parser('tune', help='Run a hyperparameter search for MCTS')
     tune.add_argument('--search', choices=searches.keys(), help='If added, run hyperparameter search for the chosen settings')
+    tune.add_argument('--ffa', action='store_true', help='Whether to run FFA hyperparameter search')
     tune.add_argument('--all', action='store_true', help='Whether to run all saved searches')
     tune.add_argument('--max-threads', type=int, help='Set the maximum number of threads')
     tune.add_argument('--num-configs', type=int, default=50, help='Set the number of configurations to try')
@@ -96,7 +98,7 @@ if __name__ == '__main__':
             exit()
 
         logger.info('Booting hyperparameter tuning script...')
-        run_tune(args)
+        run_tune(args) if not args.ffa else run_tune_ffa(args)
     
     # Benchmark command
     elif args.command == 'benchmark':
