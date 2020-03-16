@@ -66,7 +66,7 @@ def run_hyperparameter_search(args):
 
     pool = Pool(thread_count)
     finished_count = args.num_configs - remaining_num_configs
-    total_num_games = len(hyperparameter_configs)**2 * num_games_per_matchup
+    total_num_games = (len(hyperparameter_configs)**2 - len(hyperparameter_configs)) * num_games_per_matchup
     for _ in pool.imap_unordered(run_matchups, range(len(hyperparameter_configs))):
         finished_count += 1
         
@@ -87,6 +87,7 @@ def run_matchups(player_id):
     global completed_num_games, hyperparameter_configs, num_games_per_matchup
     player = hyperparameter_configs[player_id]
 
+    actual_num_games = 0
     for opponent in hyperparameter_configs:
         if player == opponent:
             continue
@@ -94,29 +95,36 @@ def run_matchups(player_id):
         m1, m2 = MCTS(player['N'], None, player['Cp'], False), MCTS(opponent['N'], None, opponent['Cp'], False)
         r1_color, r2_color = HexBoard.RED, HexBoard.BLUE
         r1_first = True
-
+        
         for _ in range(num_games_per_matchup):
             winner, r1_first = simulate_single_game_winner(player['size'], m1, m2, r1_first, r1_color, r2_color)
-        
-            # Only after completing the game do we get a lock, so it's locked for as short a time as possible
-            with player['trueskill_mu'].get_lock(), player['trueskill_sigma'].get_lock(), opponent['trueskill_mu'].get_lock(), opponent['trueskill_sigma'].get_lock():
-                r1 = Rating(mu=player['trueskill_mu'].value, sigma=player['trueskill_sigma'].value)
-                r2 = Rating(mu=opponent['trueskill_mu'].value, sigma=opponent['trueskill_sigma'].value)
 
-                if winner == HexBoard.EMPTY:
-                    r1, r2 = rate_1vs1(r1, r2, drawn=True)
-                elif winner == r1_color:
-                    r1, r2 = rate_1vs1(r1, r2, drawn=False)
-                elif winner == r2_color:
-                    r2, r1 = rate_1vs1(r2, r1, drawn=False)
-                
-                player['trueskill_mu'].value = r1.mu
-                player['trueskill_sigma'].value = r1.sigma
-                opponent['trueskill_mu'].value = r2.mu
-                opponent['trueskill_sigma'].value = r2.sigma
+            prev_r1 = Rating(mu=player['trueskill_mu'].value, sigma=player['trueskill_sigma'].value)
+            prev_r2 = Rating(mu=opponent['trueskill_mu'].value, sigma=opponent['trueskill_sigma'].value)
+            
+            if winner == HexBoard.EMPTY:
+                r1, r2 = rate_1vs1(prev_r1, prev_r2, drawn=True)
+            elif winner == r1_color:
+                r1, r2 = rate_1vs1(prev_r1, prev_r2, drawn=False)
+            elif winner == r2_color:
+                r2, r1 = rate_1vs1(prev_r2, prev_r1, drawn=False)
+
+            player_mu_diff, player_sigma_diff = r1.mu - prev_r1.mu, r1.sigma - prev_r1.sigma
+            opponent_mu_diff, opponent_sigma_diff = r2.mu - prev_r2.mu, r2.sigma - prev_r2.sigma
+
+            # Only after completing the game and calculating the mu and sigma difference, do we get a lock, so it's locked for as short a time as possible
+            with player['trueskill_mu'].get_lock(), player['trueskill_sigma'].get_lock(), opponent['trueskill_mu'].get_lock(), opponent['trueskill_sigma'].get_lock():
+                player['trueskill_mu'].value += player_mu_diff
+                player['trueskill_sigma'].value += player_sigma_diff
+                opponent['trueskill_mu'].value += opponent_mu_diff
+                opponent['trueskill_sigma'].value += opponent_sigma_diff
                 
             with completed_num_games.get_lock():
                 completed_num_games.value += 1
+
+            actual_num_games += 1
+    
+    save_configuration_result(player['search'], (player['N'], player['Cp'], actual_num_games, 0.0, 0.0, 0.0, player['trueskill_mu'].value, player['trueskill_sigma'].value))
 
 
 def print_progress():

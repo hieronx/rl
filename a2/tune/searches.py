@@ -1,8 +1,8 @@
 searches = {
     'sanity-check': {
         'baseline': { 'N': 100, 'Cp': 1.4 },
-        'size': 4,
-        'N': { 'min': 1, 'max': 10000 },
+        'size': 5,
+        'N': { 'min': 1, 'max': 5000 },
         'Cp': { 'min': 1.4, 'max': 1.4 },
         'num-configs': 20,
         'confidence-threshold': 1.0,
