@@ -9,14 +9,14 @@ import time
 from util.hexboard import HexBoard
 from search.mcts import MCTS
 from util import print_progressbar
-from tune.export import save_configuration_result, print_results, save_plots, resume_previous_run
+from tune.export import save_configuration_result, print_results, save_plots
 from rating.simulate import simulate_single_game_winner
 from tune.searches import searches
 
 logger = logging.getLogger(__name__)
 
 hyperparameter_configs = []
-num_games_per_matchup = 2 # should be a multiple of 2, as each player then has the advantage of starting the same # of times
+num_games_per_matchup = 1 # should be a multiple of 2, as each player then has the advantage of starting the same # of times
 
 completed_num_games = Value('i', 0)
 total_num_games = 0
@@ -38,14 +38,13 @@ def run_hyperparameter_search(args):
     global total_num_games, max_num_games_per_config, hyperparameter_configs
     freeze_support()
 
+    if args.num_configs == 0: return
+
     # Load the config to evaluate
     search = searches[args.search]
     logger.info('Searching %s FFA: N=[%d, %d] and Cp=[%.2f, %.2f] for board size %d.' % (args.search, search['N']['min'], search['N']['max'], search['Cp']['min'], search['Cp']['max'], search['size']))
 
-    # Ability to resume hyperparameter search runs
-    already_finished, continue_previous_run, remaining_num_configs = resume_previous_run(args)
-    if already_finished: return
-    if not continue_previous_run: save_configuration_result(args.search, ('N', 'Cp', 'num_games', 'avg_time_per_game', 'baseline_mu', 'baseline_sigma', 'config_mu', 'config_sigma'), clear=True)
+    save_configuration_result(args.search, ('N', 'Cp', 'num_games', 'avg_time_per_game', 'baseline_mu', 'baseline_sigma', 'config_mu', 'config_sigma'), clear=True)
 
     # Create the randomly sampled configurations
     hyperparameter_configs = [{
@@ -55,17 +54,17 @@ def run_hyperparameter_search(args):
         'size': search['size'],
         'trueskill_mu': Value('d', 25.0),
         'trueskill_sigma': Value('d', 25/3)
-    } for _ in range(remaining_num_configs)]
+    } for _ in range(args.num_configs)]
 
     # Start the multi-threaded hyperparameter search
-    thread_count = min(args.max_threads or (4 * cpu_count()), remaining_num_configs)
+    thread_count = min(args.max_threads or (4 * cpu_count()), args.num_configs)
     logger.info('Creating %d threads for parallel search.' % thread_count)
 
     t = threading.Thread(target=print_progress)
     t.start()
 
     pool = Pool(thread_count)
-    finished_count = args.num_configs - remaining_num_configs
+    finished_count = 0
     total_num_games = (len(hyperparameter_configs)**2 - len(hyperparameter_configs)) * num_games_per_matchup
     for _ in pool.imap_unordered(run_matchups, range(len(hyperparameter_configs))):
         finished_count += 1

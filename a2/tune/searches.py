@@ -1,10 +1,10 @@
 searches = {
     'sanity-check': {
         'baseline': { 'N': 100, 'Cp': 1.4 },
-        'size': 5,
+        'size': 6,
         'N': { 'min': 1, 'max': 5000 },
         'Cp': { 'min': 1.4, 'max': 1.4 },
-        'num-configs': 20,
+        'num-configs': 0,
         'confidence-threshold': 1.0,
         'plots': [
             {
@@ -16,10 +16,10 @@ searches = {
     },
     'cp-range': {
         'baseline': { 'N': 500, 'Cp': 1.4 },
-        'size': 3,
+        'size': 5,
         'N': { 'min': 5000, 'max': 5000 },
         'Cp': { 'min': 0.5, 'max': 2.0 },
-        'num-configs': 100,
+        'num-configs': 50,
         'confidence-threshold': 0.5,
         'plots': [
             {
@@ -31,10 +31,10 @@ searches = {
     },
     'n-range': {
         'baseline': { 'N': 100, 'Cp': 1.4 },
-        'size': 3,
-        'N': { 'min': 100, 'max': 10000 },
+        'size': 5,
+        'N': { 'min': 1, 'max': 10000 },
         'Cp': { 'min': 1.4, 'max': 1.4 },
-        'num-configs': 100,
+        'num-configs': 50,
         'confidence-threshold': 0.5,
         'plots': [
             {
@@ -46,10 +46,10 @@ searches = {
     },
     'n-vs-cp': {
         'baseline': { 'N': 100, 'Cp': 1.4 },
-        'size': 3,
-        'N': { 'min': 100, 'max': 10000 },
+        'size': 5,
+        'N': { 'min': 1, 'max': 10000 },
         'Cp': { 'min': 0.5, 'max': 2.0 },
-        'num-configs': 250,
+        'num-configs': 100,
         'confidence-threshold': 0.5,
         'plots': [
             {
