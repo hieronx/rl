@@ -1,9 +1,10 @@
 searches = {
+    # Time: around 1h
     'cp-range': {
         'size': 5,
         'N': { 'min': 100, 'max': 100 },
         'Cp': { 'min': 0.01, 'max': 2.0 },
-        'num-configs': 100,
+        'num-configs': 200,
         'plots': [
             {
                 'xcol': 'Cp',
@@ -13,9 +14,10 @@ searches = {
             }
         ]
     },
+    # Time: around 4h (num-configs=50), around 15m (num-configs=25)
     'n-range': {
-        'size': 5,
-        'N': { 'min': 1, 'max': 10000 },
+        'size': 6,
+        'N': { 'min': 1, 'max': 5000 },
         'Cp': { 'min': 1.4, 'max': 1.4 },
         'num-configs': 50,
         'plots': [
@@ -27,10 +29,11 @@ searches = {
             }
         ]
     },
+    # Time: around 3h
     'n-vs-cp': {
         'size': 5,
-        'N': { 'min': 1, 'max': 10000 },
-        'Cp': { 'min': 0.5, 'max': 2.0 },
+        'N': { 'min': 1, 'max': 5000 },
+        'Cp': { 'min': 0.01, 'max': 2.0 },
         'num-configs': 100,
         'plots': [
             {
