@@ -15,7 +15,7 @@ from tune.searches import searches
 
 logger = logging.getLogger(__name__)
 
-max_num_games_per_config = 500
+max_num_games_per_config = 300
 
 completed_num_games = Value('i', 0)
 total_num_games = 0
@@ -59,7 +59,6 @@ def run_hyperparameter_search(args):
     pool = Pool(thread_count)
     finished_count = args.num_configs - remaining_num_configs
     total_num_games = args.num_configs * max_num_games_per_config
-    # progressbar(, desc='Running hyperparameter search', start=args.num_configs - remaining_num_configs, total=args.num_configs)
     for _ in pool.imap_unordered(test_configuration, hyperparameter_configs):
         finished_count += 1
         
