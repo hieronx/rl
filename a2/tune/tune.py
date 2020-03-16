@@ -16,7 +16,7 @@ from tune.searches import searches
 logger = logging.getLogger(__name__)
 
 hyperparameter_configs = []
-num_games_per_matchup = 1 # should be a multiple of 2, as each player then has the advantage of starting the same # of times
+num_games_per_matchup = 1
 
 completed_num_games = Value('i', 0)
 total_num_games = 0
@@ -41,8 +41,6 @@ def run_hyperparameter_search(args):
     # Load the config to evaluate
     search = searches[args.search]
     logger.info('Searching %s: N=[%d, %d] and Cp=[%.2f, %.2f] for board size %d.' % (args.search, search['N']['min'], search['N']['max'], search['Cp']['min'], search['Cp']['max'], search['size']))
-    
-    save_configuration_result(args.search, ('N', 'Cp', 'num_games', 'avg_time_per_game', 'baseline_mu', 'baseline_sigma', 'config_mu', 'config_sigma'), clear=True)
 
     # Create the randomly sampled configurations
     hyperparameter_configs = [{
@@ -58,21 +56,17 @@ def run_hyperparameter_search(args):
     thread_count = min(args.max_threads or (4 * cpu_count()), args.num_configs)
     logger.info('Creating %d threads for parallel search.' % thread_count)
 
-    t = threading.Thread(target=print_progress)
+    t = threading.Thread(target=print_progress, args=(args.plot_steps, args.search, search))
     t.start()
 
     pool = Pool(thread_count)
-    finished_count = 0
-    total_num_games = (len(hyperparameter_configs)**2 - len(hyperparameter_configs)) * num_games_per_matchup
-    for _ in pool.imap_unordered(run_matchups, range(len(hyperparameter_configs))):
-        finished_count += 1
-        
-        # Print results and save plots every once in a while
-        if args.plot_steps and finished_count % args.plot_steps == 0:
-            print_results(args.search)
-            save_plots(args.search, search)
+    total_num_games = (len(hyperparameter_configs)**2 - len(hyperparameter_configs)) * args.num_games
+    save_results(args.search)
 
+    for _ in pool.imap_unordered(run_matchups, [(player_id, args.num_games) for player_id in range(len(hyperparameter_configs))]):        
         pass
+
+    save_results(args.search)
     
     logger.info('Finished hyperparameter search of %d randomly sampled configurations.' % args.num_configs)
     logger.info('Saved output/hyperparameter-search_%s.csv' % args.search)
@@ -80,11 +74,11 @@ def run_hyperparameter_search(args):
     print_results(args.search)
     save_plots(args.search, search)
     
-def run_matchups(player_id):
-    global completed_num_games, hyperparameter_configs, num_games_per_matchup
+def run_matchups(matchup_input):
+    global completed_num_games, hyperparameter_configs
+    player_id, num_games = matchup_input
     player = hyperparameter_configs[player_id]
 
-    actual_num_games = 0
     for opponent in hyperparameter_configs:
         if player == opponent:
             continue
@@ -93,7 +87,7 @@ def run_matchups(player_id):
         r1_color, r2_color = HexBoard.RED, HexBoard.BLUE
         r1_first = True
         
-        for _ in range(num_games_per_matchup):
+        for _ in range(num_games):
             winner, r1_first = simulate_single_game_winner(player['size'], m1, m2, r1_first, r1_color, r2_color)
 
             prev_r1 = Rating(mu=player['trueskill_mu'].value, sigma=player['trueskill_sigma'].value)
@@ -119,15 +113,28 @@ def run_matchups(player_id):
             with completed_num_games.get_lock():
                 completed_num_games.value += 1
 
-            actual_num_games += 1
-    
-    save_configuration_result(player['search'], (player['N'], player['Cp'], actual_num_games, 0.0, 0.0, 0.0, player['trueskill_mu'].value, player['trueskill_sigma'].value))
+def save_results(search_name):
+    global hyperparameter_configs
+    save_configuration_result(search_name, ('size', 'N', 'Cp', 'trueskill_mu', 'trueskill_sigma'), clear=True)
 
+    for player in hyperparameter_configs:
+        save_configuration_result(player['search'], (player['size'], player['N'], player['Cp'], player['trueskill_mu'].value, player['trueskill_sigma'].value))
 
-def print_progress():
+def print_progress(plot_steps, search_name, search):
     global completed_num_games, total_num_games
+
     start_time = time.time()
+    last_logged_perc = 0.0
+
     while total_num_games == 0 or int(completed_num_games.value) < total_num_games:
         if total_num_games > 0:
+            if plot_steps is not None:
+                current_perc = int(completed_num_games.value) / total_num_games
+                if current_perc >= (last_logged_perc + (plot_steps / 100)):
+                    last_logged_perc = current_perc
+                    save_results(search_name)
+                    # save_plots(search_name, search)
+
             print_progressbar(desc='Running hyperparameter search', completed=int(completed_num_games.value), start_time=start_time, total=total_num_games)
+
         time.sleep(0.5)

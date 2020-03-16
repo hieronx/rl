@@ -21,20 +21,20 @@ def save_configuration_result(search_name, data, clear=False):
 
 def print_results(search_name):
     df = pd.read_csv('output/search_%s.csv' % search_name, index_col=None, header=0)
-    optimal = df.iloc[df['config_mu'].idxmax()]
+    optimal = df.iloc[df['trueskill_mu'].idxmax()]
     logger.info(u'Optimal hyperparameters: N = %d, Cp = %.4f' % (optimal.N, optimal.Cp))
 
 def save_plots(search_name, search):
     df = pd.read_csv('output/search_%s.csv' % search_name, index_col=None, header=0)
 
     for i, plot in enumerate(search['plots']):
-        ax = df.plot(x=plot['xcol'], y='config_mu', kind='scatter', figsize=(8,5))
+        ax = df.plot(x=plot['xcol'], y=plot['ycol'], kind='scatter', figsize=(8,5))
         ax.set_xlabel(plot['xlabel'])
         ax.set_ylabel(plot['ylabel'])
 
         # Calculate linear regression
         X = df[plot['xcol']].values.reshape(-1, 1)
-        y = df['config_mu'].values.reshape(-1, 1)
+        y = df[plot['ycol']].values.reshape(-1, 1)
         lr = LinearRegression().fit(X, y)
         y_pred = lr.predict(X)
         ax.plot(X, y_pred, color='orange')

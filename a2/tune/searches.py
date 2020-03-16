@@ -7,6 +7,7 @@ searches = {
         'plots': [
             {
                 'xcol': 'N',
+                'ycol': 'trueskill_mu',
                 'xlabel': 'N',
                 'ylabel': 'TrueSkill μ-value',
             }
@@ -15,11 +16,12 @@ searches = {
     'cp-range': {
         'size': 5,
         'N': { 'min': 150, 'max': 150 },
-        'Cp': { 'min': 0.5, 'max': 2.0 },
-        'num-configs': 100,
+        'Cp': { 'min': 0.01, 'max': 1.0 },
+        'num-configs': 50,
         'plots': [
             {
                 'xcol': 'Cp',
+                'ycol': 'trueskill_mu',
                 'xlabel': 'Cp',
                 'ylabel': 'TrueSkill μ-value'
             }
@@ -33,6 +35,7 @@ searches = {
         'plots': [
             {
                 'xcol': 'N',
+                'ycol': 'trueskill_mu',
                 'xlabel': 'N',
                 'ylabel': 'TrueSkill μ-value'
             }
@@ -46,6 +49,7 @@ searches = {
         'plots': [
             {
                 'xcol': 'N',
+                'ycol': 'Cp',
                 'xlabel': 'N',
                 'ylabel': 'Cp'
             }
