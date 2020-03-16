@@ -28,7 +28,9 @@ def run_tune(args):
     else:
         for search_name in searches.keys():
             args.search = search_name
+            args.overwrite = True
             if 'num-configs' in searches[search_name]: args.num_configs = searches[search_name]['num-configs']
+            
             run_hyperparameter_search(args)
             print()
 
