@@ -1,25 +1,21 @@
-from search.minimax import Minimax
-from search.mcts import MCTS
-from evaluate.dijkstra import Dijkstra
-
 searches = {
-    # 'sanity-check': {
-    #     'baseline': MCTS(100, None, 1.4, False),
-    #     'size': 4,
-    #     'N': { 'min': 1, 'max': 10000 },
-    #     'Cp': { 'min': 1.4, 'max': 1.4 },
-    #     'num-configs': 50,
-    #     'confidence-threshold': 0.5,
-    #     'plots': [
-    #         {
-    #             'create': lambda df: df.plot(x='N', y='config_mu', kind='scatter', figsize=(8,5)),
-    #             'xlabel': 'N',
-    #             'ylabel': 'TrueSkill μ-value'
-    #         }
-    #     ]
-    # },
+    'sanity-check': {
+        'baseline': { 'N': 100, 'Cp': 1.4 },
+        'size': 4,
+        'N': { 'min': 1, 'max': 10000 },
+        'Cp': { 'min': 1.4, 'max': 1.4 },
+        'num-configs': 20,
+        'confidence-threshold': 1.0,
+        'plots': [
+            {
+                'create': lambda df: df.plot(x='N', y='config_mu', kind='scatter', figsize=(8,5)),
+                'xlabel': 'N',
+                'ylabel': 'TrueSkill μ-value'
+            }
+        ]
+    },
     'cp-range': {
-        'baseline': MCTS(500, None, 1.4, False),
+        'baseline': { 'N': 500, 'Cp': 1.4 },
         'size': 3,
         'N': { 'min': 5000, 'max': 5000 },
         'Cp': { 'min': 0.5, 'max': 2.0 },
@@ -34,7 +30,7 @@ searches = {
         ]
     },
     'n-range': {
-        'baseline': MCTS(100, None, 1.4, False),
+        'baseline': { 'N': 100, 'Cp': 1.4 },
         'size': 3,
         'N': { 'min': 100, 'max': 10000 },
         'Cp': { 'min': 1.4, 'max': 1.4 },
@@ -49,7 +45,7 @@ searches = {
         ]
     },
     'n-vs-cp': {
-        'baseline': MCTS(100, None, 1.4, False),
+        'baseline': { 'N': 100, 'Cp': 1.4 },
         'size': 3,
         'N': { 'min': 100, 'max': 10000 },
         'Cp': { 'min': 0.5, 'max': 2.0 },

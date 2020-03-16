@@ -15,7 +15,7 @@ from tune.searches import searches
 
 logger = logging.getLogger(__name__)
 
-max_num_games_per_config = 300
+max_num_games_per_config = 50
 
 completed_num_games = Value('i', 0)
 total_num_games = 0
@@ -89,7 +89,7 @@ def test_configuration(config_input):
     if confidence_threshold:
         actual_num_games = 0
         while r1.sigma > confidence_threshold or r2.sigma > confidence_threshold:
-            m1, m2 = baseline, MCTS(N, None, Cp, False)
+            m1, m2 = MCTS(baseline['N'], None, baseline['Cp'], False), MCTS(N, None, Cp, False)
             r1, r2, r1_first = simulate_single_game(board_size, r1, r2, m1, m2, r1_first, r1_color, r2_color)
 
             actual_num_games += 1
