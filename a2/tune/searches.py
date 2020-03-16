@@ -1,14 +1,15 @@
 from search.minimax import Minimax
+from search.mcts import MCTS
 from evaluate.dijkstra import Dijkstra
 
 searches = {
     'sanity-check': {
-        'baseline': Minimax(1, None, Dijkstra(), False, False),
-        'size': 3,
+        'baseline': MCTS(100, None, 1.4, False),
+        'size': 4,
         'N': { 'min': 100, 'max': 10000 },
         'Cp': { 'min': 1.4, 'max': 1.4 },
-        'num-configs': 5,
-        'confidence-threshold': 3.0,
+        'num-configs': 50,
+        'confidence-threshold': 0.1,
         'plots': [
             {
                 'create': lambda df: df.plot(x='N', y='config_mu', kind='scatter', figsize=(8,5)),
