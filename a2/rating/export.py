@@ -23,7 +23,7 @@ def save_plots(args, player_permutations):
     df = pd.read_csv("output/" + args.config + ".csv", index_col=None, header=0, delimiter=';')
     if not os.path.exists('output'): os.makedirs('output')
 
-    for i, (p1, p2) in enumerate(player_permutations):
+    for i, (_, _, p1, p2) in enumerate(player_permutations):
         m1, m2 = get_search_class(p1, args.disable_tt), get_search_class(p2, args.disable_tt)
 
         games = df[(df['p1'] == str(m1)) & (df['p2'] == str(m2))] 

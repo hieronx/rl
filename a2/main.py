@@ -31,7 +31,7 @@ if __name__ == '__main__':
     
     mcts = search_sp.add_parser('mcts', help='Play against MCTS')
     mcts.add_argument('--num-iterations', type=int, default=None, help='Set the number of iterations for MCTS')
-    mcts.add_argument('--cp', type=float, default=1.4, help='Set the exploration-exploitation tradeoff constant for MCTS')
+    mcts.add_argument('--cp', type=float, default=0.4, help='Set the exploration-exploitation tradeoff constant for MCTS')
     mcts.add_argument('--time-limit', type=float, default=None, help='Set the time limit for MCTS')
     mcts.add_argument('--size', type=int, default=4, help='Set the board size')
     mcts.add_argument('--eval', choices=['Dijkstra', 'random', 'AStar'], default='Dijkstra', help='Choose the evaluation method')

@@ -59,10 +59,7 @@ def run_hyperparameter_search(args):
     thread_count = min(args.max_threads or (4 * cpu_count()), args.num_configs)
     logger.info('Creating %d threads for parallel search.' % thread_count)
 
-    if os.name == 'nt':
-        pool = ThreadPool(thread_count)
-    else:
-        pool = Pool(thread_count)
+    pool = ThreadPool(thread_count) if os.name == 'nt' else Pool(thread_count)
 
     completed_pairs = 0
     start_time = time.time()
@@ -99,7 +96,7 @@ def run_matchup(matchup_input):
 
     m1, m2 = MCTS(player['N'], None, player['Cp'], False), MCTS(opponent['N'], None, opponent['Cp'], False)
     r1_color, r2_color = HexBoard.RED, HexBoard.BLUE
-    r1_first = True
+    r1_first = bool(random.getrandbits(1))
     
     winner, r1_first = simulate_single_game_winner(player['size'], m1, m2, r1_first, r1_color, r2_color)
 

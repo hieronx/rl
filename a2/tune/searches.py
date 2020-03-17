@@ -19,8 +19,8 @@ searches = {
     'n-range': {
         'size': 6,
         'N': { 'min': 1, 'max': 5000 },
-        'Cp': { 'min': 1.4, 'max': 1.4 },
-        'num-configs': 50,
+        'Cp': { 'min': 0.4, 'max': 0.4 },
+        'num-configs': 20,
         'plots': [
             {
                 'xcol': 'N',

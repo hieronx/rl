@@ -16,7 +16,7 @@ logger = logging.getLogger(__name__)
 class MCTS(HexSearchMethod):
     """This object houses all the code necessary for the MCTS implementation"""
 
-    def __init__(self, num_iterations, time_limit = None, Cp = 1.4, live_play=True, rave_k=-1, debug=False):
+    def __init__(self, num_iterations, time_limit = None, Cp = 0.4, live_play=True, rave_k=-1, debug=False):
         self.num_iterations = num_iterations
         self.time_limit = time_limit
         self.Cp = Cp
