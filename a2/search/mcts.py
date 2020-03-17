@@ -66,9 +66,10 @@ class MCTS(HexSearchMethod):
         return current_node
 
     def __str__(self):
-        return 'MCTS(%d,%.2fs,%.2f)' % (
+        return 'MCTS(%d, %.2fs, %.2f, %.2f)' % (
             self.num_iterations if self.num_iterations is not None else 0,
             self.time_limit if self.time_limit is not None else 0,
+            self.Cp,
             self.amaf_alpha
         )
         
