@@ -75,11 +75,12 @@ class MCTS(HexSearchMethod):
         
 class MCTSNode:
 
-    def __init__(self, board, player, parent=None, turn=None, amaf_alpha=0.0):
+    def __init__(self, board, parent, turn, prev_move, amaf_alpha=0.0):
         self.board = board
-        self.player = player
+        self.player = parent.player
         self.parent = parent
-        self.turn = turn
+        self.prev_move = prev_move
+        self.turn = HexBoard.get_opposite_color(turn)
         
         self.children = []
         self.untried_moves = self.board.get_possible_moves()
@@ -95,9 +96,9 @@ class MCTSNode:
         return len(self.untried_moves) == 0
 
     def expand(self):
-        move = self.untried_moves.pop() 
-        next_board = self.board.make_move(move, self.player)
-        child_node = MCTSNode(next_board, parent=self, player=self.player, turn=HexBoard.get_opposite_color(self.turn), amaf_alpha=self.amaf_alpha)
+        next_move = self.untried_moves.pop() 
+        next_board = self.board.make_move(next_move, self.player)
+        child_node = MCTSNode(next_board, self, turn, next_move, amaf_alpha=self.amaf_alpha)
         self.children.append(child_node)
         return child_node
     
