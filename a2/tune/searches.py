@@ -4,7 +4,7 @@ searches = {
         'size': 5,
         'N': { 'min': 100, 'max': 100 },
         'Cp': { 'min': 0.01, 'max': 2.0 },
-        'num-configs': 10,
+        'num-configs': 200,
         'plots': [
             {
                 'xcol': 'Cp',
