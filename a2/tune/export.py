@@ -17,15 +17,15 @@ def save_configuration_result(search_name, data, clear=False):
     if clear and os.path.isfile(fn): os.remove(fn)
 
     with open(fn,'a') as fd:
-        fd.write(','.join(map(str, data)) + '\n')
+        fd.write(';'.join(map(str, data)) + '\n')
 
 def print_results(search_name):
-    df = pd.read_csv('output/search_%s.csv' % search_name, index_col=None, header=0)
+    df = pd.read_csv('output/search_%s.csv' % search_name, index_col=None, header=0, delimiter=';')
     optimal = df.iloc[df['trueskill_mu'].idxmax()]
     logger.info(u'Optimal hyperparameters: N = %d, Cp = %.4f' % (optimal.N, optimal.Cp))
 
 def save_plots(search_name, search):
-    df = pd.read_csv('output/search_%s.csv' % search_name, index_col=None, header=0)
+    df = pd.read_csv('output/search_%s.csv' % search_name, index_col=None, header=0, delimiter=';')
 
     for i, plot in enumerate(search['plots']):
         ax = df.plot(x=plot['xcol'], y=plot['ycol'], kind='scatter', figsize=(8,5))

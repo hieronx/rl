@@ -129,4 +129,4 @@ class Minimax(HexSearchMethod):
             return (best_move, best_score)
     
     def __str__(self):
-        return 'Minimax(depth=%d, time_limit=%.2fs, eval=%s)' % (self.depth if self.depth is not None else 0, self.time_limit if self.time_limit is not None else 0, self.evaluate.__class__.__name__)
+        return 'Minimax(%d, %.2fs, %s)' % (self.depth if self.depth is not None else 0, self.time_limit if self.time_limit is not None else 0, self.evaluate.__class__.__name__)

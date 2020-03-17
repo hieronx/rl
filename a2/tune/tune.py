@@ -1,10 +1,12 @@
 import logging
 import random
 from multiprocessing import Pool, freeze_support, cpu_count, Value, Array
+from multiprocessing.pool import ThreadPool
 import threading
 from trueskill import Rating, rate_1vs1
 import pickle
 import time
+import os
 
 from util.hexboard import HexBoard
 from search.mcts import MCTS
@@ -47,24 +49,30 @@ def run_hyperparameter_search(args):
         'trueskill': Rating()
     } for i in range(args.num_configs)]
 
-    # Start the multi-threaded hyperparameter search
-    thread_count = min(args.max_threads or (4 * cpu_count()), args.num_configs)
-    logger.info('Creating %d threads for parallel search.' % thread_count)
-
-    pool = Pool(thread_count)
-
     pairs = []
     for player in hyperparameter_configs:
         for opponent in hyperparameter_configs:
             if player != opponent:
                 pairs.append((player, opponent))
 
+    # Start the multi-threaded hyperparameter search
+    thread_count = min(args.max_threads or (4 * cpu_count()), args.num_configs)
+    logger.info('Creating %d threads for parallel search.' % thread_count)
+
+    if os.name == 'nt':
+        pool = ThreadPool(thread_count)
+    else:
+        pool = Pool(thread_count)
+
     completed_pairs = 0
     start_time = time.time()
+    print_progressbar(desc='Running hyperparameter search', completed=0, start_time=start_time, total=len(pairs))
+    
     for winner, player_id, opponent_id in pool.imap_unordered(run_matchup, pairs):
         completed_pairs += 1
         print_progressbar(desc='Running hyperparameter search', completed=completed_pairs, start_time=start_time, total=len(pairs))
         
+        # Calculate new ratings
         r1 = hyperparameter_configs[player_id]['trueskill']
         r2 = hyperparameter_configs[opponent_id]['trueskill']
 
@@ -78,6 +86,7 @@ def run_hyperparameter_search(args):
         hyperparameter_configs[player_id]['trueskill'] = r1
         hyperparameter_configs[opponent_id]['trueskill'] = r2
 
+    # Save the results and plots
     save_results(args.search, hyperparameter_configs)
 
     logger.info('Finished hyperparameter search of %d randomly sampled configurations.' % args.num_configs)

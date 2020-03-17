@@ -14,7 +14,7 @@ def alpha_amaf_score(c, alpha, Cp, ln_N):
 
 @lru_cache(maxsize=256)
 def amaf_score(amaf_reward, num_amaf_visits):
-    return amaf_reward / num_amaf_visits
+    return amaf_reward / num_amaf_visits if amaf_reward > 0 and num_amaf_visits > 0 else 0.0
 
 @lru_cache(maxsize=256)
 def uct_score(reward, num_visits, Cp, ln_N):
