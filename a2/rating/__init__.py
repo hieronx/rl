@@ -9,7 +9,7 @@ def get_search_class(player, disable_tt=False):
     if player['search'] == 'minimax':
         return Minimax(player['depth'], player['time_limit'], get_eval_class(player['eval']), False, disable_tt)
     elif player['search'] == 'mcts':
-        return MCTS(player['depth'], player['time_limit'], 1.4, False)
+        return MCTS(player['depth'], player['time_limit'], 1.4, False, player['amaf_alpha'])
 
 def get_eval_class(eval_method):
     if eval_method == 'Dijkstra':

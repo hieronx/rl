@@ -13,8 +13,8 @@ def save_result(config_name, data, clear=False):
     fn = 'output/%s.csv' % config_name
     if clear and os.path.isfile(fn): os.remove(fn)
 
-    with open(fn,'a') as fd:
-        fd.write(','.join(map(str, data)) + '\n')
+    with open(fn, 'a') as fd:
+        fd.write(';'.join(map(str, data)) + '\n')
 
 def save_plots(args, player_permutations):
     """Saves the plots that were generated from the player permutations to the disk using the timestamp as part of the filename"""
