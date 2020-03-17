@@ -34,11 +34,11 @@ configs = {
         ]
     },
     'uct-vs-amaf-alpha': {
-        'board_size': 3,
+        'board_size': 5,
         'game_count': 50,
         'players': [
-            { 'depth': None, 'time_limit': 0.1, 'search': 'mcts', 'eval': 'Dijkstra', 'amaf_alpha': 0.0 },
-            { 'depth': None, 'time_limit': 0.1, 'search': 'mcts', 'eval': 'Dijkstra', 'amaf_alpha': 0.75 },
+            { 'depth': 100, 'time_limit': None, 'search': 'mcts', 'eval': 'Dijkstra', 'amaf_alpha': 0.0 },
+            { 'depth': 100, 'time_limit': None, 'search': 'mcts', 'eval': 'Dijkstra', 'amaf_alpha': 0.75 },
         ]
     },
     'dijkstra-performance': {

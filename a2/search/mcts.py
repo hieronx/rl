@@ -38,7 +38,7 @@ class MCTS(HexSearchMethod):
             while (time.time() - start_time) < self.time_limit:
                 self.run_iteration()
                 i += 1
-
+                
         if self.live_play:
             elapsed_time = time.time() - start_time
             cls()
@@ -97,12 +97,12 @@ class MCTSNode:
     def expand(self):
         move = self.untried_moves.pop() 
         next_board = self.board.make_move(move, self.player)
-        child_node = MCTSNode(next_board, parent=self, player=self.player, turn=HexBoard.get_opposite_color(self.turn))
+        child_node = MCTSNode(next_board, parent=self, player=self.player, turn=HexBoard.get_opposite_color(self.turn), amaf_alpha=self.amaf_alpha)
         self.children.append(child_node)
         return child_node
     
     def simulate(self):
-        self.simulated_moves = []
+        if self.amaf_alpha > 0.0: self.simulated_moves = []
 
         current_board = self.board.copy()
         all_moves = current_board.get_possible_moves()
@@ -113,7 +113,9 @@ class MCTSNode:
 
         while winner is None:
             move = all_moves.pop()
-            if self.amaf_alpha > 0.0: self.simulated_moves.append(move) # Store a list of all simulated moves
+
+            if self.amaf_alpha > 0.0:
+                self.simulated_moves.append((turn, move)) # Store a list of all simulated moves
 
             current_board.place(move, turn)
             turn = HexBoard.RED if turn == HexBoard.BLUE else HexBoard.BLUE
@@ -121,24 +123,14 @@ class MCTSNode:
 
         return HexBoard.get_reward(self.player, winner)
 
-    def backpropagate(self, reward, simulated_boards=None):
+    def backpropagate(self, reward):
         self.num_visits += 1
         self.reward += reward
-
-        # AMAF
-        # the AMAF update adjusts the counts at the backpropagated nodes
-        # as well as all siblings of the backpropagated nodes that correspond to a move made by the same player later in the play-out
-
-        # https://ris.utwente.nl/ws/portalfiles/portal/5338883/polyy.pdf
-        #  The indirect pair maintains the cumulative wins iw and samples is of all playouts made from any sibling of n where the move corresponding to n was played in the playout by the player who’s turn it is
-
-        # https://durhamgo.club/GoByGo.pdf
-        # When using AMAF, all the moves played out during the simulation phase need to be remembered. When it then comes to updating the tree, the algorithm not only updates the nodes that were visited, but also increments the AMAF scores for any sibling nodes which represent moves that were played at some point further on in that game.
 
         if self.parent is not None:
             if self.amaf_alpha > 0.0:
                 # Run All-Moves-As-First
-                simulated_boards = [self.parent.board.make_move(move, HexBoard.get_opposite_color(self.turn)).hash_code() for move in self.simulated_moves]
+                simulated_boards = [self.parent.board.make_move(move, turn).hash_code() for turn, move in self.simulated_moves]
 
                 for sibling in self.parent.children:
                     if sibling.board is not self.board and sibling.board.hash_code() in simulated_boards:
