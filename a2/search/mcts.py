@@ -16,27 +16,27 @@ logger = logging.getLogger(__name__)
 class MCTS(HexSearchMethod):
     """This object houses all the code necessary for the MCTS implementation"""
 
-    def __init__(self, num_iterations, time_limit = None, Cp = 1.4, live_play=True, amaf_alpha=0.0, debug=False):
+    def __init__(self, num_iterations, time_limit = None, Cp = 1.4, live_play=True, rave_k=-1, debug=False):
         self.num_iterations = num_iterations
         self.time_limit = time_limit
         self.Cp = Cp
         self.live_play = live_play
-        self.amaf_alpha = amaf_alpha
+        self.rave_k = rave_k
         self.debug = debug
         
     def get_next_move(self, board, color):
         start_time = time.time()
-        self.root = MCTSNode(board.copy(), parent=None, player=color, turn=color, amaf_alpha=self.amaf_alpha)
+        self.root = MCTSNode(board.copy(), parent=None, player=color, turn=color, rave_k=self.rave_k)
 
         # Run the main MCTS loop num_iterations times
         i = 0
         if self.num_iterations:
             for _ in range(self.num_iterations):
-                self.run_iteration()
+                self.run_iteration(i)
                 i += 1
         else:
             while (time.time() - start_time) < self.time_limit:
-                self.run_iteration()
+                self.run_iteration(i)
                 i += 1
                 
         if self.live_play:
@@ -46,40 +46,40 @@ class MCTS(HexSearchMethod):
 
         if self.debug: log_tree(self.root)
 
-        next_board = self.root.child_with_most_visits().board
+        next_board = self.root.child_with_most_visits(self.num_iterations).board
         return HexBoard.get_move_between_boards(self.root.board, next_board)
     
-    def run_iteration(self):
-        node = self.select_and_expand()
+    def run_iteration(self, iteration_idx):
+        node = self.select_and_expand(iteration_idx)
         reward = node.simulate()
         node.backpropagate(reward, node.player)
 
-    def select_and_expand(self):
+    def select_and_expand(self, iteration_idx):
         current_node = self.root
         winner = current_node.board.get_winner()
         while winner is None:
             if not current_node.is_fully_expanded():
                 return current_node.expand()
             else:
-                current_node = current_node.best_child(self.Cp) # UCT select
+                current_node = current_node.best_child(iteration_idx, self.Cp) # UCT select
             winner = current_node.board.get_winner()
         return current_node
 
     def __str__(self):
-        return 'MCTS(%d, %.2fs, %.2f, %.2f)' % (
+        return 'MCTS(%d, %.2fs, %.2f, %d)' % (
             self.num_iterations if self.num_iterations is not None else 0,
             self.time_limit if self.time_limit is not None else 0,
             self.Cp,
-            self.amaf_alpha
+            self.rave_k
         )
         
 class MCTSNode:
 
-    def __init__(self, board, parent, turn, prev_move, amaf_alpha=0.0):
+    def __init__(self, board, player, parent=None, turn=None, rave_k=0.0):
         self.board = board
-        self.player = parent.player
+        self.player = player
         self.parent = parent
-        self.prev_move = prev_move
+        # self.prev_move = prev_move
         self.turn = HexBoard.get_opposite_color(turn)
         
         self.children = []
@@ -90,20 +90,20 @@ class MCTSNode:
         self.num_visits, self.num_amaf_visits = 0, 0
         self.reward, self.amaf_reward = 0, 0
 
-        self.amaf_alpha = amaf_alpha
+        self.rave_k = rave_k
 
     def is_fully_expanded(self):
         return len(self.untried_moves) == 0
 
     def expand(self):
-        next_move = self.untried_moves.pop() 
-        next_board = self.board.make_move(next_move, self.player)
-        child_node = MCTSNode(next_board, self, turn, next_move, amaf_alpha=self.amaf_alpha)
+        move = self.untried_moves.pop() 
+        next_board = self.board.make_move(move, self.player)
+        child_node = MCTSNode(next_board, parent=self, player=self.player, turn=HexBoard.get_opposite_color(self.turn), rave_k=self.rave_k)
         self.children.append(child_node)
         return child_node
     
     def simulate(self):
-        if self.amaf_alpha > 0.0: self.simulated_moves_by_player = { 1: [], 2: [] }
+        if self.rave_k > 0.0: self.simulated_moves_by_player = { 1: [], 2: [] }
 
         current_board = self.board.copy()
         all_moves = current_board.get_possible_moves()
@@ -115,7 +115,7 @@ class MCTSNode:
         while winner is None:
             move = all_moves.pop()
 
-            if self.amaf_alpha > 0.0:
+            if self.rave_k > 0:
                 self.simulated_moves_by_player[turn].append(move) # Store a list of all simulated moves
 
             current_board.place(move, turn)
@@ -129,9 +129,9 @@ class MCTSNode:
         self.reward += reward
 
         if self.parent is not None:
-            if self.amaf_alpha > 0.0:
+            if self.rave_k > 0:
                 # Run All-Moves-As-First
-                simulated_boards = [self.parent.board.make_move(move, turn).hash_code() for move in self.simulated_moves_by_player[turn]]
+                simulated_boards = [self.board.make_move(move, turn).hash_code() for move in self.simulated_moves_by_player[turn]]
 
                 for child in self.children:
                     if child.board.hash_code() in simulated_boards:
@@ -141,15 +141,17 @@ class MCTSNode:
             # Backpropagate further up
             self.parent.backpropagate(reward, HexBoard.get_opposite_color(turn))
     
-    def child_with_most_visits(self):
-        return self.best_child(0.0)
+    def child_with_most_visits(self, num_iterations):
+        return self.best_child(num_iterations, 0.0)
 
         # return max(self.children, key=attrgetter('num_visits'))
 
-    def best_child(self, Cp):
+    def best_child(self, iteration_idx, Cp):
         ln_N = selection_rules.log_n(self.num_visits)
 
-        if self.amaf_alpha > 0.0:
-            return max(self.children, key=lambda child: selection_rules.alpha_amaf_score(child, self.amaf_alpha, Cp, ln_N))
+        if self.rave_k > 0:
+            beta = math.sqrt(self.rave_k / (self.rave_k + 3 * iteration_idx))
+
+            return max(self.children, key=lambda child: selection_rules.alpha_amaf_score(child, beta, Cp, ln_N))
         else:
             return max(self.children, key=lambda child: selection_rules.uct_score(child.reward, child.num_visits, Cp, ln_N))

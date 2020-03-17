@@ -33,12 +33,12 @@ configs = {
             { 'depth': None, 'time_limit': 0.1, 'search': 'mcts', 'eval': 'Dijkstra' },
         ]
     },
-    'uct-vs-amaf-alpha': {
-        'board_size': 4,
+    'uct-vs-rave': {
+        'board_size': 5,
         'game_count': 50,
         'players': [
-            { 'depth': 400, 'time_limit': None, 'search': 'mcts', 'eval': 'Dijkstra', 'amaf_alpha': 0.0 },
-            { 'depth': 400, 'time_limit': None, 'search': 'mcts', 'eval': 'Dijkstra', 'amaf_alpha': 0.75 },
+            { 'depth': 200, 'time_limit': None, 'search': 'mcts', 'eval': 'Dijkstra', 'rave_k': -1 },
+            { 'depth': 200, 'time_limit': None, 'search': 'mcts', 'eval': 'Dijkstra', 'rave_k': 1000 },
         ]
     },
     'dijkstra-performance': {
