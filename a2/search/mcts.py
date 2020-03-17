@@ -52,7 +52,7 @@ class MCTS(HexSearchMethod):
     def run_iteration(self):
         node = self.select_and_expand()
         reward = node.simulate()
-        node.backpropagate(reward)
+        node.backpropagate(reward, node.player)
 
     def select_and_expand(self):
         current_node = self.root
@@ -84,7 +84,7 @@ class MCTSNode:
         self.children = []
         self.untried_moves = self.board.get_possible_moves()
 
-        self.simulated_moves = []
+        self.simulated_moves_by_player = { 1: [], 2: [] }
 
         self.num_visits, self.num_amaf_visits = 0, 0
         self.reward, self.amaf_reward = 0, 0
@@ -102,7 +102,7 @@ class MCTSNode:
         return child_node
     
     def simulate(self):
-        if self.amaf_alpha > 0.0: self.simulated_moves = []
+        if self.amaf_alpha > 0.0: self.simulated_moves_by_player = { 1: [], 2: [] }
 
         current_board = self.board.copy()
         all_moves = current_board.get_possible_moves()
@@ -115,7 +115,7 @@ class MCTSNode:
             move = all_moves.pop()
 
             if self.amaf_alpha > 0.0:
-                self.simulated_moves.append((turn, move)) # Store a list of all simulated moves
+                self.simulated_moves_by_player[turn].append(move) # Store a list of all simulated moves
 
             current_board.place(move, turn)
             turn = HexBoard.RED if turn == HexBoard.BLUE else HexBoard.BLUE
@@ -123,22 +123,22 @@ class MCTSNode:
 
         return HexBoard.get_reward(self.player, winner)
 
-    def backpropagate(self, reward):
+    def backpropagate(self, reward, turn=None):
         self.num_visits += 1
         self.reward += reward
 
         if self.parent is not None:
             if self.amaf_alpha > 0.0:
                 # Run All-Moves-As-First
-                simulated_boards = [self.parent.board.make_move(move, turn).hash_code() for turn, move in self.simulated_moves]
+                simulated_boards = [self.parent.board.make_move(move, turn).hash_code() for move in self.simulated_moves_by_player[turn]]
 
-                for sibling in self.parent.children:
-                    if sibling.board is not self.board and sibling.board.hash_code() in simulated_boards:
-                        sibling.num_amaf_visits += 1
-                        sibling.amaf_reward += reward
+                for child in self.children:
+                    if child.board.hash_code() in simulated_boards:
+                        child.num_amaf_visits += 1
+                        child.amaf_reward += reward
 
             # Backpropagate further up
-            self.parent.backpropagate(reward)
+            self.parent.backpropagate(reward, HexBoard.get_opposite_color(turn))
     
     def child_with_most_visits(self):
         return self.best_child(0.0)
