@@ -33,11 +33,12 @@ def save_plots(search_name, search):
         ax.set_ylabel(plot['ylabel'])
 
         # Calculate linear regression
-        X = df[plot['xcol']].values.reshape(-1, 1)
-        y = df[plot['ycol']].values.reshape(-1, 1)
-        lr = LinearRegression().fit(X, y)
-        y_pred = lr.predict(X)
-        ax.plot(X, y_pred, color='orange')
+        if plot['linear-regression'] == True:
+            X = df[plot['xcol']].values.reshape(-1, 1)
+            y = df[plot['ycol']].values.reshape(-1, 1)
+            lr = LinearRegression().fit(X, y)
+            y_pred = lr.predict(X)
+            ax.plot(X, y_pred, color='orange')
 
         fn = 'output/search_%s_%d.png' % (search_name, i)
         ax.get_figure().savefig(fn)

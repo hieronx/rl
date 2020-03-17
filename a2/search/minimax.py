@@ -31,11 +31,12 @@ class Minimax(HexSearchMethod):
 
         max_depth = self.depth or 1
         if self.depth:
-            best_move, _ = self.alpha_beta_search(board, self.depth, color, opposite_color, alpha, beta, True)
+            best_move, _ = self.alpha_beta_search(board.copy(), self.depth, color, opposite_color, alpha, beta, True)
         elif self.time_limit:
             best_move = None
+            new_board = board.copy()
             while (time.time() - self.start_time) < self.time_limit:
-                new_move, new_score = self.alpha_beta_search(board, max_depth, color, opposite_color, alpha, beta, True)
+                new_move, new_score = self.alpha_beta_search(new_board, max_depth, color, opposite_color, alpha, beta, True)
                 if new_move is not None and new_score is not None:
                     best_move = new_move
                 max_depth += 1
@@ -126,3 +127,6 @@ class Minimax(HexSearchMethod):
                     
             if not self.disable_tt: self.tp_table[board.hash_code(opposite_color)] = (depth, best_move, best_score)
             return (best_move, best_score)
+    
+    def __str__(self):
+        return 'Minimax(depth=%d, time_limit=%.2fs, eval=%s)' % (self.depth if self.depth is not None else 0, self.time_limit if self.time_limit is not None else 0, self.evaluate.__class__.__name__)

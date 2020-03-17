@@ -1,4 +1,12 @@
 configs = {
+    'test': {
+        'board_size': 4,
+        'game_count': 1,
+        'players': [
+            { 'depth': None, 'time_limit': 0.5, 'search': 'minimax', 'eval': 'Dijkstra' },
+            { 'depth': None, 'time_limit': 0.5, 'search': 'minimax', 'eval': 'Dijkstra' },
+        ]
+    },
     'random-vs-dijkstra': {
         'board_size': 4,
         'game_count': 200,
@@ -18,7 +26,7 @@ configs = {
         ]
     },
     'minimax-vs-mcts': {
-        'board_size': 5,
+        'board_size': 3,
         'game_count': 50,
         'players': [
             { 'depth': None, 'time_limit': 0.1, 'search': 'minimax', 'eval': 'Dijkstra' },

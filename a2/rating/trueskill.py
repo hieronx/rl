@@ -53,8 +53,10 @@ def play_game(game_input):
 
     for game_id in progressbar(range(1, game_cnt + 1), desc="Processor %d" % (process_id + 1), position=process_id):
         m1, m2 = get_search_class(p1, disable_tt), get_search_class(p2, disable_tt)
+        # print(str(m1))
+        # print(str(m2))
         r1, r2, r1_first = simulate_single_game(board_size, r1, r2, m1, m2, r1_first, r1_color, r2_color)
         save_result(config, (p1['search'], p1['depth'], p1['time_limit'], p1['eval'], p2['search'], p2['depth'], p2['time_limit'], p2['eval'], game_id, r1.mu, r1.sigma, r2.mu, r2.sigma))
         
-    logger.info('[p1=%s] %s' % (p1['eval'], r1))
-    logger.info('[p2=%s] %s' % (p2['eval'], r2))
+    logger.info('[p1=%s] %s' % (m1, r1))
+    logger.info('[p2=%s] %s' % (m2, r2))

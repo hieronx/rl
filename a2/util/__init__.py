@@ -19,7 +19,7 @@ def progressbar(it, desc="", position=None, size=None, start=0, total=None, file
         _, columns = os.popen('stty size', 'r').read().split()
 
         # Terminal width - description length - spacing - completed count - spacing - total count - spacing - time - ips
-        width = size or (int(columns) - len(desc) - 5 - len(str(start + j)) - 1 - len(str(count)) - 2 - 11 - 12) 
+        width = size or (int(columns) - len(desc) - 5 - len(str(start + j)) - 1 - len(str(count)) - 2 - 11 - 10 - len(str(int(ips)))) 
 
         min_elapsed, sec_elapsed = divmod(sec_elapsed_total, 60)
         sec_total = math.ceil(count / ips) - sec_elapsed_total if ips > 0 else 0
