@@ -113,7 +113,7 @@ class MCTSNode:
 
         while winner is None:
             move = all_moves.pop()
-            self.simulated_moves.append(move) # Store a list of all simulated moves
+            if self.amaf_alpha > 0.0: self.simulated_moves.append(move) # Store a list of all simulated moves
 
             current_board.place(move, turn)
             turn = HexBoard.RED if turn == HexBoard.BLUE else HexBoard.BLUE
@@ -136,13 +136,14 @@ class MCTSNode:
         # When using AMAF, all the moves played out during the simulation phase need to be remembered. When it then comes to updating the tree, the algorithm not only updates the nodes that were visited, but also increments the AMAF scores for any sibling nodes which represent moves that were played at some point further on in that game.
 
         if self.parent is not None:
-            # Run All-Moves-As-First
-            simulated_boards = [self.parent.board.make_move(move, HexBoard.get_opposite_color(self.turn)).hash_code() for move in self.simulated_moves]
+            if self.amaf_alpha > 0.0:
+                # Run All-Moves-As-First
+                simulated_boards = [self.parent.board.make_move(move, HexBoard.get_opposite_color(self.turn)).hash_code() for move in self.simulated_moves]
 
-            for sibling in self.parent.children:
-                if sibling.board.hash_code() in simulated_boards:
-                    sibling.num_amaf_visits += 1
-                    sibling.amaf_reward += reward
+                for sibling in self.parent.children:
+                    if sibling.board is not self.board and sibling.board.hash_code() in simulated_boards:
+                        sibling.num_amaf_visits += 1
+                        sibling.amaf_reward += reward
 
             # Backpropagate further up
             self.parent.backpropagate(reward)
