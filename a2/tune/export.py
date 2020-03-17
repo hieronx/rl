@@ -3,6 +3,7 @@ import glob
 import logging
 import pickle
 import pandas as pd
+from sklearn.linear_model import LinearRegression
 
 from tune.searches import searches
 
@@ -20,23 +21,29 @@ def save_configuration_result(search_name, data, clear=False):
 
 def print_results(search_name):
     df = pd.read_csv('output/search_%s.csv' % search_name, index_col=None, header=0)
-    optimal = df.iloc[df['config_mu'].idxmax()]
+    optimal = df.iloc[df['trueskill_mu'].idxmax()]
     logger.info(u'Optimal hyperparameters: N = %d, Cp = %.4f' % (optimal.N, optimal.Cp))
 
 def save_plots(search_name, search):
     df = pd.read_csv('output/search_%s.csv' % search_name, index_col=None, header=0)
 
     for i, plot in enumerate(search['plots']):
-        ax = plot['create'](df)
+        ax = df.plot(x=plot['xcol'], y=plot['ycol'], kind='scatter', figsize=(8,5))
         ax.set_xlabel(plot['xlabel'])
         ax.set_ylabel(plot['ylabel'])
+
+        # Calculate linear regression
+        X = df[plot['xcol']].values.reshape(-1, 1)
+        y = df[plot['ycol']].values.reshape(-1, 1)
+        lr = LinearRegression().fit(X, y)
+        y_pred = lr.predict(X)
+        ax.plot(X, y_pred, color='orange')
+
         fn = 'output/search_%s_%d.png' % (search_name, i)
         ax.get_figure().savefig(fn)
         logger.info('Saved %s' % fn)
 
-def resume_previous_run(args):
-    continue_previous_run = False
-    remaining_num_configs = args.num_configs
+def has_already_completed(args):
     if not args.overwrite:
         if os.path.isfile('output/search_' + args.search + '.csv'):
             completed_num_configs = sum(1 for line in open('output/search_%s.csv' % args.search)) - 1
@@ -46,10 +53,9 @@ def resume_previous_run(args):
                 logger.info('Hyperparameter search was already completed, call with --overwrite to re-run.')
                 print_results(args.search)
                 save_plots(args.search, searches[args.search])
-                return True, False, False
+                return True
 
             else:
-                continue_previous_run = True
                 logger.info('Resuming from previous hyperparameter search.')
     
-    return False, continue_previous_run, remaining_num_configs
+    return False

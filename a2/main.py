@@ -47,10 +47,9 @@ if __name__ == '__main__':
     tune.add_argument('--all', action='store_true', help='Whether to run all saved searches')
     tune.add_argument('--max-threads', type=int, help='Set the maximum number of threads')
     tune.add_argument('--num-configs', type=int, default=50, help='Set the number of configurations to try')
-    tune.add_argument('--num-games', type=int, default=50, help='Set the number of games to play per configuration')
-    tune.add_argument('--confidence-threshold', type=float, default=None, help='Set the sigma confidence threshold')
+    tune.add_argument('--num-games', type=int, default=1, help='Set the number of games to play per matchup')
     tune.add_argument('--overwrite', action='store_true', help='Whether to overwrite the previous run')
-    tune.add_argument('--plot-steps', type=int, default=None, help='Save plots every X number of configurations')
+    tune.add_argument('--plot-steps', type=int, default=10, help='Save plots every x%% of all configurations')
 
     benchmark = subparsers.add_parser('benchmark', help='Run a standardized benchmarking script')
 
@@ -89,10 +88,6 @@ if __name__ == '__main__':
     elif args.command == 'tune':
         if not args.search and not args.all:
             logger.critical('--search or --all needs to be set.')
-            exit()
-
-        if args.num_games and args.confidence_threshold:
-            logger.critical('--num-games and --confidence-threshold cannot both be set.')
             exit()
 
         logger.info('Booting hyperparameter tuning script...')

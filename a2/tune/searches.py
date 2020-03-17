@@ -1,59 +1,44 @@
 searches = {
-    'sanity-check': {
-        'baseline': { 'N': 100, 'Cp': 1.4 },
-        'size': 4,
-        'N': { 'min': 1, 'max': 10000 },
-        'Cp': { 'min': 1.4, 'max': 1.4 },
-        'num-configs': 20,
-        'confidence-threshold': 1.0,
-        'plots': [
-            {
-                'create': lambda df: df.plot(x='N', y='config_mu', kind='scatter', figsize=(8,5)),
-                'xlabel': 'N',
-                'ylabel': 'TrueSkill μ-value'
-            }
-        ]
-    },
+    # Time: around 1h
     'cp-range': {
-        'baseline': { 'N': 500, 'Cp': 1.4 },
-        'size': 3,
-        'N': { 'min': 5000, 'max': 5000 },
-        'Cp': { 'min': 0.5, 'max': 2.0 },
-        'num-configs': 100,
-        'confidence-threshold': 0.5,
+        'size': 5,
+        'N': { 'min': 100, 'max': 100 },
+        'Cp': { 'min': 0.01, 'max': 2.0 },
+        'num-configs': 200,
         'plots': [
             {
-                'create': lambda df: df.plot(x='Cp', y='config_mu', kind='scatter', figsize=(8,5)),
+                'xcol': 'Cp',
+                'ycol': 'trueskill_mu',
                 'xlabel': 'Cp',
                 'ylabel': 'TrueSkill μ-value'
             }
         ]
     },
+    # Time: around 4h (num-configs=50), around 15m (num-configs=25)
     'n-range': {
-        'baseline': { 'N': 100, 'Cp': 1.4 },
-        'size': 3,
-        'N': { 'min': 100, 'max': 10000 },
+        'size': 6,
+        'N': { 'min': 1, 'max': 5000 },
         'Cp': { 'min': 1.4, 'max': 1.4 },
-        'num-configs': 100,
-        'confidence-threshold': 0.5,
+        'num-configs': 50,
         'plots': [
             {
-                'create': lambda df: df.plot(x='N', y='config_mu', kind='scatter', figsize=(8,5)),
+                'xcol': 'N',
+                'ycol': 'trueskill_mu',
                 'xlabel': 'N',
                 'ylabel': 'TrueSkill μ-value'
             }
         ]
     },
+    # Time: around 3h
     'n-vs-cp': {
-        'baseline': { 'N': 100, 'Cp': 1.4 },
-        'size': 3,
-        'N': { 'min': 100, 'max': 10000 },
-        'Cp': { 'min': 0.5, 'max': 2.0 },
-        'num-configs': 250,
-        'confidence-threshold': 0.5,
+        'size': 5,
+        'N': { 'min': 1, 'max': 5000 },
+        'Cp': { 'min': 0.01, 'max': 2.0 },
+        'num-configs': 100,
         'plots': [
             {
-                'create': lambda df: df.plot(x='N', y='Cp', kind='scatter', figsize=(8,5)),
+                'xcol': 'N',
+                'ycol': 'Cp',
                 'xlabel': 'N',
                 'ylabel': 'Cp'
             }
