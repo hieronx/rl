@@ -1,19 +1,4 @@
 searches = {
-    'test': {
-        'size': 5,
-        'N': { 'min': 100, 'max': 100 },
-        'Cp': { 'min': 0.01, 'max': 2.0 },
-        'num-configs': 10,
-        'plots': [
-            {
-                'xcol': 'Cp',
-                'ycol': 'trueskill_mu',
-                'xlabel': 'Cp',
-                'ylabel': 'TrueSkill μ-value',
-                'linear-regression': False
-            }
-        ]
-    },
     # Time: around 1h
     'cp-range': {
         'size': 5,
