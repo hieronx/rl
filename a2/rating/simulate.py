@@ -1,4 +1,7 @@
 from trueskill import Rating, rate_1vs1
+import logging
+
+logger = logging.getLogger(__name__)
 
 from util.hexboard import HexBoard
 

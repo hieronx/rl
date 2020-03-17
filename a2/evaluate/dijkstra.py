@@ -33,4 +33,3 @@ class Dijkstra(HexEvalMethod):
                     heappush(q, (new_dist, neighbor))
 
         return math.inf
-        

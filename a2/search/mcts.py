@@ -24,7 +24,7 @@ class MCTS(HexSearchMethod):
         
     def get_next_move(self, board, color, debug=False):
         start_time = time.time()
-        self.root = MCTSNode(board, parent=None, player=color)
+        self.root = MCTSNode(board.copy(), parent=None, player=color)
 
         # Run the main MCTS loop num_iterations times
         i = 0
@@ -62,6 +62,9 @@ class MCTS(HexSearchMethod):
             winner = current_node.board.get_winner()
         return current_node
 
+    def __str__(self):
+        return 'MCTS(num_iterations=%d, time_limit=%.2fs)' % (self.num_iterations if self.num_iterations is not None else 0, self.time_limit if self.time_limit is not None else 0)
+        
 class MCTSNode:
 
     def __init__(self, board, player, parent=None):
