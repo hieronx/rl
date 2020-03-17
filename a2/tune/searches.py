@@ -1,4 +1,19 @@
 searches = {
+    'test': {
+        'size': 5,
+        'N': { 'min': 100, 'max': 100 },
+        'Cp': { 'min': 0.01, 'max': 2.0 },
+        'num-configs': 10,
+        'plots': [
+            {
+                'xcol': 'Cp',
+                'ycol': 'trueskill_mu',
+                'xlabel': 'Cp',
+                'ylabel': 'TrueSkill μ-value',
+                'linear-regression': False
+            }
+        ]
+    },
     # Time: around 1h
     'cp-range': {
         'size': 5,
@@ -31,20 +46,49 @@ searches = {
             }
         ]
     },
-    # Time: around 3h
-    'n-vs-cp': {
-        'size': 5,
-        'N': { 'min': 1, 'max': 5000 },
+    'cp-range-6': {
+        'size': 6,
+        'N': { 'min': 100, 'max': 100 },
         'Cp': { 'min': 0.01, 'max': 2.0 },
-        'num-configs': 100,
+        'num-configs': 200,
         'plots': [
             {
-                'xcol': 'N',
-                'ycol': 'Cp',
-                'xlabel': 'N',
-                'ylabel': 'Cp',
+                'xcol': 'Cp',
+                'ycol': 'trueskill_mu',
+                'xlabel': 'Cp',
+                'ylabel': 'TrueSkill μ-value',
                 'linear-regression': False
             }
         ]
-    }
+    },
+    'cp-range-7': {
+        'size': 7,
+        'N': { 'min': 100, 'max': 100 },
+        'Cp': { 'min': 0.01, 'max': 2.0 },
+        'num-configs': 200,
+        'plots': [
+            {
+                'xcol': 'Cp',
+                'ycol': 'trueskill_mu',
+                'xlabel': 'Cp',
+                'ylabel': 'TrueSkill μ-value',
+                'linear-regression': False
+            }
+        ]
+    },
+    'cp-range-8': {
+        'size': 8,
+        'N': { 'min': 100, 'max': 100 },
+        'Cp': { 'min': 0.01, 'max': 2.0 },
+        'num-configs': 200,
+        'plots': [
+            {
+                'xcol': 'Cp',
+                'ycol': 'trueskill_mu',
+                'xlabel': 'Cp',
+                'ylabel': 'TrueSkill μ-value',
+                'linear-regression': False
+            }
+        ]
+    },
 }
