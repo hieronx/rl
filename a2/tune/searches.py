@@ -20,7 +20,8 @@ searches = {
         'size': 6,
         'N': { 'min': 1, 'max': 5000 },
         'Cp': { 'min': 0.4, 'max': 0.4 },
-        'num-configs': 20,
+        'num-configs': 50,
+        'num-opponents': 25,
         'plots': [
             {
                 'xcol': 'N',

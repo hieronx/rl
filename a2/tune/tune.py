@@ -1,12 +1,8 @@
-import logging
-import random
 from multiprocessing import Pool, freeze_support, cpu_count, Value, Array
 from multiprocessing.pool import ThreadPool
 import threading
 from trueskill import Rating, rate_1vs1
-import pickle
-import time
-import os
+import logging, os, time, copy, random
 
 from util.hexboard import HexBoard
 from search.mcts import MCTS
@@ -50,8 +46,13 @@ def run_hyperparameter_search(args):
     } for i in range(args.num_configs)]
 
     pairs = []
+    opponents = copy.deepcopy(hyperparameter_configs)
     for player in hyperparameter_configs:
-        for opponent in hyperparameter_configs:
+        random.shuffle(opponents)
+        for i, opponent in enumerate(opponents):
+            if 'num-opponents' in search and i >= search['num-opponents']:
+                break
+                
             if player != opponent:
                 pairs.append((player, opponent))
 
