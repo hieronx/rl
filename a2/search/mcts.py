@@ -150,8 +150,6 @@ class MCTSNode:
         ln_N = selection_rules.log_n(self.num_visits)
 
         if self.rave_k > 0:
-            beta = math.sqrt(self.rave_k / (self.rave_k + 3 * iteration_idx))
-
-            return max(self.children, key=lambda child: selection_rules.alpha_amaf_score(child, beta, Cp, ln_N))
+            return max(self.children, key=lambda child: selection_rules.rave_score(child, self.rave_k, Cp, ln_N))
         else:
             return max(self.children, key=lambda child: selection_rules.uct_score(child.reward, child.num_visits, Cp, ln_N))
