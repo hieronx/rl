@@ -37,8 +37,8 @@ configs = {
         'board_size': 6,
         'game_count': 50,
         'players': [
-            { 'depth': 400, 'time_limit': None, 'search': 'mcts', 'eval': 'Dijkstra', 'rave_k': -1 },
-            { 'depth': 400, 'time_limit': None, 'search': 'mcts', 'eval': 'Dijkstra', 'rave_k': 200 },
+            { 'depth': 500, 'time_limit': None, 'search': 'mcts', 'eval': 'Dijkstra', 'rave_k': -1 },
+            { 'depth': 500, 'time_limit': None, 'search': 'mcts', 'eval': 'Dijkstra', 'rave_k': 250 },
         ]
     },
     'dijkstra-performance': {

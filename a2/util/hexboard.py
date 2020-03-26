@@ -8,6 +8,7 @@ class HexBoard:
     BLUE = 1
     RED = 2
     EMPTY = 3
+    PLAYER_ID_TO_NAME = { 1: 'blue', 2: 'red', 3: 'empty' }
     POSSIBLE_NEIGHBORS = ((-1, 0), (1, 0), (-1, 1), (1, -1), (0, 1), (0, -1))
 
     def __init__(self, board_size, source_coords=None, target_coords=None, moves_made=None, overwrite = False):

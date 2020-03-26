@@ -61,7 +61,7 @@ class MCTS(HexSearchMethod):
             if not current_node.is_fully_expanded():
                 return current_node.expand()
             else:
-                current_node = current_node.best_child(iteration_idx, self.Cp) # UCT select
+                current_node = current_node.best_child(self.Cp) # UCT select
             winner = current_node.board.get_winner()
         return current_node
 
@@ -80,7 +80,7 @@ class MCTSNode:
         self.player = player
         self.parent = parent
         # self.prev_move = prev_move
-        self.turn = HexBoard.get_opposite_color(turn)
+        self.turn = turn
         
         self.children = []
         self.untried_moves = self.board.get_possible_moves()
@@ -109,17 +109,17 @@ class MCTSNode:
         all_moves = current_board.get_possible_moves()
         random.shuffle(all_moves)
 
-        turn = self.player
+        current_turn = self.player
         winner = current_board.get_winner()
 
         while winner is None:
             move = all_moves.pop()
 
             if self.rave_k > 0:
-                self.simulated_moves_by_player[turn].append(move) # Store a list of all simulated moves
+                self.simulated_moves_by_player[current_turn].append(move) # Store a list of all simulated moves
 
-            current_board.place(move, turn)
-            turn = HexBoard.RED if turn == HexBoard.BLUE else HexBoard.BLUE
+            current_board.place(move, current_turn)
+            current_turn = HexBoard.RED if current_turn == HexBoard.BLUE else HexBoard.BLUE
             winner = current_board.get_winner()
 
         return HexBoard.get_reward(self.player, winner)
@@ -131,7 +131,7 @@ class MCTSNode:
         if self.parent is not None:
             if self.rave_k > 0:
                 # Run All-Moves-As-First
-                simulated_boards = [self.board.make_move(move, turn).hash_code() for move in self.simulated_moves_by_player[turn]]
+                simulated_boards = [self.board.make_move(move, self.turn).hash_code() for move in self.simulated_moves_by_player[self.turn]]
 
                 for child in self.children:
                     if child.board.hash_code() in simulated_boards:
@@ -142,11 +142,10 @@ class MCTSNode:
             self.parent.backpropagate(reward, HexBoard.get_opposite_color(turn))
     
     def child_with_most_visits(self, num_iterations):
-        return self.best_child(num_iterations, 0.0)
+        # return self.best_child(0.0)
+        return max(self.children, key=attrgetter('num_visits'))
 
-        # return max(self.children, key=attrgetter('num_visits'))
-
-    def best_child(self, iteration_idx, Cp):
+    def best_child(self, Cp):
         ln_N = selection_rules.log_n(self.num_visits)
 
         if self.rave_k > 0:

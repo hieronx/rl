@@ -18,7 +18,7 @@ class TestSearch(unittest.TestCase):
 
         board.place((0, 0), HexBoard.RED)
         board.place((0, 1), HexBoard.RED)
-        board.print()
+        # board.print()
 
         self.assertEquals(board.get_winner(), None)
 
@@ -28,10 +28,11 @@ class TestSearch(unittest.TestCase):
 
     def test_mcts(self):
         """"Tests to see if MCTS returns the expected best moves for specific board states"""
-        board = HexBoard(3)
+        board = HexBoard(4)
 
-        board.place((1, 0), HexBoard.RED)
-        board.place((1, 1), HexBoard.RED)
+        board.place((2, 0), HexBoard.RED)
+        board.place((1, 1), HexBoard.BLUE)
+        board.print()
 
         self.assertEquals(board.get_winner(), None)
 
