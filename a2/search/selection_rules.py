@@ -10,9 +10,13 @@ def log_n(num_visits):
 def rave_score(c, rave_k, Cp, ln_N):
     beta = rave_beta(rave_k, c.num_visits)
 
-    amaf = amaf_score(c.amaf_reward, c.num_amaf_visits)
-    uct = uct_score(c.reward, c.num_visits, Cp, ln_N)
-    return beta * amaf + ((1 - beta) * uct)
+    amaf_win_rate = amaf_score(c.amaf_reward, c.num_amaf_visits)
+    win_rate = c.reward / c.num_visits
+    
+    return (
+        (beta * amaf_win_rate + ((1 - beta) * win_rate)) # RAVE exploitation
+        + Cp * math.sqrt((2 * ln_N / c.num_visits)) # UCT exploration
+    )
 
 @lru_cache(maxsize=256)
 def alpha_amaf_score(c, alpha, Cp, ln_N):

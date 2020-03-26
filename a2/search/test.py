@@ -18,6 +18,7 @@ class TestSearch(unittest.TestCase):
 
         board.place((0, 0), HexBoard.RED)
         board.place((0, 1), HexBoard.RED)
+        board.print()
 
         self.assertEquals(board.get_winner(), None)
 
@@ -34,7 +35,7 @@ class TestSearch(unittest.TestCase):
 
         self.assertEquals(board.get_winner(), None)
 
-        mcts = MCTS(20000, None, 0.4, False, rave_k=1000, debug=True)
+        mcts = MCTS(10000, None, 0.4, False, rave_k=5000, debug=True)
         move = mcts.get_next_move(board, HexBoard.RED)
         new_board = board.make_move(move, HexBoard.RED)
         self.assertEqual(move, (1, 2))
