@@ -8,6 +8,7 @@ from rating.trueskill import run_trueskill
 from rating.benchmark import run_benchmark
 from rating.configs import configs
 from tune.tune import run_tune
+from tune.plot import generate_custom_plots
 from tune.searches import searches
 
 logging.basicConfig(format = '%(asctime)s - %(levelname)s - %(message)s',
@@ -52,6 +53,7 @@ if __name__ == '__main__':
     tune.add_argument('--plot-steps', type=int, default=10, help='Save plots every x%% of all configurations')
 
     benchmark = subparsers.add_parser('benchmark', help='Run a standardized benchmarking script')
+    plot = subparsers.add_parser('plot', help='Generate custom plots')
 
     args = parser.parse_args(sys.argv[1:])
 
@@ -92,6 +94,11 @@ if __name__ == '__main__':
 
         logger.info('Booting hyperparameter tuning script...')
         run_tune(args)
+    
+    # Plot command
+    elif args.command == 'plot':
+        logger.info('Booting custom plot generation script...')
+        generate_custom_plots(args)
     
     # Benchmark command
     elif args.command == 'benchmark':

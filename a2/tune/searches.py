@@ -32,11 +32,28 @@ searches = {
             }
         ]
     },
-    'cp-range-6': {
-        'size': 6,
+    'cp-range-3': {
+        'size': 3,
         'N': { 'min': 100, 'max': 100 },
         'Cp': { 'min': 0.01, 'max': 2.0 },
         'num-configs': 200,
+        'num-opponents': 200,
+        'plots': [
+            {
+                'xcol': 'Cp',
+                'ycol': 'trueskill_mu',
+                'xlabel': 'Cp',
+                'ylabel': 'TrueSkill μ-value',
+                'linear-regression': False
+            }
+        ]
+    },
+    'cp-range-4': {
+        'size': 4,
+        'N': { 'min': 100, 'max': 100 },
+        'Cp': { 'min': 0.01, 'max': 2.0 },
+        'num-configs': 200,
+        'num-opponents': 200,
         'plots': [
             {
                 'xcol': 'Cp',
@@ -61,20 +78,5 @@ searches = {
                 'linear-regression': False
             }
         ]
-    },
-    'cp-range-8': {
-        'size': 8,
-        'N': { 'min': 100, 'max': 100 },
-        'Cp': { 'min': 0.01, 'max': 2.0 },
-        'num-configs': 200,
-        'plots': [
-            {
-                'xcol': 'Cp',
-                'ycol': 'trueskill_mu',
-                'xlabel': 'Cp',
-                'ylabel': 'TrueSkill μ-value',
-                'linear-regression': False
-            }
-        ]
-    },
+    }
 }
