@@ -1,8 +1,11 @@
 from util.hexboard import HexBoard
 
 class HexSearchMethod:
-        
+    """TODO: This class is probably not used anymore. Should be removed?"""
+
+
     def get_next_move(self, board, color):
+        """This should not be used and thus raises an error"""
         raise NotImplementedError
     
     def get_possible_moves(self, board):
