@@ -20,11 +20,13 @@ def save_configuration_result(search_name, data, clear=False):
         fd.write(';'.join(map(str, data)) + '\n')
 
 def print_results(search_name):
+    """Prints the results to an output file in the output directory. Results are printed in a .csv format."""
     df = pd.read_csv('output/search_%s.csv' % search_name, index_col=None, header=0, delimiter=';')
     optimal = df.iloc[df['trueskill_mu'].idxmax()]
     logger.info(u'Optimal hyperparameters: N = %d, Cp = %.4f' % (optimal.N, optimal.Cp))
 
 def save_plots(search_name, search):
+    """Generates a plot from the csv that is associated with the provided search name. This plot is then saved as .png"""
     df = pd.read_csv('output/search_%s.csv' % search_name, index_col=None, header=0, delimiter=';')
 
     for i, plot in enumerate(search['plots']):
@@ -45,6 +47,7 @@ def save_plots(search_name, search):
         logger.info('Saved %s' % fn)
 
 def has_already_completed(args):
+    """Checks if a search has already been completed, if so stores how many"""
     if not args.overwrite:
         if os.path.isfile('output/search_' + args.search + '.csv'):
             completed_num_configs = sum(1 for line in open('output/search_%s.csv' % args.search)) - 1

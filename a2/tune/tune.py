@@ -14,6 +14,7 @@ from tune.searches import searches
 logger = logging.getLogger(__name__)
 
 def run_tune(args):
+    """Runs the hyperparameter tuning algorithm by checking which args are used"""
     if args.search:
         if 'num-configs' in searches[args.search]: args.num_configs = searches[args.search]['num-configs']
         run_hyperparameter_search(args)
@@ -27,6 +28,7 @@ def run_tune(args):
             print()
 
 def run_hyperparameter_search(args):
+    """Runs all the possible hyperparameter searches that are provided by the args object"""
     freeze_support()
 
     if args.num_configs == 0 or has_already_completed(args): return
@@ -93,6 +95,7 @@ def run_hyperparameter_search(args):
     save_plots(args.search, search)
     
 def run_matchup(matchup_input):
+    """Runs a single matchup and updates the winner accordingly"""
     player, opponent = matchup_input
 
     m1, m2 = MCTS(player['N'], None, player['Cp'], False), MCTS(opponent['N'], None, opponent['Cp'], False)
@@ -109,6 +112,7 @@ def run_matchup(matchup_input):
         return (opponent['id'], player['id'], opponent['id'])
 
 def save_results(search_name, hyperparameter_configs):
+    """Saves the results of the matchup to disk"""
     save_configuration_result(search_name, ('size', 'N', 'Cp', 'trueskill_mu', 'trueskill'), clear=True)
 
     for player in hyperparameter_configs:

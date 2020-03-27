@@ -4,13 +4,15 @@ import pandas as pd
 logger = logging.getLogger(__name__)
 
 def generate_custom_plots(args):
+    """Generates the custom plots"""
     size_vs_cp()
     trueskill_confidence()
 
 def size_vs_cp():
+    """Runs the size vs cp test. In this test we see what CP is most useful on what board size."""
     logger.info('Generating size vs Cp plot...')
     
-    list = []
+    list = [] #TODO: Do not use python key name variable-names
     for fn in glob.glob('output/final/search_cp-range-*.csv'):
         logger.info('Loading %s' % fn)
         list.append(pd.read_csv(fn, index_col=None, header=0, delimiter=';'))
@@ -30,6 +32,7 @@ def size_vs_cp():
     print()
 
 def trueskill_confidence():
+    """Runs the trueskill confidence script which plots the confidence"""
     logger.info('Generating TrueSkill confidence plot...')
 
     list = []
