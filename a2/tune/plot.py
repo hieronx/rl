@@ -5,9 +5,9 @@ logger = logging.getLogger(__name__)
 
 def generate_custom_plots(args):
     """Generates the custom plots"""
-    # size_vs_cp()
+    size_vs_cp()
     minimax_vs_mcts_by_time()
-    # trueskill_confidence()
+    trueskill_confidence()
 
 def size_vs_cp():
     """Runs the size vs cp test. In this test we see what CP is most useful on what board size."""
@@ -26,6 +26,7 @@ def size_vs_cp():
     ax = best_Cp.boxplot(by='size', column=['Cp'], grid = False) 
     ax.set_xlabel('Board size')
     ax.set_ylabel('Cp')
+    ax.set_title('')
 
     fn = 'output/size-vs-Cp.png'
     ax.get_figure().savefig(fn)
@@ -53,7 +54,8 @@ def minimax_vs_mcts_by_time():
         fn = 'output/minimax-vs-mcts-by-time_size-%d.png' % board_size
         ax.get_figure().savefig(fn)
         logger.info('Saved %s' % fn)
-
+    
+    print()
 
 def trueskill_confidence():
     """Runs the trueskill confidence script which plots the confidence"""
@@ -69,6 +71,9 @@ def trueskill_confidence():
     ax = df.boxplot(by='size', column=['trueskill'], grid = False) 
     ax.set_xlabel('Board size')
     ax.set_ylabel('Trueskill σ-value')
+    
+    ax.set_title("")
+    # ax.set_suptitle("")
 
     fn = 'output/trueskill-confidence.png'
     ax.get_figure().savefig(fn)
