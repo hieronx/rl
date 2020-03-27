@@ -187,6 +187,7 @@ class HexBoard:
     @classmethod
     @lru_cache(maxsize=512)
     def is_at_border(cls, color, move, size):
+        """Checks if the provided coordinate is at the border for the provided color""" 
         return (color == HexBoard.BLUE and move[0] == size-1) or (color == HexBoard.RED and move[1] == size-1)
 
     @classmethod          
@@ -201,11 +202,13 @@ class HexBoard:
     @classmethod          
     @lru_cache(maxsize=32)
     def get_target_coordinates(cls, size):
+        """Returns the target coordinates for both of the colors"""
         return {HexBoard.BLUE: HexBoard.get_target_coordinates_for_color(HexBoard.BLUE, size), HexBoard.RED: HexBoard.get_target_coordinates_for_color(HexBoard.RED, size)}
 
     @classmethod          
     @lru_cache(maxsize=32)
     def get_source_coordinates(cls, size):
+        """Returns the source coordinates for both of the colors"""
         return {HexBoard.BLUE: HexBoard.get_source_coordinates_for_color(HexBoard.BLUE, size), HexBoard.RED: HexBoard.get_source_coordinates_for_color(HexBoard.RED, size)}
 
     @classmethod
@@ -219,6 +222,7 @@ class HexBoard:
 
     @classmethod
     def from_hash_code(cls, hash_code):
+        """Rebuilds a board based on the hash code. This basically makes the hash code more of a serialization"""
         pos = str(hash_code)[:-1][::-1]
         board_size = int(math.sqrt(len(pos)))
         board = cls(board_size)
@@ -238,6 +242,7 @@ class HexBoard:
         return HexBoard.RED if color == HexBoard.BLUE else HexBoard.BLUE
     
     def get_move_between_boards(self, other_board):
+        """Tries to find the move that is made between the two provided boards."""
         if self.size is not other_board.size:
             print('Trying to get the move between two boards of different sizes.')
             return (None, None)

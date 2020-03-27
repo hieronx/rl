@@ -12,7 +12,7 @@ def cls():
 
 # Based on https://stackoverflow.com/questions/3160699/python-progress-bar
 def progressbar(it, desc="", position=None, size=None, start=0, total=None, file = sys.stdout):
-
+    """Rewrote our own progressbar to get rid of the dependency on tqdm. This is necessary to provide feedback on the progress."""
     count = total or len(it)
 
     def show(j, ips, sec_elapsed_total):
@@ -44,11 +44,13 @@ def progressbar(it, desc="", position=None, size=None, start=0, total=None, file
 
 # Based on https://github.com/tqdm/tqdm/blob/master/tqdm/std.py#L1401
 def moveto(fp, n):
+    """Moves the filepointer inside of a file, or file-like buffer like the console"""
     fp.write(str('\n' * n + ('' if (os.name == 'nt') else '\x1b[A') * -n))
     fp.flush()
 
 
 def print_progressbar(desc="", completed=0, start_time=None, total=0, position=None, file=sys.stdout):
+    """Prints a progressbar to the console using the provided parameters"""
     _, columns = os.popen('stty size', 'r').read().split()
 
     # Terminal width - description length - spacing - completed count - spacing - total count - spacing - time - ips

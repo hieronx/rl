@@ -107,6 +107,7 @@ class TestUtil(unittest.TestCase):
         self.assertEqual(board.hash_code(HexBoard.RED), 3331333322)
 
     def test_reward(self):
+        """"Tests if our rewards are returning the expected results"""
         board = HexBoard(3)
 
         board.place((0, 0), HexBoard.BLUE)
@@ -117,6 +118,7 @@ class TestUtil(unittest.TestCase):
         self.assertEqual(HexBoard.get_reward(HexBoard.RED, board.get_winner()), -1)
 
     def test_from_hash_code(self):
+        """Check if we can recreate a board from the serialized hash representation"""
         board = HexBoard(3)
 
         board.place((0, 0), HexBoard.RED)
@@ -128,6 +130,7 @@ class TestUtil(unittest.TestCase):
         self.assertEqual(new_board.hash_code(HexBoard.BLUE), 3331333321)
 
     def get_move_between_boards(self):
+        """"Test if the move between boards function can actually find the move that changed between two board states"""
         board1 = HexBoard(3)
         board.place((0, 0), HexBoard.RED)
 
