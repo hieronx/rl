@@ -63,7 +63,7 @@ class MCTS(HexSearchMethod):
         current_node = self.root
         winner = current_node.board.get_winner()
         while winner is None:
-            if not current_node.is_fully_expanded():
+            if len(self.untried_moves) > 0:
                 return current_node.expand()
             else:
                 current_node = current_node.best_child(self.Cp) # UCT select
@@ -87,7 +87,6 @@ class MCTSNode:
         self.board = board
         self.player = player
         self.parent = parent
-        # self.prev_move = prev_move
         self.turn = turn
         
         self.children = []
@@ -99,10 +98,6 @@ class MCTSNode:
         self.reward, self.amaf_reward = 0, 0
 
         self.rave_k = rave_k
-
-    def is_fully_expanded(self):
-        """Tries to see if we have expanded all our children"""
-        return len(self.untried_moves) == 0
 
     def expand(self):
         """Expands one of the possible child moves"""

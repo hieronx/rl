@@ -26,8 +26,8 @@ configs = {
         ]
     },
     'minimax-vs-mcts': {
-        'board_size': 5,
-        'game_count': 100,
+        'board_size': 6,
+        'game_count': 200,
         'players': [
             { 'depth': None, 'time_limit': 0.3, 'search': 'minimax', 'eval': 'Dijkstra', 'rave_k': -1  },
             { 'depth': None, 'time_limit': 0.3, 'search': 'mcts', 'eval': 'Dijkstra', 'rave_k': -1  },
