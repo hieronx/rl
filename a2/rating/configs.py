@@ -26,11 +26,11 @@ configs = {
         ]
     },
     'minimax-vs-mcts': {
-        'board_size': 6,
+        'board_size': 5,
         'game_count': 200,
         'players': [
-            { 'depth': None, 'time_limit': 0.01, 'search': 'minimax', 'eval': 'Dijkstra', 'rave_k': -1  },
-            { 'depth': None, 'time_limit': 0.01, 'search': 'mcts', 'eval': 'Dijkstra', 'rave_k': -1  },
+            { 'depth': None, 'time_limit': 0.5, 'search': 'minimax', 'eval': 'Dijkstra', 'rave_k': -1  },
+            { 'depth': None, 'time_limit': 0.5, 'search': 'mcts', 'eval': 'Dijkstra', 'rave_k': -1  },
         ]
     },
     'uct-vs-rave': {

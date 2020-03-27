@@ -37,6 +37,7 @@ if __name__ == '__main__':
     mcts.add_argument('--time-limit', type=float, default=None, help='Set the time limit for MCTS')
     mcts.add_argument('--size', type=int, default=4, help='Set the board size')
     mcts.add_argument('--eval', choices=['Dijkstra', 'random', 'AStar'], default='Dijkstra', help='Choose the evaluation method')
+    mcts.add_argument('--rave-k', type=int, default=-1, help='Set the RAVE K value')
 
     trueskill = subparsers.add_parser('trueskill', help='Evaluate the RL algorithm using TrueSkill')
     trueskill.add_argument('--config', choices=configs.keys(), required=True, help='If added, evaluate using TrueSkill using the chosen configuration set')

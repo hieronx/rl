@@ -35,7 +35,7 @@ def size_vs_cp():
 def minimax_vs_mcts_by_time():
     logger.info('Generating Minimax vs MCTS by time limit plot...')
     
-    for board_size in [6]:
+    for board_size in [5, 6]:
         combined = pd.DataFrame(columns=['time_limit', 'player', 'trueskill_mu'])
         for time_limit in [0.1, 0.2, 0.3, 0.4, 0.5]:
             fn = 'output/final/minimax-vs-mcts-%d-%.1fs.csv' % (board_size, time_limit)
