@@ -7,6 +7,7 @@ logger = logging.getLogger(__name__)
 player_names = ['']
 
 def log_tree(node, level=0):
+    """This function takes the root node and tries to log a debug output to a file. This is used to visualize the tree."""
     output = []
     output.append((level, str(node.reward) + '/' + str(node.num_visits) + ' | ' + str(node.amaf_reward) + '/' + str(node.num_amaf_visits) + ' ' + str(node.board) + ' turn=' + HexBoard.PLAYER_ID_TO_NAME[node.turn]))
 
