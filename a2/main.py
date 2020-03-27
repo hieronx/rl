@@ -17,6 +17,7 @@ logging.basicConfig(format = '%(asctime)s - %(levelname)s - %(message)s',
 logger = logging.getLogger(__name__)
 
 if __name__ == '__main__':
+    """Main entry point of the code. Below we describe all the different argument possibilities"""
     parser = argparse.ArgumentParser(description="Reinforcement learning for Hex")
     subparsers = parser.add_subparsers(dest='command')
 
