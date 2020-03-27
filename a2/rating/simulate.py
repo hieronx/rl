@@ -6,6 +6,7 @@ logger = logging.getLogger(__name__)
 from util.hexboard import HexBoard
 
 def simulate_single_game(board_size, r1, r2, m1, m2, r1_first, r1_color, r2_color):
+    """Runs a single game using the provided rating objects and their colors, returns the resulting ratings after playing"""
     board = HexBoard(board_size)
     r1_first = True if not r1_first else False
     r1_turn = True if r1_first else False
@@ -30,6 +31,7 @@ def simulate_single_game(board_size, r1, r2, m1, m2, r1_first, r1_color, r2_colo
     return r1, r2, r1_first
 
 def simulate_single_game_winner(board_size, m1, m2, r1_first, r1_color, r2_color):
+    """Simulates a single game, but also returns the winner of that game"""
     board = HexBoard(board_size)
     r1_first = True if not r1_first else False
     r1_turn = True if r1_first else False
