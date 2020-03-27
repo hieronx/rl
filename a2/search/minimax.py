@@ -1,5 +1,6 @@
 import math
 import time
+import random
 
 from util import cls
 from util.hexboard import HexBoard
@@ -33,7 +34,7 @@ class Minimax(HexSearchMethod):
         if self.depth:
             best_move, _ = self.alpha_beta_search(board.copy(), self.depth, color, opposite_color, alpha, beta, True)
         elif self.time_limit:
-            best_move = None
+            best_move = random.choice(board.get_possible_moves()) # Initialize with a random move, if not even one level of alpha-beta search can run in the allotted time limit
             new_board = board.copy()
             while (time.time() - self.start_time) < self.time_limit:
                 new_move, new_score = self.alpha_beta_search(new_board, max_depth, color, opposite_color, alpha, beta, True)

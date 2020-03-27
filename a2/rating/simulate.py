@@ -42,6 +42,8 @@ def simulate_single_game_winner(board_size, m1, m2, r1_first, r1_color, r2_color
     winner = board.get_winner()
     while winner is None:
         move = (m1 if r1_turn else m2).get_next_move(board, r1_color if r1_turn else r2_color)
+        if move is None:
+            print(str(m1 if r1_turn else m2))
         board.place(move, r1_color if r1_turn else r2_color)
         r1_turn = False if r1_turn else True
         winner = board.get_winner()

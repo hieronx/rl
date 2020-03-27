@@ -63,7 +63,7 @@ class MCTS(HexSearchMethod):
         current_node = self.root
         winner = current_node.board.get_winner()
         while winner is None:
-            if len(self.untried_moves) > 0:
+            if len(current_node.untried_moves) > 0:
                 return current_node.expand()
             else:
                 current_node = current_node.best_child(self.Cp) # UCT select
