@@ -22,6 +22,7 @@ intial_games = 10000
 def main():
     # Load training data
     if os.path.isfile("training_data.p"):
+        logger.info("Loading training data from cache...")
         with open("training_data.p", "rb") as f:
             training_data = pickle.load(f)
 
@@ -65,9 +66,9 @@ def main():
         env.reset()
         scores.append(score)
 
-    logger.info(scores)
-    logger.info("Average Score:", sum(scores) / len(scores))
-    logger.info(
+    print(scores)
+    print("Average Score:", sum(scores) / len(scores))
+    print(
         "choice 1:{}  choice 0:{} choice 2:{}".format(
             choices.count(1) / len(choices),
             choices.count(0) / len(choices),
