@@ -12,22 +12,6 @@ def cls():
     else:
         temp = os.system('clear')
 
-def play_a_random_game_first(env, goal_steps):
-    for step_index in range(goal_steps):
-        #         env.render()
-        action = env.action_space.sample()
-        observation, reward, done, info = env.step(action)
-        print("Step {}:".format(step_index))
-        print("action: {}".format(action))
-        print("observation: {}".format(observation))
-        print("reward: {}".format(reward))
-        print("done: {}".format(done))
-        print("info: {}".format(info))
-        if done:
-            break
-    env.reset()
-
-
 def model_data_preparation(env, num_games, steps_per_game, score_requirement):
     training_data = []
 
@@ -39,14 +23,6 @@ def model_data_preparation(env, num_games, steps_per_game, score_requirement):
         for _ in range(steps_per_game):
             action = random.randrange(0, 3)
             observation, reward, done, _ = env.step(action)
-
-            # env.render()
-            # cls()
-            # print('Observation: %s' % str(observation))
-            # print('Reward: %s' % str(reward))
-            # print('Done: %s' % str(done))
-            # print('Info: %s' % str(info))
-            # time.sleep(0.1)
 
             # This is going in the right direction, so we should reward it
             if observation[0] > -0.2: reward = 1
@@ -143,24 +119,3 @@ def moveto(fp, n):
     """Moves the filepointer inside of a file, or file-like buffer like the console"""
     fp.write(str("\n" * n + ("" if (os.name == "nt") else "\x1b[A") * -n))
     fp.flush()
-
-
-def print_progressbar(desc="", completed=0, start_time=None, total=0, position=None, file=sys.stdout):
-    """Prints a progressbar to the console using the provided parameters"""
-    _, columns = os.popen('stty size', 'r').read().split()
-
-    # Terminal width - description length - spacing - completed count - spacing - total count - spacing - time - ips
-    width = (int(columns) - len(desc) - 5 - len(str(completed)) - 1 - len(str(total)) - 2 - 11 - 13) 
-
-    sec_elapsed_total = time.time() - start_time
-    ips = completed / sec_elapsed_total
-
-    min_elapsed, sec_elapsed = divmod(sec_elapsed_total, 60)
-    sec_total = math.ceil(total / ips) - sec_elapsed_total if ips > 0 else 0
-    min_rem, sec_rem = divmod(sec_total, 60)
-    
-    x = int(width * completed / total)
-    if position: moveto(file, position)
-    file.write("%s: |%s%s| %i/%i [%02d:%02d<%02d:%02d, %.2fit/s]\r" % (desc, "█" * x, " " * (width - x), completed, total, min_elapsed, sec_elapsed, min_rem, sec_rem, ips))
-    file.flush()
-    if position: moveto(file, -position)

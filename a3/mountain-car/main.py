@@ -37,17 +37,12 @@ def main():
         with open("training_data.p", "wb") as training_data_file:
             pickle.dump(training_data, training_data_file)
 
-    print(training_data[0])
-
-    # Train model
-    arr = np.array([previous_observation for previous_observation, _ in training_data])
-    print(arr.shape)
-
+    # Train model`
     X = np.array([previous_observation for previous_observation, _ in training_data]).reshape(-1, len(training_data[0][0]))
     y = np.array([action for _, action in training_data]).reshape(-1, len(training_data[0][1]))
     model = build_model(input_size=len(X[0]), output_size=len(y[0]))
 
-    model.fit(X, y, epochs=5)
+    model.fit(X, y, epochs=20)
 
     # Evaluate model
     total_scores = []
@@ -78,9 +73,9 @@ def main():
             rewards = np.add(rewards, new_rewards)
 
         total_scores.extend(rewards)
-        print("Average Score:", sum(total_scores) / len(total_scores))
+        print("Average score:", sum(total_scores) / len(total_scores))
 
-    print("Average Score:", sum(total_scores) / len(total_scores))
+    print("Average score:", sum(total_scores) / len(total_scores))
 
 
 if __name__ == "__main__":
