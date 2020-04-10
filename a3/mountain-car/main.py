@@ -14,10 +14,12 @@ logger = logging.getLogger(__name__)
 
 env = gym.make("MountainCar-v0")
 env.reset()
-goal_steps = 200
-score_requirement = -198
-intial_games = 10000
 
+score_requirement = -198
+num_games_train = 10000
+num_games_eval = 100
+steps_per_game_train = 200
+steps_per_game_eval = 200
 
 def main():
     # Load training data
@@ -28,14 +30,19 @@ def main():
 
     else:
         training_data = model_data_preparation(
-            env, intial_games, goal_steps, score_requirement
+            env, num_games_train, steps_per_game_train, score_requirement
         )
         with open("training_data.p", "wb") as training_data_file:
             pickle.dump(training_data, training_data_file)
 
+    print(training_data[0])
+
     # Train model
-    X = np.array([i[0] for i in training_data]).reshape(-1, len(training_data[0][0]))
-    y = np.array([i[1] for i in training_data]).reshape(-1, len(training_data[0][1]))
+    arr = np.array([previous_observation for previous_observation, _ in training_data])
+    print(arr.shape)
+
+    X = np.array([previous_observation for previous_observation, _ in training_data]).reshape(-1, len(training_data[0][0]))
+    y = np.array([action for _, action in training_data]).reshape(-1, len(training_data[0][1]))
     model = build_model(input_size=len(X[0]), output_size=len(y[0]))
 
     model.fit(X, y, epochs=5)
@@ -43,25 +50,29 @@ def main():
     # Evaluate model
     scores = []
     choices = []
-    for each_game in progressbar(range(100), "Evaluating"):
+    for _ in progressbar(range(num_games_eval), "Evaluating"):
         score = 0
-        prev_obs = []
-        for step_index in range(goal_steps):
+        previous_observation = []
+
+        for _ in range(steps_per_game_eval):
             # Uncomment this line if you want to see how our bot playing
-            #         env.render()
-            if len(prev_obs) == 0:
+            env.render()
+
+            # First perform a random action, and then start using the model to predict the next action
+            if len(previous_observation) == 0:
                 action = random.randrange(0, 2)
             else:
                 action = np.argmax(
-                    model.predict(prev_obs.reshape(-1, len(prev_obs)))[0]
+                    model.predict(previous_observation.reshape(-1, len(previous_observation)))[0]
                 )
 
+            observation, reward, done, _ = env.step(action)
+
             choices.append(action)
-            new_observation, reward, done, info = env.step(action)
-            prev_obs = new_observation
+            previous_observation = observation
             score += reward
-            if done:
-                break
+
+            if done: break
 
         env.reset()
         scores.append(score)

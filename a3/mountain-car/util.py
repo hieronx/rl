@@ -3,7 +3,14 @@ import sys
 import time
 import math
 import random
+import time
 
+def cls():
+    """Clears the screen, depending on the OS level call, this is merely a small utility function"""
+    if os.name == 'nt':
+        temp = os.system('cls')
+    else:
+        temp = os.system('clear')
 
 def play_a_random_game_first(env, goal_steps):
     for step_index in range(goal_steps):
@@ -21,42 +28,46 @@ def play_a_random_game_first(env, goal_steps):
     env.reset()
 
 
-def model_data_preparation(env, intial_games, goal_steps, score_requirement):
+def model_data_preparation(env, num_games, steps_per_game, score_requirement):
     training_data = []
-    accepted_scores = []
-    for game_index in progressbar(range(intial_games), desc="Preparing model data"):
+
+    for _ in progressbar(range(num_games), desc="Preparing model data"):
         score = 0
         game_memory = []
         previous_observation = []
-        for step_index in range(goal_steps):
+
+        for _ in range(steps_per_game):
             action = random.randrange(0, 3)
-            observation, reward, done, info = env.step(action)
+            observation, reward, done, _ = env.step(action)
 
-            if len(previous_observation) > 0:
-                game_memory.append([previous_observation, action])
+            # env.render()
+            # cls()
+            # print('Observation: %s' % str(observation))
+            # print('Reward: %s' % str(reward))
+            # print('Done: %s' % str(done))
+            # print('Info: %s' % str(info))
+            # time.sleep(0.1)
 
+            # This is going in the right direction, so we should reward it
+            if observation[0] > -0.2: reward = 1
+
+            game_memory.append((previous_observation, action))
             previous_observation = observation
-            if observation[0] > -0.2:
-                reward = 1
-
             score += reward
-            if done:
-                break
+            
+            if done: break
 
         if score >= score_requirement:
-            accepted_scores.append(score)
-            for data in game_memory:
-                if data[1] == 1:
-                    output = [0, 1, 0]
-                elif data[1] == 0:
-                    output = [1, 0, 0]
-                elif data[1] == 2:
-                    output = [0, 0, 1]
-                training_data.append([data[0], output])
+            for previous_observation, action in game_memory:
+                if len(previous_observation) > 0:
+                    # Turn into one-hot encoding
+                    output = [0, 0, 0]
+                    output[action] = 1
+                    
+                    # Store tuple of "what was observed and which action was undertaken"
+                    training_data.append((previous_observation, output))
 
         env.reset()
-
-    print(accepted_scores)
 
     return training_data
 
