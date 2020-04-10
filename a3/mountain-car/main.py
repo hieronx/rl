@@ -1,9 +1,11 @@
 import gym
 import random, pickle, os, logging
 import numpy as np
+from stable_baselines.common.vec_env import SubprocVecEnv
+from stable_baselines.common import set_global_seeds, make_vec_env
 
 from model import build_model
-from util import model_data_preparation, progressbar
+from util import model_data_preparation, progressbar, Namespace
 
 logging.basicConfig(
     format="%(asctime)s - %(levelname)s - %(message)s",
@@ -12,14 +14,14 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-env = gym.make("MountainCar-v0")
-env.reset()
-
-score_requirement = -198
-num_games_train = 10000
-num_games_eval = 100
-steps_per_game_train = 200
-steps_per_game_eval = 200
+args = Namespace(
+    score_requirement = -198,
+    num_games_train = 10000,
+    num_games_eval = 100,
+    steps_per_game_train = 200,
+    steps_per_game_eval = 200,
+    num_threads = 10
+)
 
 def main():
     # Load training data
@@ -30,7 +32,7 @@ def main():
 
     else:
         training_data = model_data_preparation(
-            env, num_games_train, steps_per_game_train, score_requirement
+            env, args.num_games_train, args.steps_per_game_train, args.score_requirement
         )
         with open("training_data.p", "wb") as training_data_file:
             pickle.dump(training_data, training_data_file)
@@ -48,44 +50,37 @@ def main():
     model.fit(X, y, epochs=5)
 
     # Evaluate model
-    scores = []
-    choices = []
-    for _ in progressbar(range(num_games_eval), "Evaluating"):
-        score = 0
-        previous_observation = []
+    total_scores = []
+    
+    env = make_vec_env("MountainCar-v0", n_envs=args.num_threads, seed=0)
 
-        for _ in range(steps_per_game_eval):
-            # Uncomment this line if you want to see how our bot playing
-            env.render()
+    for _ in progressbar(range(args.num_games_eval // args.num_threads), "Evaluating"):
+        rewards = [0] * args.num_threads
+        previous_observations = env.reset()
+        done_envs = [False] * args.num_threads
 
-            # First perform a random action, and then start using the model to predict the next action
-            if len(previous_observation) == 0:
-                action = random.randrange(0, 2)
-            else:
-                action = np.argmax(
-                    model.predict(previous_observation.reshape(-1, len(previous_observation)))[0]
-                )
+        for step_id in range(args.steps_per_game_eval):
+            # env.render('human')
 
-            observation, reward, done, _ = env.step(action)
+            actions = [np.argmax(
+                model.predict(previous_observation.reshape(-1, len(previous_observation)))[0]
+            ) for previous_observation in previous_observations]
 
-            choices.append(action)
-            previous_observation = observation
-            score += reward
+            new_observations, _, dones, _ = env.step(actions)
+            
+            new_rewards = [0 if (dones[env_id] == True or done_envs[env_id] == True) else -1 for env_id, _ in enumerate(dones)]
 
-            if done: break
+            for env_id, _ in enumerate(dones):
+                if dones[env_id] == True:
+                    done_envs[env_id] = True
 
-        env.reset()
-        scores.append(score)
+            previous_observations = new_observations
+            rewards = np.add(rewards, new_rewards)
 
-    print(scores)
-    print("Average Score:", sum(scores) / len(scores))
-    print(
-        "choice 1:{}  choice 0:{} choice 2:{}".format(
-            choices.count(1) / len(choices),
-            choices.count(0) / len(choices),
-            choices.count(2) / len(choices),
-        )
-    )
+        total_scores.extend(rewards)
+        print("Average Score:", sum(total_scores) / len(total_scores))
+
+    print("Average Score:", sum(total_scores) / len(total_scores))
 
 
 if __name__ == "__main__":
