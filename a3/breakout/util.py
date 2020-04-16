@@ -1,5 +1,6 @@
 import math
 import os
+import random
 import sys
 import time
 
@@ -22,6 +23,9 @@ class Namespace:
     def __init__(self, **kwargs):
         self.__dict__.update(kwargs)
 
+def sample_batch(replay_buffer, batch_size):
+    random_start_idx = random.randint(0, len(replay_buffer) - 1)
+    return [replay_buffer[idx % len(replay_buffer)] for idx in range(random_start_idx, random_start_idx + batch_size)]
 
 
 # Based on https://stackoverflow.com/questions/3160699/python-progress-bar
