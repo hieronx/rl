@@ -18,6 +18,10 @@ def preprocess(img):
 def transform_reward(reward):
     return np.sign(reward)
 
+class Namespace:
+    def __init__(self, **kwargs):
+        self.__dict__.update(kwargs)
+
 
 
 # Based on https://stackoverflow.com/questions/3160699/python-progress-bar

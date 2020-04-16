@@ -1,92 +1,67 @@
 import os
-import pickle
 import random
 
 import gym
+import numpy as np
+import tensorflow as tf
 
 from dqn import fit_batch
 from model import atari_model
 from ring_buf import RingBuf
-from util import preprocess, progressbar, transform_reward
+from train import choose_best_action, get_epsilon_for_iteration, load_random_samples
+from util import Namespace, preprocess, progressbar, transform_reward
 
 env = gym.make('BreakoutDeterministic-v4')
 
-model = atari_model(4)
-memory = RingBuf(1000000)
+model_path = 'model.h5'
+if os.path.isfile(model_path): model = tf.keras.models.load_model(model_path)
+else: model = atari_model(4)
 
-def load_training_data(env, memory):
-    if os.path.isfile("training_data.p"):
-        print("Loading training data from cache...")
-        with open("training_data.p", "rb") as f:
-            memory = pickle.load(f)
+args = Namespace(
+    num_total_steps = 20000,
+    num_random_samples = 50000,
+    gamma = 0.99,
+    batch_size = 32,
+    log_every_n_steps = 500,
+    replay_buffer_size = 10**6
+)
 
-    else:
-        frame = env.reset()
-        last_four_frames = [preprocess(frame)] * 4
+replay_buffer = RingBuf(args.replay_buffer_size)
 
-        for _ in progressbar(range(50000), desc="Generating training data"):
-            state = last_four_frames
-            action = env.action_space.sample()
+env, replay_buffer = load_random_samples(env, replay_buffer)
 
-            new_frame, reward, is_done, _ = env.step(action)
-            memory.append((state, action, new_frame, reward, is_done))
-
-            last_four_frames.pop(0)
-            last_four_frames.append(preprocess(new_frame))
-
-            if is_done: frame = env.reset()
-        
-        with open("training_data.p", "wb") as training_data_file:
-            pickle.dump(memory, training_data_file)
-
-    env.reset()
-    return env, memory
-
-env, memory = load_training_data(env, memory)
-
-assert(len(memory) == 50000)
-
-frame = env.reset()
-
-def get_epsilon_for_iteration(iteration):
-    if iteration > 1000000: return 0.1
-    else: return 0.9 * (1.0 - (iteration / 1000000)) + 0.1
-
-def choose_best_action(model, state):
-    Q_values = model.predict([state, np.ones(actions.shape)])
-    return np.max(Q_values, axis=1)
-
-def q_iteration(env, model, state, iteration, memory):
+def q_iteration(env, model, state, iteration, replay_buffer):
     # Choose epsilon based on the iteration
-    epsilon = get_epsilon_for_iteration(iteration)
+    epsilon = get_epsilon_for_iteration(iteration, args.num_total_steps)
 
     # Choose the action 
     if random.random() < epsilon:
         action = env.action_space.sample()
+        # print('Random action: %d' % action)
     else:
         action = choose_best_action(model, state)
+        print('Greedy action: %d' % action)
 
     # Play one game iteration (note: according to the next paper, you should actually play 4 times here)
     new_frame, reward, is_done, _ = env.step(action)
-    memory.append((state, action, new_frame, reward, is_done))
+    replay_buffer.append((state, action, new_frame, reward, is_done))
 
     # Sample and fit
-    batch = memory.sample_batch(32)
-    fit_batch(model, 0.99, batch)
+    batch = replay_buffer.sample_batch(args.batch_size)
+    fit_batch(model, args.gamma, batch)
 
     return new_frame, reward, is_done
 
-num_training_steps = 100000
 frame = env.reset()
 last_four_frames = [preprocess(frame)] * 4
 
 is_done = False
 iteration = 0
 total_reward = 0
-for i in progressbar(range(num_training_steps), desc="Training"):
+for i in progressbar(range(args.num_total_steps), desc="Training"):
     state = last_four_frames
 
-    new_frame, reward, is_done = q_iteration(env, model, state, iteration, memory)
+    new_frame, reward, is_done = q_iteration(env, model, state, iteration, replay_buffer)
 
     last_four_frames.pop(0)
     last_four_frames.append(preprocess(new_frame))
@@ -97,8 +72,9 @@ for i in progressbar(range(num_training_steps), desc="Training"):
     if is_done:
         frame = env.reset()
         last_four_frames = [preprocess(frame)] * 4
-        iteration = 0
 
-    if i % 100 == 0:
-        print('Avg reward: %.2f' % (total_reward / 100))
+    if i % args.log_every_n_steps == 0:
+        print('Avg reward: %.2f' % (total_reward / args.log_every_n_steps))
         total_reward = 0
+
+        model.save(model_path)
