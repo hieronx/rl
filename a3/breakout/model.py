@@ -22,6 +22,8 @@ def atari_model(n_actions):
     )(conv_1)
     # Flattening the second convolutional layer.
     conv_flattened = tf.keras.layers.Flatten()(conv_2)
+
+    # TODO: the paper uses 512 hidden units in this layer
     # "The final hidden layer is fully-connected and consists of 256 rectifier units."
     hidden = tf.keras.layers.Dense(256, activation='relu')(conv_flattened)
     # "The output layer is a fully-connected linear layer with a single output for each valid action."

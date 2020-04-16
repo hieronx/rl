@@ -3,7 +3,7 @@ import numpy as np
 from util import preprocess, transform_reward
 
 
-def fit_batch(model, gamma, batch):
+def fit_batch(model, target_model, gamma, batch):
     # batch = 32 * (state, action, new_frame, reward, is_done)
     try:
         start_states = np.array([sample[0] for sample in batch])
@@ -23,7 +23,7 @@ def fit_batch(model, gamma, batch):
     rewards = np.array([transform_reward(sample[3]) for sample in batch])
     is_dones = np.array([sample[4] for sample in batch])
 
-    next_Q_values = model.predict([next_states, actions])
+    next_Q_values = target_model.predict([next_states, actions])
     next_Q_values[is_dones] = 0
 
     Q_values = rewards + gamma * np.max(next_Q_values, axis=1)

@@ -10,7 +10,7 @@ from tensorflow.python.client import device_lib
 from dqn import fit_batch
 from model import atari_model
 from train import choose_best_action, get_epsilon_for_iteration, load_random_samples
-from util import Namespace, preprocess, progressbar, sample_batch, transform_reward
+from util import Namespace, copy_model, preprocess, progressbar, transform_reward
 
 print('Using GPU: %s' % str(tf.test.is_gpu_available()))
 print('GPU devices: %s' % str([device.name for device in device_lib.list_local_devices()]))
@@ -20,9 +20,11 @@ env = gym.make('BreakoutDeterministic-v4')
 model_path = 'model.h5'
 if os.path.isfile(model_path): model = tf.keras.models.load_model(model_path)
 else: model = atari_model(4)
+target_model = copy_model(model, 'model.h5')
 
 args = Namespace(
     num_total_steps = 20000,
+    backup_target_model_every_n_steps = 1000,
     perc_initial_random_samples = 0.005,
     gamma = 0.99,
     batch_size = 32,
@@ -80,7 +82,11 @@ for iteration in progressbar(range(args.num_total_steps), desc="Training"):
             last_four_frames.append(preprocess(new_frame))
 
     # Sample a minibatch and perform SGD updates
-    fit_batch(model, args.gamma, sample_batch(replay_buffer, args.batch_size))
+    random_batch = [random.choice(replay_buffer) for _ in range(args.batch_size)]
+    fit_batch(model, target_model, args.gamma, random_batch)
+
+    if iteration > 0 and iteration % args.backup_target_model_every_n_steps == 0:
+        target_model = copy_model(model, 'model.h5')
 
     if iteration > 0 and iteration % (args.log_every_n_steps // args.update_frequence) == 0:
         # print('Average reward: %.2f' % (total_reward / (args.log_every_n_steps // args.update_frequence)))
