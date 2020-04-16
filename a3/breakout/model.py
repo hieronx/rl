@@ -27,6 +27,16 @@ def atari_model(n_actions):
     optimizer = optimizer=tf.keras.optimizers.Adam(lr=0.00025 / 4, epsilon=0.00015) # From the Rainbow paper
     # optimizer = optimizer=tf.keras.optimizers.RMSprop(lr=0.00025, rho=0.95, epsilon=0.01)
 
-    model.compile(optimizer, loss='mse')
+    model.compile(optimizer, loss=huber_loss)
 
     return model
+# Note: pass in_keras=False to use this function with raw numbers of numpy arrays for testing
+def huber_loss(a, b, in_keras=True):
+    error = a - b
+    quadratic_term = error*error / 2
+    linear_term = abs(error) - 1/2
+    use_linear_term = (abs(error) > 1.0)
+    if in_keras:
+        # Keras won't let us multiply floats by booleans, so we explicitly cast the booleans to floats
+        use_linear_term = tf.keras.backend.cast(use_linear_term, 'float32')
+    return use_linear_term * linear_term + (1-use_linear_term) * quadratic_term

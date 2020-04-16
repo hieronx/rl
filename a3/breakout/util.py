@@ -7,6 +7,8 @@ import time
 import numpy as np
 import tensorflow as tf
 
+from model import huber_loss
+
 
 def to_grayscale(img):
     return np.mean(img, axis=2).astype(np.uint8)
@@ -17,8 +19,8 @@ def downsample(img):
 def preprocess(img):
     return to_grayscale(downsample(img))
 
-def transform_reward(reward):
-    return np.sign(reward)
+# def transform_reward(reward):
+#     return np.sign(reward)
 
 class Namespace:
     def __init__(self, **kwargs):
@@ -26,7 +28,7 @@ class Namespace:
 
 def copy_model(model, path):
     model.save(path)
-    return tf.keras.models.load_model(path)
+    return tf.keras.models.load_model(path, custom_objects={'huber_loss': huber_loss})
 
 
 # Based on https://stackoverflow.com/questions/3160699/python-progress-bar

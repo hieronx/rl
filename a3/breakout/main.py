@@ -10,7 +10,7 @@ from tensorflow.python.client import device_lib
 from dqn import fit_batch
 from model import atari_model
 from train import choose_best_action, get_epsilon_for_iteration, load_random_samples
-from util import Namespace, copy_model, preprocess, progressbar, transform_reward
+from util import Namespace, copy_model, preprocess, progressbar
 
 print('Using GPU: %s' % str(tf.test.is_gpu_available()))
 print('GPU devices: %s' % str([device.name for device in device_lib.list_local_devices()]))
@@ -30,7 +30,7 @@ args = Namespace(
     batch_size = 32,
     log_every_n_steps = 500,
     replay_buffer_perc = 0.10,
-    overwrite_random_samples = False,
+    overwrite_random_samples = True,
     update_frequence = 4,
     render = True,
     max_no_op_actions = 30
@@ -63,9 +63,9 @@ for iteration in progressbar(range(args.num_total_steps), desc="Training"):
             else: action = choose_best_action(model, state)
 
             new_frame, reward, is_done, _ = env.step(action)
-            replay_buffer.append((state, action, new_frame, transform_reward(reward), is_done))
+            replay_buffer.append((state, action, new_frame, reward, is_done))
 
-            current_game_score += transform_reward(reward)
+            current_game_score += reward
 
         if args.render: env.render()
 

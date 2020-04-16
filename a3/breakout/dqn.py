@@ -1,6 +1,6 @@
 import numpy as np
 
-from util import preprocess, transform_reward
+from util import preprocess
 
 
 def fit_batch(model, target_model, gamma, batch):
@@ -20,7 +20,7 @@ def fit_batch(model, target_model, gamma, batch):
         next_states.append(next_state)
     next_states = np.array(next_states)
 
-    rewards = np.array([transform_reward(sample[3]) for sample in batch])
+    rewards = np.array([sample[3] for sample in batch])
     is_dones = np.array([sample[4] for sample in batch])
 
     next_Q_values = target_model.predict([next_states, actions])
