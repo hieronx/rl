@@ -32,7 +32,8 @@ args = Namespace(
     replay_buffer_perc = 0.10,
     overwrite_random_samples = False,
     update_frequence = 4,
-    render = True
+    render = True,
+    max_no_op_actions = 30
 )
 
 replay_buffer = deque(maxlen=int(args.num_total_steps * args.replay_buffer_perc))
@@ -45,27 +46,26 @@ is_done = False
 total_game_score = 0
 num_games_played = 0
 current_game_score = 0
+no_op_actions = random.randint(0, args.max_no_op_actions)
 for iteration in progressbar(range(args.num_total_steps), desc="Training"):
     # Play n steps
     for _ in range(args.update_frequence):
         state = last_four_frames
-        epsilon = get_epsilon_for_iteration(iteration, args.num_total_steps)
 
-        if random.random() < epsilon: action = env.action_space.sample()
-        else: action = choose_best_action(model, state)
-        
-        # TODO: implement no-op max
+        if no_op_actions > 0:
+            new_frame, _, is_done, _ = env.step(0)
+            no_op_actions -= 1
 
-        # Play one game iteration (note: according to the next paper, you should actually play 4 times here)
-        new_frame, reward, is_done, _ = env.step(action)
-        replay_buffer.append((state, action, new_frame, transform_reward(reward), is_done))
+        else:
+            epsilon = get_epsilon_for_iteration(iteration, args.num_total_steps)
 
-        current_game_score += transform_reward(reward)
+            if random.random() < epsilon: action = env.action_space.sample()
+            else: action = choose_best_action(model, state)
 
-        if reward < 0.0:
-            print('STOPP!!!!!!')
-            print(reward)
-            exit()
+            new_frame, reward, is_done, _ = env.step(action)
+            replay_buffer.append((state, action, new_frame, transform_reward(reward), is_done))
+
+            current_game_score += transform_reward(reward)
 
         if args.render: env.render()
 
@@ -77,6 +77,8 @@ for iteration in progressbar(range(args.num_total_steps), desc="Training"):
             print('Ended game %d with score %d' % (num_games_played, current_game_score))
             total_game_score += current_game_score
             current_game_score = 0
+
+            no_op_actions = random.randint(0, args.max_no_op_actions)
         else:
             last_four_frames.pop(0)
             last_four_frames.append(preprocess(new_frame))
