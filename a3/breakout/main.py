@@ -19,62 +19,56 @@ else: model = atari_model(4)
 
 args = Namespace(
     num_total_steps = 20000,
-    num_random_samples = 50000,
+    perc_initial_random_samples = 0.05,
     gamma = 0.99,
     batch_size = 32,
     log_every_n_steps = 500,
-    replay_buffer_size = 10**6
+    replay_buffer_size = 10**6,
+    overwrite_random_samples = False,
+    update_frequence = 4,
+    render = True
 )
 
 replay_buffer = RingBuf(args.replay_buffer_size)
-
-env, replay_buffer = load_random_samples(env, replay_buffer)
-
-def q_iteration(env, model, state, iteration, replay_buffer):
-    # Choose epsilon based on the iteration
-    epsilon = get_epsilon_for_iteration(iteration, args.num_total_steps)
-
-    # Choose the action 
-    if random.random() < epsilon:
-        action = env.action_space.sample()
-        # print('Random action: %d' % action)
-    else:
-        action = choose_best_action(model, state)
-        print('Greedy action: %d' % action)
-
-    # Play one game iteration (note: according to the next paper, you should actually play 4 times here)
-    new_frame, reward, is_done, _ = env.step(action)
-    replay_buffer.append((state, action, new_frame, reward, is_done))
-
-    # Sample and fit
-    batch = replay_buffer.sample_batch(args.batch_size)
-    fit_batch(model, args.gamma, batch)
-
-    return new_frame, reward, is_done
+env, replay_buffer = load_random_samples(env, replay_buffer, args)
 
 frame = env.reset()
 last_four_frames = [preprocess(frame)] * 4
 
 is_done = False
-iteration = 0
 total_reward = 0
-for i in progressbar(range(args.num_total_steps), desc="Training"):
-    state = last_four_frames
+for iteration in progressbar(range(args.num_total_steps), desc="Training"):
+    # Play n steps
+    for _ in range(args.update_frequence):
+        state = last_four_frames
+        epsilon = get_epsilon_for_iteration(iteration, args.num_total_steps)
 
-    new_frame, reward, is_done = q_iteration(env, model, state, iteration, replay_buffer)
+        if random.random() < epsilon: action = env.action_space.sample()
+        else: action = choose_best_action(model, state)
+        
+        # TODO: implement no-op max
 
-    last_four_frames.pop(0)
-    last_four_frames.append(preprocess(new_frame))
+        # Play one game iteration (note: according to the next paper, you should actually play 4 times here)
+        new_frame, reward, is_done, _ = env.step(action)
+        replay_buffer.append((state, action, new_frame, transform_reward(reward), is_done))
 
-    total_reward += reward
-    iteration += 1
-    
-    if is_done:
-        frame = env.reset()
-        last_four_frames = [preprocess(frame)] * 4
+        total_reward += transform_reward(reward)
 
-    if i % args.log_every_n_steps == 0:
-        print('Avg reward: %.2f' % (total_reward / args.log_every_n_steps))
+        if args.render: env.render()
+
+        if is_done:
+            frame = env.reset()
+            last_four_frames = [preprocess(frame)] * 4
+        else:
+            last_four_frames.pop(0)
+            last_four_frames.append(preprocess(new_frame))
+
+    # Sample a minibatch and perform SGD updates
+    batch = replay_buffer.sample_batch(args.batch_size)
+    fit_batch(model, args.gamma, batch)
+
+    if iteration > 0 and iteration % args.log_every_n_steps == 0:
+        print('Average reward: %.2f' % (total_reward / args.log_every_n_steps))
         total_reward = 0
 
         model.save(model_path)
