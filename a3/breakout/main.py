@@ -32,7 +32,7 @@ args = Namespace(
     replay_buffer_perc = 0.10,
     overwrite_random_samples = True,
     update_frequence = 4,
-    render = True,
+    render = False,
     max_no_op_actions = 30
 )
 

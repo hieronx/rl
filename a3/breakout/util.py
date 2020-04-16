@@ -39,7 +39,9 @@ def progressbar(
     count = total or len(it)
 
     def show(j, ips, sec_elapsed_total):
-        _, columns = os.popen("stty size", "r").read().split()
+        f = os.popen("stty size", "r")
+        _, columns = f.read().split()
+        f.close()
 
         # Terminal width - description length - spacing - completed count - spacing - total count - spacing - time - ips
         width = size or (
