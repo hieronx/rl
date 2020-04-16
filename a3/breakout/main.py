@@ -4,12 +4,16 @@ import random
 import gym
 import numpy as np
 import tensorflow as tf
+from tensorflow.python.client import device_lib
 
 from dqn import fit_batch
 from model import atari_model
 from ring_buf import RingBuf
 from train import choose_best_action, get_epsilon_for_iteration, load_random_samples
 from util import Namespace, preprocess, progressbar, transform_reward
+
+print('Using GPU: %s' % str(tf.test.is_gpu_available()))
+print('GPU devices: %s' % str([device.name for device in device_lib.list_local_devices()]))
 
 env = gym.make('BreakoutDeterministic-v4')
 
@@ -19,17 +23,17 @@ else: model = atari_model(4)
 
 args = Namespace(
     num_total_steps = 20000,
-    perc_initial_random_samples = 0.05,
+    perc_initial_random_samples = 0.005,
     gamma = 0.99,
     batch_size = 32,
     log_every_n_steps = 500,
-    replay_buffer_size = 10**6,
+    replay_buffer_perc = 0.10,
     overwrite_random_samples = False,
     update_frequence = 4,
     render = True
 )
 
-replay_buffer = RingBuf(args.replay_buffer_size)
+replay_buffer = RingBuf(int(args.num_total_steps * args.replay_buffer_perc))
 env, replay_buffer = load_random_samples(env, replay_buffer, args)
 
 frame = env.reset()
