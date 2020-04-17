@@ -7,10 +7,10 @@ import gym
 import numpy as np
 import tensorflow as tf
 
-from breakout.buffer import create_and_prefill_buffer, load_random_samples, create_last_four_frame_state
+from breakout.buffer import create_and_prefill_buffer, create_last_four_frame_state, load_random_samples
 from breakout.dqn import fit_batch
-from breakout.model import create_models, get_epsilon_greedy_action
-from breakout.util import Namespace, copy_model, get_epsilon_for_iteration, preprocess, progressbar
+from breakout.model import copy_model, create_models, get_epsilon_greedy_action
+from breakout.util import Namespace, get_epsilon_for_iteration, preprocess, progressbar
 
 
 def train(args):
@@ -68,7 +68,7 @@ def train(args):
                 no_op_actions = random.randint(0, args.max_no_op_actions)
             else:
                 # If the game isn't done yet, save the frame in the state (removing the first one)
-                state.append(preprocess(frame))
+                state.append(preprocess(new_frame))
 
         # Sample a minibatch and perform SGD updates
         # TODO: speed up based on https://github.com/keras-rl/keras-rl/blob/216c3145f3dc4d17877be26ca2185ce7db462bad/rl/memory.py#L30

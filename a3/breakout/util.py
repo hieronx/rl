@@ -6,7 +6,6 @@ import time
 import numpy as np
 import tensorflow as tf
 
-from breakout.model import huber_loss
 
 def to_grayscale(img):
     """Converts the second axis of RGB color (GREEN) to a 8-bit unsigned integer 0-255, this is done to save memory"""
@@ -19,11 +18,6 @@ def downsample(img):
 def preprocess(img):
     """Does the full preprocess process on the provided image RGB array. This includes downsampling and grayscale"""
     return to_grayscale(downsample(img))
-
-def copy_model(model, path):
-    """Copies the neural network model by saving it to disk and loading a new model from the saved copy"""
-    model.save(path)
-    return tf.keras.models.load_model(path, custom_objects={'huber_loss': huber_loss})
 
 def moveto(fp, n):
     """
