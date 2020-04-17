@@ -32,13 +32,14 @@ def train(args):
 
             # Play action and store in replay buffer
             new_frame, reward, is_done, info = env.step(action)
+            proc_frame = preprocess(new_frame)
 
             stats.current_game_score += reward
 
             if stats.lives > info['ale.lives']: reward = -1
             stats.lives = info['ale.lives']
 
-            replay_buffer.append((state, action, preprocess(new_frame), reward, is_done))
+            replay_buffer.append((state, action, proc_frame, reward, is_done))
 
             if args.render: env.render()
 
@@ -47,7 +48,7 @@ def train(args):
                 stats.finished_game()
                 is_done = spinup_game(env, args)
             else:
-                state.append(preprocess(new_frame))
+                state.append(proc_frame)
 
         # Sample a minibatch and perform SGD updates
         random_batch_idx = random.sample(range(1, len(replay_buffer)), args.batch_size)
