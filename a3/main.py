@@ -44,6 +44,10 @@ if __name__ == '__main__':
 
     args = parser.parse_args(sys.argv[1:])
 
+    if tf.__version__[:4] != 1.15:
+        logger.critical('Requires Tensorflow 1.15')
+        exit()
+
     # Train command
     if args.command == 'train':
         logger.info('Using GPU: %s' % str(tf.test.is_gpu_available()))
