@@ -17,7 +17,7 @@ def fit_batch(model, target_model, gamma, batch_idx, replay_buffer):
         reward = replay_buffer.rewards[idx]
         is_done = replay_buffer.is_dones[idx]
         next_state = deque(replay_buffer.start_states[idx], maxlen=4)
-        next_state.append(replay_buffer.proc_frames[idx])
+        next_state.append(replay_buffer.next_frames[idx])
 
         next_states.append(next_state)
         start_states.append(start_state)

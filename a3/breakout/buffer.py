@@ -56,17 +56,17 @@ def create_play_history(env):
 class ReplayBuffer:
 
     def __init__(self, size):
-        self.states = deque([], maxlen=size)
+        self.start_states = deque([], maxlen=size)
         self.actions = deque([], maxlen=size)
-        self.proc_frames = deque([], maxlen=size)
+        self.next_frames = deque([], maxlen=size)
         self.rewards = deque([], maxlen=size)
         self.is_dones = deque([], maxlen=size)
         self.size = 0
 
     def append(self, state, action, proc_frame, reward, is_done):
-        self.states.append(state)
+        self.start_states.append(state)
         self.actions.append(action)
-        self.proc_frames.append(proc_frame)
+        self.next_frames.append(proc_frame)
         self.rewards.append(reward)
         self.is_dones.append(is_done)
         self.size = len(self.actions)
