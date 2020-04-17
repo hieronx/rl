@@ -31,9 +31,14 @@ def train(args):
             action = get_epsilon_greedy_action(env, model, state, args, iteration)
 
             # Play action and store in replay buffer
-            new_frame, reward, is_done, _ = env.step(action)
-            replay_buffer.append((state, action, preprocess(new_frame), reward, is_done))
+            new_frame, reward, is_done, info = env.step(action)
+
             stats.current_game_score += reward
+
+            if stats.lives > info['ale.lives']: reward = -1
+            stats.lives = info['ale.lives']
+
+            replay_buffer.append((state, action, preprocess(new_frame), reward, is_done))
 
             if args.render: env.render()
 

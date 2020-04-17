@@ -11,6 +11,7 @@ class Stats:
         self.running_game_scores = deque([], maxlen=int(100))
         self.total_game_score = 0
         self.num_games_played = 0
+        self.lives = 5
 
     def finished_game(self):
         """Finishes a game, updating statistics and resetting current game score"""
@@ -19,6 +20,7 @@ class Stats:
         self.total_game_score += self.current_game_score
         self.print_summary()
         self.current_game_score = 0
+        self.lives = 5
 
     def print_summary(self):
         """Prints a summary of the statistics obtained during this run so far to the console"""
