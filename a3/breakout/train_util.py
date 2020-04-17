@@ -22,7 +22,7 @@ def load_random_samples(env, replay_buffer, args):
             action = env.action_space.sample()
 
             new_frame, reward, is_done, _ = env.step(action)
-            replay_buffer.append((state, action, new_frame, reward, is_done))
+            replay_buffer.append((state, action, preprocess(new_frame), reward, is_done))
 
             last_four_frames.pop(0)
             last_four_frames.append(preprocess(new_frame))

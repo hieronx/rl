@@ -1,26 +1,32 @@
 import numpy as np
 
-from util import preprocess
-
-
 def fit_batch(model, target_model, gamma, batch):
     """
     Fits the model to one batch. Every batch is 32 samples. Every sample consists
     of a tuple of: state, action, new_frame, reward, is_done
     """
-    start_states = np.array([sample[0] for sample in batch])
-    actions = np.array([[1 if i == sample[1] else 0 for i in range(4)] for sample in batch])
-    next_states = []
+    start_states, next_states, actions, rewards, is_dones = ([], [], [], [], [])
 
     for sample in batch:
+        start_state = sample[0]
+        action = [1 if i == sample[1] else 0 for i in range(4)]
+        reward = sample[3]
+        is_done = sample[4]
         next_state = sample[0]
         next_state.pop(0)
         next_state.append(sample[2])
-        next_states.append(next_state)
-    next_states = np.array(next_states)
 
-    rewards = np.array([sample[3] for sample in batch])
-    is_dones = np.array([sample[4] for sample in batch])
+        next_states.append(next_state)
+        start_states.append(start_state)
+        rewards.append(reward)
+        is_dones.append(is_done)
+        actions.append(action)
+
+    next_states = np.array(next_states)
+    start_states = np.array(start_states)
+    actions = np.array(actions)
+    rewards = np.array(rewards)
+    is_dones = np.array(is_dones)
 
     next_Q_values = target_model.predict([next_states, actions])
     next_Q_values[is_dones] = 0
