@@ -8,10 +8,10 @@ import numpy as np
 import tensorflow as tf
 from tensorflow.python.client import device_lib
 
+from breakout.buffer import create_and_prefill_buffer, load_random_samples
 from breakout.dqn import fit_batch
 from breakout.model import atari_model
 from breakout.train_util import choose_best_action, get_epsilon_for_iteration
-from breakout.buffer import load_random_samples, create_and_prefill_buffer
 from breakout.util import Namespace, copy_model, preprocess, progressbar
 
 
@@ -26,7 +26,7 @@ def train(args):
     else: model = atari_model(4)
     target_model = copy_model(model, 'breakout/model.h5')
 
-    replay_buffer = create_and_prefill_buffer(args)
+    replay_buffer = create_and_prefill_buffer(env, args)
 
     frame = env.reset()
     last_four_frames = [preprocess(frame)] * 4

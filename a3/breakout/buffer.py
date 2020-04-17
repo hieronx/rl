@@ -1,10 +1,13 @@
 import os
 import pickle
+from collections import deque
+
 import numpy as np
+
 from breakout.util import preprocess, progressbar
 
 
-def create_and_prefill_buffer(args):
+def create_and_prefill_buffer(env, args):
     replay_buffer = deque(maxlen=int(args.num_total_steps * args.replay_buffer_perc))
     replay_buffer = load_random_samples(env, replay_buffer, args)
     return replay_buffer
