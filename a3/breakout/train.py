@@ -16,15 +16,11 @@ from breakout.util import get_epsilon_for_iteration, preprocess, progressbar
 def train(args):
     # Initialize environment, model, state, and replay buffer
     model_path = 'breakout/model.h5'
+    stats = Stats()
     env = gym.make('BreakoutDeterministic-v4')
     model, target_model = create_models(model_path)
     replay_buffer = create_and_prefill_buffer(env, args)
-    state = create_last_four_frame_state(env)
-
-    # Reset statistics and do a random spinup, idling for a random amount of time
-    is_done = False
-    stats = Stats()
-    spinup_game(env, args)
+    is_done = reset_game()
 
     # Run the training loop
     for iteration in progressbar(range(args.num_total_steps), desc="Training"):
@@ -37,19 +33,10 @@ def train(args):
             replay_buffer.append((state, action, preprocess(new_frame), reward, is_done))
             stats.current_game_score += reward
 
-            # Render the GUI
             if args.render: env.render()
 
-            if is_done:
-                # Reset the state and statistics, and do another random spinup time for the new game
-                frame = env.reset()
-                state = create_last_four_frame_state(env)
-                stats.finished_game()
-                spinup_game(env, args)
-
-            else:
-                # If the game isn't done yet, save the frame in the state (removing the first one)
-                state.append(preprocess(new_frame))
+            if is_done: reset_game()
+            else: state.append(preprocess(new_frame))
 
         # Sample a minibatch and perform SGD updates
         # TODO: speed up based on https://github.com/keras-rl/keras-rl/blob/216c3145f3dc4d17877be26ca2185ce7db462bad/rl/memory.py#L30
@@ -61,5 +48,14 @@ def train(args):
 
 def spinup_game(env, args):
     """Does a random amount of spinup with no-op actions"""
-    for _ in range(random.randint(1, args.max_no_op_actions)):
+    for _ in range(random.randint(0, args.max_no_op_actions)):
         env.step(0)
+    
+    return False
+
+def reset_game(env, args, stats):
+    """Resets the game and the statistics"""
+    state = create_last_four_frame_state(env)
+    stats.finished_game()
+    is_done = spinup_game(env, args)
+    return is_done
