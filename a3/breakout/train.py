@@ -9,8 +9,8 @@ import tensorflow as tf
 
 from breakout.buffer import create_and_prefill_buffer, load_random_samples
 from breakout.dqn import fit_batch
-from breakout.model import atari_model, choose_best_action
-from breakout.util import Namespace, copy_model, preprocess, progressbar, get_epsilon_for_iteration
+from breakout.model import dqn_model, predict_max_q_action
+from breakout.util import Namespace, copy_model, get_epsilon_for_iteration, preprocess, progressbar
 
 
 def train(args):
@@ -18,7 +18,7 @@ def train(args):
     env = gym.make('BreakoutDeterministic-v4')
 
     model_path = 'breakout/model.h5'
-    model = atari_model(4)
+    model = dqn_model(4)
     target_model = copy_model(model, model_path)
 
     replay_buffer = create_and_prefill_buffer(env, args)
@@ -52,7 +52,7 @@ def train(args):
                 epsilon = get_epsilon_for_iteration(iteration, args.num_total_steps)
 
                 if random.random() < epsilon: action = env.action_space.sample()
-                else: action = choose_best_action(model, state)
+                else: action = predict_max_q_action(model, state)
 
                 # Play action and store in replay buffer
                 new_frame, reward, is_done, _ = env.step(action)

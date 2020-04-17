@@ -1,7 +1,8 @@
-import tensorflow as tf
 import numpy as np
+import tensorflow as tf
 
-def atari_model(n_actions):
+
+def dqn_model(n_actions):
     """Creates and returns the ATARI model with the specified amount of actions that are possible"""
     ATARI_SHAPE = (4, 105, 80) # TODO: maybe make these NONE-magic numbers?
 
@@ -32,7 +33,7 @@ def atari_model(n_actions):
 
     return model
 
-def choose_best_action(model, state):
+def predict_max_q_action(model, state):
     """Returns the index of the output layer that has the highest value, this is effectively the index of the best action"""
     Q_values = model.predict([np.expand_dims(state, axis=0), np.ones((1, 4))])
     return np.argmax(Q_values)
