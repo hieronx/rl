@@ -3,6 +3,7 @@ import logging
 import sys
 
 from breakout.train import train as train_breakout
+from mountaincar.train import train as train_mountain_car
 
 logging.basicConfig(format = '%(asctime)s - %(levelname)s - %(message)s',
                     datefmt = '%H:%M:%S',
@@ -30,9 +31,19 @@ if __name__ == '__main__':
     breakout_train_command.add_argument('--render', action='store_true', help='Show the GUI while training')
     breakout_train_command.add_argument('--max-no-op-actions', type=int, default=30, help='Maximum number of no-op actions to take at the start of every game')
 
+    mountain_car_train_command = game_sp.add_parser('mountain-car', help='Train the DQN algorithm for Mountain Car')
+    mountain_car_train_command.add_argument('--score-requirement', type=int, default=-198, help='Set the minimum score requirement')
+    mountain_car_train_command.add_argument('--num-games-train', type=int, default=10000, help='Set the number of games played for training')
+    mountain_car_train_command.add_argument('--num-games-eval', type=int, default=100, help='Set the number of games played for evaluation')
+    mountain_car_train_command.add_argument('--steps-per-game-train', type=int, default=200, help='Set the number of max steps played per game during training')
+    mountain_car_train_command.add_argument('--steps-per-game-eval', type=int, default=200, help='Set the number of max steps played per game during evaluation')
+    mountain_car_train_command.add_argument('--num-threads', type=int, default=10, help='Set the number of threads')
+
     args = parser.parse_args(sys.argv[1:])
 
     # Train command
     if args.command == 'train':
         if args.game == 'breakout':
             train_breakout(args)
+        elif args.game == 'mountain-car':
+            train_mountain_car(args)

@@ -1,29 +1,19 @@
+import logging
+import os
+import pickle
+import random
+
 import gym
-import random, pickle, os, logging
 import numpy as np
+from stable_baselines.common import make_vec_env, set_global_seeds
 from stable_baselines.common.vec_env import SubprocVecEnv
-from stable_baselines.common import set_global_seeds, make_vec_env
 
-from model import build_model
-from util import model_data_preparation, progressbar, Namespace
+from mountaincar.model import build_model
+from mountaincar.util import Namespace, model_data_preparation, progressbar
 
-logging.basicConfig(
-    format="%(asctime)s - %(levelname)s - %(message)s",
-    datefmt="%H:%M:%S",
-    level=logging.INFO,
-)
 logger = logging.getLogger(__name__)
 
-args = Namespace(
-    score_requirement = -198,
-    num_games_train = 10000,
-    num_games_eval = 100,
-    steps_per_game_train = 200,
-    steps_per_game_eval = 200,
-    num_threads = 10
-)
-
-def main():
+def train(args):
     # Load training data
     if os.path.isfile("training_data.p"):
         logger.info("Loading training data from cache...")
@@ -31,6 +21,9 @@ def main():
             training_data = pickle.load(f)
 
     else:
+        env = gym.make("MountainCar-v0")
+        env.reset()
+
         training_data = model_data_preparation(
             env, args.num_games_train, args.steps_per_game_train, args.score_requirement
         )
@@ -76,7 +69,3 @@ def main():
         print("Average score:", sum(total_scores) / len(total_scores))
 
     print("Average score:", sum(total_scores) / len(total_scores))
-
-
-if __name__ == "__main__":
-    main()
