@@ -28,8 +28,7 @@ def load_random_samples(env, replay_buffer, args):
             replay_buffer = pickle.load(f)
 
     else:
-        frame = env.reset()
-        state = deque([preprocess(frame)] * 4, maxlen=4)
+        state = create_play_history(env)
 
         for _ in progressbar(range(int(args.num_total_steps * args.perc_initial_random_samples)), desc="Generating random samples"):
             action = env.action_space.sample()
