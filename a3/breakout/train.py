@@ -31,9 +31,14 @@ def train(args):
             action = get_epsilon_greedy_action(env, model, state, args, iteration)
 
             # Play action and store in replay buffer
-            new_frame, reward, is_done, _ = env.step(action)
-            replay_buffer.append((state, action, preprocess(new_frame), reward, is_done))
+            new_frame, reward, is_done, info = env.step(action)
+
             stats.current_game_score += reward
+
+            if stats.lives > info['ale.lives']: reward = -1
+            stats.lives = info['ale.lives']
+
+            replay_buffer.append((state, action, preprocess(new_frame), reward, is_done))
 
             if args.render: env.render()
 
@@ -45,9 +50,8 @@ def train(args):
                 state.append(preprocess(new_frame))
 
         # Sample a minibatch and perform SGD updates
-        # TODO: speed up based on https://github.com/keras-rl/keras-rl/blob/216c3145f3dc4d17877be26ca2185ce7db462bad/rl/memory.py#L30
-        random_batch = [random.choice(replay_buffer) for _ in range(args.batch_size)]
-        fit_batch(model, target_model, args.gamma, random_batch)
+        random_batch_idx = random.sample(range(1, len(replay_buffer)), args.batch_size)
+        fit_batch(model, target_model, args.gamma, random_batch_idx, replay_buffer)
 
         if iteration > 0 and iteration % args.backup_target_model_every_n_steps == 0:
             target_model = copy_model(model, model_path)
