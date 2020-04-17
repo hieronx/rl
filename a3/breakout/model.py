@@ -35,10 +35,10 @@ def create_dqn_model(n_actions):
 
     model = tf.keras.models.Model(inputs=[frames_input, actions_input], outputs=filtered_output)
 
-    optimizer = optimizer=tf.keras.optimizers.Adam(lr=0.00025 / 4, epsilon=0.00015) # From the Rainbow paper
-    # optimizer = optimizer=tf.keras.optimizers.RMSprop(lr=0.00025, rho=0.95, epsilon=0.01)
+    optimizer = tf.keras.optimizers.Adam(lr=0.00025 / 4, epsilon=0.00015) # From the Rainbow paper
+    # optimizer = tf.keras.optimizers.RMSprop(lr=0.00025, rho=0.95, epsilon=0.01)
 
-    model.compile(optimizer, loss=huber_loss)
+    model.compile(optimizer, loss=tf.keras.losses.Huber())
 
     return model
 
@@ -46,21 +46,6 @@ def predict_max_q_action(model, state):
     """Returns the index of the output layer that has the highest value, this is effectively the index of the best action"""
     Q_values = model.predict([np.expand_dims(state, axis=0), np.ones((1, 4))])
     return np.argmax(Q_values)
-
-def huber_loss(a, b, in_keras=True):
-    """
-    Implements the Huber_Loss function, the in_keras parameter 
-    can be used to test this using debug numpy arrays by setting it to false
-    """
-    error = a - b
-    quadratic_term = error * error / 2
-    linear_term = abs(error) - .5
-    use_linear_term = (abs(error) > 1.0)
-    
-    # Keras won't let us multiply floats by booleans, so we explicitly cast the booleans to floats
-    if in_keras: use_linear_term = tf.keras.backend.cast(use_linear_term, 'float32')
-    
-    return use_linear_term * linear_term + (1-use_linear_term) * quadratic_term
 
 def get_epsilon_greedy_action(env, model, state, args, iteration):
     # Choose action using epsilon-greedy approach
@@ -74,4 +59,4 @@ def get_epsilon_greedy_action(env, model, state, args, iteration):
 def copy_model(model, path):
     """Copies the neural network model by saving it to disk and loading a new model from the saved copy"""
     model.save(path)
-    return tf.keras.models.load_model(path, custom_objects={'huber_loss': huber_loss})
+    return tf.keras.models.load_model(path)
