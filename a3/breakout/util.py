@@ -7,7 +7,7 @@ import time
 import numpy as np
 import tensorflow as tf
 
-from model import huber_loss
+from breakout.model import huber_loss
 
 
 def to_grayscale(img):

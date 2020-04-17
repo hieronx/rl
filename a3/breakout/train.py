@@ -8,10 +8,10 @@ import numpy as np
 import tensorflow as tf
 from tensorflow.python.client import device_lib
 
-from dqn import fit_batch
-from model import atari_model
-from train_util import choose_best_action, get_epsilon_for_iteration, load_random_samples
-from util import Namespace, copy_model, preprocess, progressbar
+from breakout.dqn import fit_batch
+from breakout.model import atari_model
+from breakout.train_util import choose_best_action, get_epsilon_for_iteration, load_random_samples
+from breakout.util import Namespace, copy_model, preprocess, progressbar
 
 
 def train(args):
@@ -20,10 +20,10 @@ def train(args):
 
     env = gym.make('BreakoutDeterministic-v4')
 
-    model_path = 'model.h5'
+    model_path = 'breakout/model.h5'
     if os.path.isfile(model_path): model = tf.keras.models.load_model(model_path)
     else: model = atari_model(4)
-    target_model = copy_model(model, 'model.h5')
+    target_model = copy_model(model, 'breakout/model.h5')
 
     replay_buffer = deque(maxlen=int(args.num_total_steps * args.replay_buffer_perc))
     env, replay_buffer = load_random_samples(env, replay_buffer, args)
@@ -39,7 +39,7 @@ def train(args):
     no_op_actions = random.randint(0, args.max_no_op_actions)
     for iteration in progressbar(range(args.num_total_steps), desc="Training"):
         # Play n steps
-        for _ in range(args.update_frequence):
+        for _ in range(args.update_frequency):
             state = last_four_frames
 
             if no_op_actions > 0:
@@ -81,28 +81,10 @@ def train(args):
         fit_batch(model, target_model, args.gamma, random_batch)
 
         if iteration > 0 and iteration % args.backup_target_model_every_n_steps == 0:
-            target_model = copy_model(model, 'model.h5')
+            target_model = copy_model(model, 'breakout/model.h5')
 
-        if iteration > 0 and iteration % (args.log_every_n_steps // args.update_frequence) == 0:
-            # print('Average reward: %.2f' % (total_reward / (args.log_every_n_steps // args.update_frequence)))
+        if iteration > 0 and iteration % (args.log_every_n_steps // args.update_frequency) == 0:
+            # print('Average reward: %.2f' % (total_reward / (args.log_every_n_steps // args.update_frequency)))
             # total_reward = 0
 
             model.save(model_path)
-
-
-if __name__ == "__main__":
-    args = Namespace(
-        num_total_steps = 20000,
-        backup_target_model_every_n_steps = 1000,
-        perc_initial_random_samples = 0.005,
-        gamma = 0.99,
-        batch_size = 32,
-        log_every_n_steps = 500,
-        replay_buffer_perc = 0.10,
-        overwrite_random_samples = True,
-        update_frequence = 4,
-        render = False,
-        max_no_op_actions = 30
-    )
-
-    train(args)
