@@ -1,4 +1,5 @@
 import tensorflow as tf
+import numpy as np
 
 def atari_model(n_actions):
     """Creates and returns the ATARI model with the specified amount of actions that are possible"""
@@ -30,6 +31,11 @@ def atari_model(n_actions):
     model.compile(optimizer, loss=huber_loss)
 
     return model
+
+def choose_best_action(model, state):
+    """Returns the index of the output layer that has the highest value, this is effectively the index of the best action"""
+    Q_values = model.predict([np.expand_dims(state, axis=0), np.ones((1, 4))])
+    return np.argmax(Q_values)
 
 def huber_loss(a, b, in_keras=True):
     """

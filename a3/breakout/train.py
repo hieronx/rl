@@ -10,9 +10,8 @@ from tensorflow.python.client import device_lib
 
 from breakout.buffer import create_and_prefill_buffer, load_random_samples
 from breakout.dqn import fit_batch
-from breakout.model import atari_model
-from breakout.train_util import choose_best_action, get_epsilon_for_iteration
-from breakout.util import Namespace, copy_model, preprocess, progressbar
+from breakout.model import atari_model, choose_best_action
+from breakout.util import Namespace, copy_model, preprocess, progressbar, get_epsilon_for_iteration
 
 
 def train(args):
