@@ -21,6 +21,8 @@ def train(args):
     model, target_model = create_models(model_path)
     replay_buffer = create_and_prefill_buffer(env, args)
 
+    backup_target_model_every_n_steps = int(args.backup_target_model_perc * args.num_total_steps)
+
     state = create_play_history(env)
     is_done = spinup_game(env, args)
 
@@ -54,7 +56,7 @@ def train(args):
         random_batch_idx = random.sample(range(1, replay_buffer.size), args.batch_size)
         fit_batch(model, target_model, args.gamma, random_batch_idx, replay_buffer)
 
-        if iteration > 0 and iteration % args.backup_target_model_every_n_steps == 0:
+        if iteration > 0 and iteration % backup_target_model_every_n_steps == 0:
             target_model = copy_model(model, model_path)
 
 def spinup_game(env, args):
