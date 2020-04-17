@@ -44,7 +44,7 @@ if __name__ == '__main__':
 
     args = parser.parse_args(sys.argv[1:])
 
-    if tf.__version__[:4] != 1.15:
+    if tf.__version__[:4] != '1.15':
         logger.critical('Requires Tensorflow 1.15')
         exit()
 
