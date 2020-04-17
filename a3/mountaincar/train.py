@@ -28,7 +28,7 @@ def train(args):
             env, args.num_games_train, args.steps_per_game_train, args.score_requirement
         )
         with open("training_data.p", "wb") as training_data_file:
-            pickle.dump(training_data, training_data_file)
+            pickle.dump(training_data, training_data_file, protocol=pickle.HIGHEST_PROTOCOL)
 
     # Train model`
     X = np.array([previous_observation for previous_observation, _ in training_data]).reshape(-1, len(training_data[0][0]))

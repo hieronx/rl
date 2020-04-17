@@ -43,7 +43,7 @@ def load_random_samples(env, replay_buffer, args):
             if is_done: frame = env.reset()
         
         with open(random_samples_path, "wb") as training_data_file:
-            pickle.dump(replay_buffer, training_data_file)
+            pickle.dump(replay_buffer, training_data_file, protocol=pickle.HIGHEST_PROTOCOL)
 
     env.reset()
     return replay_buffer
