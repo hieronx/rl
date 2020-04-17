@@ -1,8 +1,10 @@
+import random
+
 import numpy as np
 import tensorflow as tf
-import random
+
 from breakout.util import get_epsilon_for_iteration
-from breakout.model import predict_max_q_action
+
 
 def create_models(model_path):
     model = create_dqn_model(4)
@@ -66,3 +68,10 @@ def get_epsilon_greedy_action(env, model, state, args, iteration):
 
     if random.random() < epsilon: action = env.action_space.sample()
     else: action = predict_max_q_action(model, state)
+
+    return action
+
+def copy_model(model, path):
+    """Copies the neural network model by saving it to disk and loading a new model from the saved copy"""
+    model.save(path)
+    return tf.keras.models.load_model(path, custom_objects={'huber_loss': huber_loss})
