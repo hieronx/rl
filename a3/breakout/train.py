@@ -39,7 +39,7 @@ def train(args):
             if stats.lives > info['ale.lives']: reward = -1
             stats.lives = info['ale.lives']
 
-            replay_buffer.append((state, action, proc_frame, reward, is_done))
+            replay_buffer.append(state, action, proc_frame, reward, is_done)
 
             if args.render: env.render()
 
@@ -51,7 +51,7 @@ def train(args):
                 state.append(proc_frame)
 
         # Sample a minibatch and perform SGD updates
-        random_batch_idx = random.sample(range(1, len(replay_buffer)), args.batch_size)
+        random_batch_idx = random.sample(range(1, replay_buffer.size), args.batch_size)
         fit_batch(model, target_model, args.gamma, random_batch_idx, replay_buffer)
 
         if iteration > 0 and iteration % args.backup_target_model_every_n_steps == 0:

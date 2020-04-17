@@ -9,7 +9,7 @@ from breakout.util import preprocess, progressbar
 
 def create_and_prefill_buffer(env, args):
     """Create the deque and prefill the buffer either from disk or by creating random samples"""
-    replay_buffer = deque(maxlen=int(args.num_total_steps * args.replay_buffer_perc))
+    replay_buffer = ReplayBuffer(int(args.num_total_steps * args.replay_buffer_perc))
     replay_buffer = load_random_samples(env, replay_buffer, args)
     return replay_buffer
 
@@ -35,7 +35,7 @@ def load_random_samples(env, replay_buffer, args):
 
             new_frame, reward, is_done, _ = env.step(action)
             proc_frame = preprocess(new_frame)
-            replay_buffer.append((state, action, proc_frame, reward, is_done))
+            replay_buffer.append(state, action, proc_frame, reward, is_done)
 
             state.append(proc_frame)
 
@@ -52,3 +52,21 @@ def create_play_history(env):
     """Creates a simple queue of the last four frames"""
     frame = env.reset()
     return deque([preprocess(frame)] * 4, maxlen=4)
+
+class ReplayBuffer:
+
+    def __init__(self, size):
+        self.states = deque([], maxlen=size)
+        self.actions = deque([], maxlen=size)
+        self.proc_frames = deque([], maxlen=size)
+        self.rewards = deque([], maxlen=size)
+        self.is_dones = deque([], maxlen=size)
+        self.size = 0
+
+    def append(self, state, action, proc_frame, reward, is_done):
+        self.states.append(state)
+        self.actions.append(action)
+        self.proc_frames.append(proc_frame)
+        self.rewards.append(reward)
+        self.is_dones.append(is_done)
+        self.size = len(self.actions)

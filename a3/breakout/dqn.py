@@ -11,14 +11,13 @@ def fit_batch(model, target_model, gamma, batch_idx, replay_buffer):
     start_states, next_states, actions, rewards, is_dones = ([], [], [], [], [])
 
     for idx in batch_idx:
-        sample = replay_buffer[idx]
 
-        start_state = sample[0]
-        action = [1 if i == sample[1] else 0 for i in range(4)]
-        reward = sample[3]
-        is_done = sample[4]
-        next_state = deque(sample[0], maxlen=4)
-        next_state.append(sample[2])
+        start_state = replay_buffer.start_states[idx]
+        action = [1 if i == replay_buffer.actions[idx] else 0 for i in range(4)]
+        reward = replay_buffer.rewards[idx]
+        is_done = replay_buffer.is_dones[idx]
+        next_state = deque(replay_buffer.start_states[idx], maxlen=4)
+        next_state.append(replay_buffer.proc_frames[idx])
 
         next_states.append(next_state)
         start_states.append(start_state)
