@@ -30,7 +30,7 @@ def fit_batch(model, target_model, gamma, batch):
     rewards = np.array(rewards)
     is_dones = np.array(is_dones)
 
-    next_Q_values = target_model.predict([next_states, actions])
+    next_Q_values = target_model.predict([next_states, np.ones(actions.shape)])
     next_Q_values[is_dones] = 0
 
     Q_values = rewards + gamma * np.max(next_Q_values, axis=1)
