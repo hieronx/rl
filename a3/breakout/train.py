@@ -7,24 +7,19 @@ import gym
 import numpy as np
 import tensorflow as tf
 
-from breakout.buffer import create_and_prefill_buffer, load_random_samples
+from breakout.buffer import create_and_prefill_buffer, load_random_samples, create_last_four_frame_state
 from breakout.dqn import fit_batch
-from breakout.model import create_models
+from breakout.model import create_models, get_epsilon_greedy_action
 from breakout.util import Namespace, copy_model, get_epsilon_for_iteration, preprocess, progressbar
 
 
 def train(args):
-    # Initialize environment, model, and replay buffer
-    env = gym.make('BreakoutDeterministic-v4')
-
+    # Initialize environment, model, state, and replay buffer
     model_path = 'breakout/model.h5'
+    env = gym.make('BreakoutDeterministic-v4')
     model, target_model = create_models(model_path)
-
     replay_buffer = create_and_prefill_buffer(env, args)
-
-    # Copy the initial frame 4 times and store this as the initial state
-    frame = env.reset()
-    state = deque([preprocess(frame)] * 4, maxlen=4)
+    state = create_last_four_frame_state(env)
 
     # Reset statistics
     is_done = False
@@ -48,11 +43,7 @@ def train(args):
 
             else:
                 # Choose action using epsilon-greedy approach
-                epsilon = get_epsilon_for_iteration(iteration, args.num_total_steps)
-
-                if random.random() < epsilon: action = env.action_space.sample()
-                else: action = predict_max_q_action(model, state)
-
+                action = get_epsilon_greedy_action(env, model, state, args, iteration)
                 # Play action and store in replay buffer
                 new_frame, reward, is_done, _ = env.step(action)
                 replay_buffer.append((state, action, preprocess(new_frame), reward, is_done))

@@ -1,5 +1,8 @@
 import numpy as np
 import tensorflow as tf
+import random
+from breakout.util import get_epsilon_for_iteration
+from breakout.model import predict_max_q_action
 
 def create_models(model_path):
     model = create_dqn_model(4)
@@ -56,3 +59,10 @@ def huber_loss(a, b, in_keras=True):
     if in_keras: use_linear_term = tf.keras.backend.cast(use_linear_term, 'float32')
     
     return use_linear_term * linear_term + (1-use_linear_term) * quadratic_term
+
+def get_epsilon_greedy_action(env, model, state, args, iteration):
+    # Choose action using epsilon-greedy approach
+    epsilon = get_epsilon_for_iteration(iteration, args.num_total_steps)
+
+    if random.random() < epsilon: action = env.action_space.sample()
+    else: action = predict_max_q_action(model, state)

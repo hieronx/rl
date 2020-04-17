@@ -46,3 +46,9 @@ def load_random_samples(env, replay_buffer, args):
 
     env.reset()
     return replay_buffer
+
+
+def create_last_four_frame_state(env):
+    """Creates a simple queue of the last four frames"""
+    frame = env.reset()
+    return deque([preprocess(frame)] * 4, maxlen=4)
