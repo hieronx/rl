@@ -28,17 +28,15 @@ def load_random_samples(env, replay_buffer, args):
 
     else:
         frame = env.reset()
-        last_four_frames = [preprocess(frame)] * 4
+        state = deque([preprocess(frame)] * 4, maxlen=4)
 
         for _ in progressbar(range(int(args.num_total_steps * args.perc_initial_random_samples)), desc="Generating random samples"):
-            state = last_four_frames
             action = env.action_space.sample()
 
             new_frame, reward, is_done, _ = env.step(action)
             replay_buffer.append((state, action, preprocess(new_frame), reward, is_done))
 
-            last_four_frames.pop(0)
-            last_four_frames.append(preprocess(new_frame))
+            state.append(preprocess(new_frame))
 
             if is_done: frame = env.reset()
         
