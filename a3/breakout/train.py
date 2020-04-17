@@ -1,46 +1,108 @@
 import os
-import pickle
+import random
+import statistics
+from collections import deque
 
+import gym
 import numpy as np
+import tensorflow as tf
+from tensorflow.python.client import device_lib
 
-from util import preprocess, progressbar
+from dqn import fit_batch
+from model import atari_model
+from train_util import choose_best_action, get_epsilon_for_iteration, load_random_samples
+from util import Namespace, copy_model, preprocess, progressbar
 
-random_samples_path = 'random_samples.p'
 
-def load_random_samples(env, replay_buffer, args):
-    if not args.overwrite_random_samples and os.path.isfile(random_samples_path):
-        print("Loading random samples from cache...")
-        with open(random_samples_path, "rb") as f:
-            replay_buffer = pickle.load(f)
+def train(args):
+    print('Using GPU: %s' % str(tf.test.is_gpu_available()))
+    print('GPU devices: %s' % str([device.name for device in device_lib.list_local_devices()]))
 
-    else:
-        frame = env.reset()
-        last_four_frames = [preprocess(frame)] * 4
+    env = gym.make('BreakoutDeterministic-v4')
 
-        for _ in progressbar(range(int(args.num_total_steps * args.perc_initial_random_samples)), desc="Generating random samples"):
+    model_path = 'model.h5'
+    if os.path.isfile(model_path): model = tf.keras.models.load_model(model_path)
+    else: model = atari_model(4)
+    target_model = copy_model(model, 'model.h5')
+
+    replay_buffer = deque(maxlen=int(args.num_total_steps * args.replay_buffer_perc))
+    env, replay_buffer = load_random_samples(env, replay_buffer, args)
+
+    frame = env.reset()
+    last_four_frames = [preprocess(frame)] * 4
+
+    is_done = False
+    running_game_scores = deque([], maxlen=int(100))
+    total_game_score = 0
+    num_games_played = 0
+    current_game_score = 0
+    no_op_actions = random.randint(0, args.max_no_op_actions)
+    for iteration in progressbar(range(args.num_total_steps), desc="Training"):
+        # Play n steps
+        for _ in range(args.update_frequence):
             state = last_four_frames
-            action = env.action_space.sample()
 
-            new_frame, reward, is_done, _ = env.step(action)
-            replay_buffer.append((state, action, new_frame, reward, is_done))
+            if no_op_actions > 0:
+                new_frame, _, is_done, _ = env.step(0)
+                no_op_actions -= 1
 
-            last_four_frames.pop(0)
-            last_four_frames.append(preprocess(new_frame))
+            else:
+                epsilon = get_epsilon_for_iteration(iteration, args.num_total_steps)
 
-            if is_done: frame = env.reset()
-        
-        with open(random_samples_path, "wb") as training_data_file:
-            pickle.dump(replay_buffer, training_data_file)
+                if random.random() < epsilon: action = env.action_space.sample()
+                else: action = choose_best_action(model, state)
 
-    env.reset()
-    return env, replay_buffer
+                new_frame, reward, is_done, _ = env.step(action)
+                replay_buffer.append((state, action, new_frame, reward, is_done))
 
-def get_epsilon_for_iteration(iteration, num_total_steps):
-    if iteration > num_total_steps * 0.1: return 0.1
-    else: return 0.9 * (1.0 - (iteration / (num_total_steps * 0.1))) + 0.1
+                current_game_score += reward
 
-def choose_best_action(model, state):
-    # state is (4, 105, 80), should be (1, 4, 105, 80), since the first dimension is the batch size
-    Q_values = model.predict([np.expand_dims(state, axis=0), np.ones((1, 4))])
-    max_Q = np.argmax(Q_values)
-    return max_Q
+            if args.render: env.render()
+
+            if is_done:
+                frame = env.reset()
+                last_four_frames = [preprocess(frame)] * 4
+
+                num_games_played += 1
+                running_game_scores.append(current_game_score)
+                print('Ended game %d with score %d, running average is %.2f' % (num_games_played, current_game_score, statistics.mean(running_game_scores)))
+                total_game_score += current_game_score
+                current_game_score = 0
+
+                no_op_actions = random.randint(0, args.max_no_op_actions)
+            else:
+                last_four_frames.pop(0)
+                last_four_frames.append(preprocess(new_frame))
+
+        # Sample a minibatch and perform SGD updates
+
+        # TODO: speed up based on https://github.com/keras-rl/keras-rl/blob/216c3145f3dc4d17877be26ca2185ce7db462bad/rl/memory.py#L30
+        random_batch = [random.choice(replay_buffer) for _ in range(args.batch_size)]
+        fit_batch(model, target_model, args.gamma, random_batch)
+
+        if iteration > 0 and iteration % args.backup_target_model_every_n_steps == 0:
+            target_model = copy_model(model, 'model.h5')
+
+        if iteration > 0 and iteration % (args.log_every_n_steps // args.update_frequence) == 0:
+            # print('Average reward: %.2f' % (total_reward / (args.log_every_n_steps // args.update_frequence)))
+            # total_reward = 0
+
+            model.save(model_path)
+
+
+if __name__ == "__main__":
+    args = Namespace(
+        num_total_steps = 20000,
+        backup_target_model_every_n_steps = 1000,
+        perc_initial_random_samples = 0.005,
+        gamma = 0.99,
+        batch_size = 32,
+        log_every_n_steps = 500,
+        replay_buffer_perc = 0.10,
+        overwrite_random_samples = True,
+        update_frequence = 4,
+        render = False,
+        max_no_op_actions = 30
+    )
+
+    train(args)
