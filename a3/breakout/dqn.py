@@ -1,4 +1,7 @@
+from collections import deque
+
 import numpy as np
+
 
 def fit_batch(model, target_model, gamma, batch):
     """
@@ -12,8 +15,7 @@ def fit_batch(model, target_model, gamma, batch):
         action = [1 if i == sample[1] else 0 for i in range(4)]
         reward = sample[3]
         is_done = sample[4]
-        next_state = sample[0]
-        next_state.pop(0)
+        next_state = deque(sample[0], maxlen=4)
         next_state.append(sample[2])
 
         next_states.append(next_state)

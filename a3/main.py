@@ -2,6 +2,9 @@ import argparse
 import logging
 import sys
 
+import tensorflow as tf
+from tensorflow.python.client import device_lib
+
 from breakout.train import train as train_breakout
 from mountaincar.train import train as train_mountain_car
 
@@ -43,6 +46,9 @@ if __name__ == '__main__':
 
     # Train command
     if args.command == 'train':
+        logger.info('Using GPU: %s' % str(tf.test.is_gpu_available()))
+        logger.info('GPU devices: %s' % str([device.name for device in device_lib.list_local_devices()]))
+
         if args.game == 'breakout':
             train_breakout(args)
         elif args.game == 'mountain-car':
