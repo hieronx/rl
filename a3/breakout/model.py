@@ -1,8 +1,8 @@
 import tensorflow as tf
 
-
 def atari_model(n_actions):
-    ATARI_SHAPE = (4, 105, 80)
+    """Creates and returns the ATARI model with the specified amount of actions that are possible"""
+    ATARI_SHAPE = (4, 105, 80) # TODO: maybe make these NONE-magic numbers?
 
     frames_input = tf.keras.Input(ATARI_SHAPE, name='frames')
     actions_input = tf.keras.Input((n_actions,), name='mask')
@@ -30,13 +30,18 @@ def atari_model(n_actions):
     model.compile(optimizer, loss=huber_loss)
 
     return model
-# Note: pass in_keras=False to use this function with raw numbers of numpy arrays for testing
+
 def huber_loss(a, b, in_keras=True):
+    """
+    Implements the Huber_Loss function, the in_keras parameter 
+    can be used to test this using debug numpy arrays by setting it to false
+    """
     error = a - b
-    quadratic_term = error*error / 2
-    linear_term = abs(error) - 1/2
+    quadratic_term = error * error / 2
+    linear_term = abs(error) - .5
     use_linear_term = (abs(error) > 1.0)
-    if in_keras:
-        # Keras won't let us multiply floats by booleans, so we explicitly cast the booleans to floats
-        use_linear_term = tf.keras.backend.cast(use_linear_term, 'float32')
+    
+    # Keras won't let us multiply floats by booleans, so we explicitly cast the booleans to floats
+    if in_keras: use_linear_term = tf.keras.backend.cast(use_linear_term, 'float32')
+    
     return use_linear_term * linear_term + (1-use_linear_term) * quadratic_term
