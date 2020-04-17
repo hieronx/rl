@@ -4,19 +4,18 @@ from util import preprocess
 
 
 def fit_batch(model, target_model, gamma, batch):
-    # batch = 32 * (state, action, new_frame, reward, is_done)
-    try:
-        start_states = np.array([sample[0] for sample in batch])
-    except:
-        print(batch)
-
+    """
+    Fits the model to one batch. Every batch is 32 samples. Every sample consists
+    of a tuple of: state, action, new_frame, reward, is_done
+    """
+    start_states = np.array([sample[0] for sample in batch])
     actions = np.array([[1 if i == sample[1] else 0 for i in range(4)] for sample in batch])
-    
     next_states = []
+
     for sample in batch:
         next_state = sample[0]
         next_state.pop(0)
-        next_state.append(preprocess(sample[2]))
+        next_state.append(sample[2])
         next_states.append(next_state)
     next_states = np.array(next_states)
 

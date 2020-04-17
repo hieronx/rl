@@ -53,7 +53,7 @@ def train(args):
                 else: action = choose_best_action(model, state)
 
                 new_frame, reward, is_done, _ = env.step(action)
-                replay_buffer.append((state, action, new_frame, reward, is_done))
+                replay_buffer.append((state, action, preprocess(new_frame), reward, is_done))
 
                 current_game_score += reward
 
