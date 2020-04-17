@@ -1,4 +1,3 @@
-import math
 import os
 import random
 import sys
@@ -66,7 +65,7 @@ def progressbar(it, desc="", position=None, size=None, start=0, total=None, file
         )
 
         min_elapsed, sec_elapsed = divmod(sec_elapsed_total, 60)
-        sec_total = math.ceil(count / ips) - sec_elapsed_total if ips > 0 else 0
+        sec_total = int((count / ips) + 1) - sec_elapsed_total if ips > 0 else 0
         min_rem, sec_rem = divmod(sec_total, 60)
 
         x = int(width * (start + j) / count)
