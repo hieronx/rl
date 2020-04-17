@@ -20,7 +20,9 @@ def train(args):
     env = gym.make('BreakoutDeterministic-v4')
     model, target_model = create_models(model_path)
     replay_buffer = create_and_prefill_buffer(env, args)
-    is_done = reset_game()
+
+    state = create_last_four_frame_state(env)
+    is_done = spinup_game(env, args)
 
     # Run the training loop
     for iteration in progressbar(range(args.num_total_steps), desc="Training"):
@@ -35,8 +37,12 @@ def train(args):
 
             if args.render: env.render()
 
-            if is_done: reset_game()
-            else: state.append(preprocess(new_frame))
+            if is_done:
+                state = create_last_four_frame_state(env)
+                stats.finished_game()
+                is_done = spinup_game(env, args)
+            else:
+                state.append(preprocess(new_frame))
 
         # Sample a minibatch and perform SGD updates
         # TODO: speed up based on https://github.com/keras-rl/keras-rl/blob/216c3145f3dc4d17877be26ca2185ce7db462bad/rl/memory.py#L30
@@ -52,10 +58,3 @@ def spinup_game(env, args):
         env.step(0)
     
     return False
-
-def reset_game(env, args, stats):
-    """Resets the game and the statistics"""
-    state = create_last_four_frame_state(env)
-    stats.finished_game()
-    is_done = spinup_game(env, args)
-    return is_done
