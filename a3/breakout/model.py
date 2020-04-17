@@ -7,6 +7,7 @@ from breakout.util import get_epsilon_for_iteration
 
 
 def create_models(model_path):
+    """Creates the model and the target model, returning both"""
     model = create_dqn_model(4)
     target_model = copy_model(model, model_path)
     return model, target_model
