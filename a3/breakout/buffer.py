@@ -35,9 +35,10 @@ def load_random_samples(env, replay_buffer, args):
             action = env.action_space.sample()
 
             new_frame, reward, is_done, _ = env.step(action)
-            replay_buffer.append((state, action, preprocess(new_frame), reward, is_done))
+            proc_frame = preprocess(new_frame)
+            replay_buffer.append((state, action, proc_frame, reward, is_done))
 
-            state.append(preprocess(new_frame))
+            state.append(proc_frame)
 
             if is_done: frame = env.reset()
         
@@ -48,7 +49,7 @@ def load_random_samples(env, replay_buffer, args):
     return replay_buffer
 
 
-def create_last_four_frame_state(env):
+def create_play_history(env):
     """Creates a simple queue of the last four frames"""
     frame = env.reset()
     return deque([preprocess(frame)] * 4, maxlen=4)
