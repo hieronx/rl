@@ -9,7 +9,7 @@ import tensorflow as tf
 
 from breakout.buffer import create_and_prefill_buffer, load_random_samples
 from breakout.dqn import fit_batch
-from breakout.model import dqn_model, predict_max_q_action
+from breakout.model import create_models
 from breakout.util import Namespace, copy_model, get_epsilon_for_iteration, preprocess, progressbar
 
 
@@ -18,8 +18,7 @@ def train(args):
     env = gym.make('BreakoutDeterministic-v4')
 
     model_path = 'breakout/model.h5'
-    model = create_dqn_model(4)
-    target_model = copy_model(model, model_path)
+    model, target_model = create_models(model_path)
 
     replay_buffer = create_and_prefill_buffer(env, args)
 

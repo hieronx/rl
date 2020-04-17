@@ -1,6 +1,10 @@
 import numpy as np
 import tensorflow as tf
 
+def create_models(model_path):
+    model = create_dqn_model(4)
+    target_model = copy_model(model, model_path)
+    return model, target_model
 
 def create_dqn_model(n_actions):
     """Creates and returns the ATARI model with the specified amount of actions that are possible"""
