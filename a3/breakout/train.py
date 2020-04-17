@@ -6,11 +6,11 @@ import gym
 import numpy as np
 import tensorflow as tf
 
-from breakout.buffer import create_and_prefill_buffer, create_last_four_frame_state, load_random_samples
+from breakout.buffer import create_and_prefill_buffer, create_last_four_frame_state
 from breakout.dqn import fit_batch
+from breakout.model import copy_model, create_models, get_epsilon_greedy_action
 from breakout.stats import Stats
-from breakout.model import create_models, get_epsilon_greedy_action, copy_model
-from breakout.util import Namespace, get_epsilon_for_iteration, preprocess, progressbar
+from breakout.util import get_epsilon_for_iteration, preprocess, progressbar
 
 
 def train(args):
@@ -31,6 +31,7 @@ def train(args):
         # Play n steps, based on the update frequency
         for _ in range(args.update_frequency):
             action = get_epsilon_greedy_action(env, model, state, args, iteration)
+
             # Play action and store in replay buffer
             new_frame, reward, is_done, _ = env.step(action)
             replay_buffer.append((state, action, preprocess(new_frame), reward, is_done))
@@ -60,5 +61,5 @@ def train(args):
 
 def spinup_game(env, args):
     """Does a random amount of spinup with no-op actions"""
-    for _ in range(random.randint(0, args.max_no_op_actions)):
+    for _ in range(random.randint(1, args.max_no_op_actions)):
         env.step(0)
