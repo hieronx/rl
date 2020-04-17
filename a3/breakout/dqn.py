@@ -1,6 +1,6 @@
 import numpy as np
 
-from util import preprocess
+from breakout.util import preprocess
 
 
 def fit_batch(model, target_model, gamma, batch):

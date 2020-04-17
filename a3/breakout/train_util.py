@@ -3,9 +3,9 @@ import pickle
 
 import numpy as np
 
-from util import preprocess, progressbar
+from breakout.util import preprocess, progressbar
 
-random_samples_path = 'random_samples.p'
+random_samples_path = 'breakout/random_samples.p'
 
 def load_random_samples(env, replay_buffer, args):
     if not args.overwrite_random_samples and os.path.isfile(random_samples_path):
