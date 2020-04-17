@@ -6,7 +6,7 @@ import gym
 import numpy as np
 import tensorflow as tf
 
-from breakout.buffer import create_and_prefill_buffer, create_last_four_frame_state
+from breakout.buffer import create_and_prefill_buffer, create_play_history
 from breakout.dqn import fit_batch
 from breakout.model import copy_model, create_models, get_epsilon_greedy_action
 from breakout.stats import Stats
@@ -21,7 +21,7 @@ def train(args):
     model, target_model = create_models(model_path)
     replay_buffer = create_and_prefill_buffer(env, args)
 
-    state = create_last_four_frame_state(env)
+    state = create_play_history(env)
     is_done = spinup_game(env, args)
 
     # Run the training loop
@@ -38,7 +38,7 @@ def train(args):
             if args.render: env.render()
 
             if is_done:
-                state = create_last_four_frame_state(env)
+                state = create_play_history(env)
                 stats.finished_game()
                 is_done = spinup_game(env, args)
             else:
