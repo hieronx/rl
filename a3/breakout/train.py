@@ -38,8 +38,8 @@ def train(args):
 
             stats.current_game_score += reward
 
-            if stats.lives > info['ale.lives']: reward = -1
-            stats.lives = info['ale.lives']
+            # if stats.lives > info['ale.lives']: reward = -1
+            # stats.lives = info['ale.lives']
 
             replay_buffer.append(state, action, proc_frame, reward, is_done)
 
