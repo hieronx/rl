@@ -1,7 +1,6 @@
 import os
 import random
 import statistics
-from collections import deque
 
 import gym
 import numpy as np
@@ -9,6 +8,7 @@ import tensorflow as tf
 
 from breakout.buffer import create_and_prefill_buffer, load_random_samples, create_last_four_frame_state
 from breakout.dqn import fit_batch
+from breakout.stats import Stats
 from breakout.model import create_models, get_epsilon_greedy_action
 from breakout.util import Namespace, copy_model, get_epsilon_for_iteration, preprocess, progressbar
 
@@ -21,51 +21,31 @@ def train(args):
     replay_buffer = create_and_prefill_buffer(env, args)
     state = create_last_four_frame_state(env)
 
-    # Reset statistics
+    # Reset statistics and do a random spinup, idling for a random amount of time
     is_done = False
-    running_game_scores = deque([], maxlen=int(100))
-    total_game_score = 0
-    num_games_played = 0
-    current_game_score = 0
-
-    # Determine number of no-op actions to take at the start of the first game,
-    # which is between 0 and the max value.
-    no_op_actions = random.randint(0, args.max_no_op_actions)
+    stats = Stats()
+    spinup_game(env, args)
 
     # Run the training loop
     for iteration in progressbar(range(args.num_total_steps), desc="Training"):
         # Play n steps, based on the update frequency
         for _ in range(args.update_frequency):
-            if no_op_actions > 0:
-                # Don't do anything
-                new_frame, _, is_done, _ = env.step(0)
-                no_op_actions -= 1
-
-            else:
-                # Choose action using epsilon-greedy approach
-                action = get_epsilon_greedy_action(env, model, state, args, iteration)
-                # Play action and store in replay buffer
-                new_frame, reward, is_done, _ = env.step(action)
-                replay_buffer.append((state, action, preprocess(new_frame), reward, is_done))
-
-                current_game_score += reward
+            action = get_epsilon_greedy_action(env, model, state, args, iteration)
+            # Play action and store in replay buffer
+            new_frame, reward, is_done, _ = env.step(action)
+            replay_buffer.append((state, action, preprocess(new_frame), reward, is_done))
+            stats.current_game_score += reward
 
             # Render the GUI
             if args.render: env.render()
 
             if is_done:
-                # Reset the state and statistics
+                # Reset the state and statistics, and do another random spinup time for the new game
                 frame = env.reset()
-                state = deque([preprocess(frame)] * 4, maxlen=4)
+                state = create_last_four_frame_state(env)
+                stats.finished_game()
+                spinup_game(env, args)
 
-                num_games_played += 1
-                running_game_scores.append(current_game_score)
-                print('Ended game %d with score %d, running average is %.2f' % (num_games_played, current_game_score, statistics.mean(running_game_scores)))
-                total_game_score += current_game_score
-                current_game_score = 0
-
-                # Re-calculate the number of no-op actions for the next game
-                no_op_actions = random.randint(0, args.max_no_op_actions)
             else:
                 # If the game isn't done yet, save the frame in the state (removing the first one)
                 state.append(preprocess(frame))
@@ -77,3 +57,8 @@ def train(args):
 
         if iteration > 0 and iteration % args.backup_target_model_every_n_steps == 0:
             target_model = copy_model(model, model_path)
+
+def spinup_game(env, args):
+    """Does a random amount of spinup with no-op actions"""
+    for _ in range(random.randint(0, args.max_no_op_actions)):
+        env.step(0)
