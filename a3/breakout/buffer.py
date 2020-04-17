@@ -8,6 +8,7 @@ from breakout.util import preprocess, progressbar
 
 
 def create_and_prefill_buffer(env, args):
+    """Create the deque and prefill the buffer either from disk or by creating random samples"""
     replay_buffer = deque(maxlen=int(args.num_total_steps * args.replay_buffer_perc))
     replay_buffer = load_random_samples(env, replay_buffer, args)
     return replay_buffer

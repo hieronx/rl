@@ -2,7 +2,7 @@ import numpy as np
 import tensorflow as tf
 
 
-def dqn_model(n_actions):
+def create_dqn_model(n_actions):
     """Creates and returns the ATARI model with the specified amount of actions that are possible"""
     ATARI_SHAPE = (4, 105, 80) # TODO: maybe make these NONE-magic numbers?
 

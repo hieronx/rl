@@ -18,7 +18,7 @@ def train(args):
     env = gym.make('BreakoutDeterministic-v4')
 
     model_path = 'breakout/model.h5'
-    model = dqn_model(4)
+    model = create_dqn_model(4)
     target_model = copy_model(model, model_path)
 
     replay_buffer = create_and_prefill_buffer(env, args)
