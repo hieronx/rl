@@ -22,7 +22,7 @@ class Stats:
         if self.current_game_score > self.max_game_score:
             self.max_game_score = self.current_game_score
 
-        self.save_stats((self.num_games_played, self.current_game_score, self.max_game_score, statistics.mean(self.running_game_scores) if len(self.running_game_scores) > 0 else 0.0), epsilon)
+        self.save_stats((self.num_games_played, self.current_game_score, self.max_game_score, statistics.mean(self.running_game_scores) if len(self.running_game_scores) > 0 else 0.0, epsilon))
 
         self.num_games_played += 1
         self.running_game_scores.append(self.current_game_score)
