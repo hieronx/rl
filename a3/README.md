@@ -12,7 +12,7 @@ To print the instructions on how to use the program:
 ```python main.py -h```
 
 ## Section 2 - Mountain Car
-```python main.py train mountain-car```
+```python main.py train mountaincar```
 
 ## Section 3 - Breakout
 ```python main.py train breakout```
