@@ -37,7 +37,7 @@ def create_dqn_model(n_actions):
 
     model = tf.keras.models.Model(inputs=[frames_input, actions_input], outputs=filtered_output)
 
-    optimizer = tf.keras.optimizers.Adam(lr=0.00025 / 4, epsilon=0.00015) # From the Rainbow paper
+    optimizer = tf.keras.optimizers.Adam(lr=0.0000625, epsilon=0.00015) # From the Rainbow paper
     # optimizer = tf.keras.optimizers.RMSprop(lr=0.00025, rho=0.95, epsilon=0.01)
 
     model.compile(optimizer, loss=tf.keras.losses.Huber())
