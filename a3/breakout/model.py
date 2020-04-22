@@ -30,7 +30,8 @@ def create_dqn_model(n_actions):
     conv_flattened = tf.keras.layers.Flatten()(conv_2)
 
     hidden = tf.keras.layers.Dense(256, activation='relu')(conv_flattened)
-    output = tf.keras.layers.Dense(n_actions)(hidden)
+    regularized_hidden = tf.keras.layers.Dropout(0.2)(hidden)
+    output = tf.keras.layers.Dense(n_actions)(regularized_hidden)
 
     filtered_output = tf.keras.layers.multiply([output, actions_input])
 
@@ -55,7 +56,7 @@ def get_epsilon_greedy_action(env, model, state, args, iteration):
     if random.random() < epsilon: action = env.action_space.sample()
     else: action = predict_max_q_action(model, state)
 
-    return action
+    return action, epsilon
 
 def copy_model(model, path):
     """Copies the neural network model by saving it to disk and loading a new model from the saved copy"""

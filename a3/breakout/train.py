@@ -37,7 +37,7 @@ def train(args):
     for iteration in progressbar(range(start_iteration, args.num_total_steps), start=start_iteration, desc="Training"):
         # Play n steps, based on the update frequency
         for _ in range(args.update_frequency):
-            action = get_epsilon_greedy_action(env, model, state, args, iteration)
+            action, epsilon = get_epsilon_greedy_action(env, model, state, args, iteration)
 
             # Play action and store in replay buffer
             new_frame, reward, is_done, info = env.step(action)
@@ -54,7 +54,7 @@ def train(args):
 
             if is_done:
                 state = create_play_history(env)
-                stats.finished_game()
+                stats.finished_game(epsilon)
                 is_done = spinup_game(env, args)
             else:
                 state.append(proc_frame)

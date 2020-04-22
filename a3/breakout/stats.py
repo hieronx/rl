@@ -15,14 +15,14 @@ class Stats:
         self.lives = 5
         self.max_game_score = 0
 
-        self.save_stats(('game_id', 'score', 'max_game_score', 'avg_game_score'), clear=True)
+        self.save_stats(('game_id', 'score', 'max_game_score', 'avg_game_score', 'epsilon'), clear=True)
 
-    def finished_game(self):
+    def finished_game(self, epsilon):
         """Finishes a game, updating statistics and resetting current game score"""
         if self.current_game_score > self.max_game_score:
             self.max_game_score = self.current_game_score
 
-        self.save_stats((self.num_games_played, self.current_game_score, self.max_game_score, statistics.mean(self.running_game_scores) if len(self.running_game_scores) > 0 else 0.0))
+        self.save_stats((self.num_games_played, self.current_game_score, self.max_game_score, statistics.mean(self.running_game_scores) if len(self.running_game_scores) > 0 else 0.0), epsilon)
 
         self.num_games_played += 1
         self.running_game_scores.append(self.current_game_score)
