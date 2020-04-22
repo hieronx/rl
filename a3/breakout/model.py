@@ -21,15 +21,12 @@ def create_dqn_model(n_actions):
 
     normalized = tf.keras.layers.Lambda(lambda x: x / 255.0)(frames_input)
     
-    conv_1 = tf.keras.layers.Conv2D(
-        filters=16, kernel_size=(8, 8), strides=4, padding='same', activation='relu'
-    )(normalized)
-    conv_2 = tf.keras.layers.Conv2D(
-        filters=32, kernel_size=(4, 4), strides=2, padding='same', activation='relu'
-    )(conv_1)
-    conv_flattened = tf.keras.layers.Flatten()(conv_2)
+    conv_1 = tf.keras.layers.Conv2D(filters=32, kernel_size=(8, 8), strides=4, padding='same', activation='relu')(normalized)
+    conv_2 = tf.keras.layers.Conv2D(filters=64, kernel_size=(4, 4), strides=2, padding='same', activation='relu')(conv_1)
+    conv_3 = tf.keras.layers.Conv2D(filters=64, kernel_size=(3, 3), strides=1, padding='same', activation='relu')(conv_2)
+    conv_flattened = tf.keras.layers.Flatten()(conv_3)
 
-    hidden = tf.keras.layers.Dense(256, activation='relu')(conv_flattened)
+    hidden = tf.keras.layers.Dense(512, activation='relu')(conv_flattened)
     regularized_hidden = tf.keras.layers.Dropout(0.2)(hidden)
     output = tf.keras.layers.Dense(n_actions)(regularized_hidden)
 
@@ -38,7 +35,6 @@ def create_dqn_model(n_actions):
     model = tf.keras.models.Model(inputs=[frames_input, actions_input], outputs=filtered_output)
 
     optimizer = tf.keras.optimizers.Adam(lr=0.0000625, epsilon=0.00015) # From the Rainbow paper
-    # optimizer = tf.keras.optimizers.RMSprop(lr=0.00025, rho=0.95, epsilon=0.01)
 
     model.compile(optimizer, loss=tf.keras.losses.Huber())
 
