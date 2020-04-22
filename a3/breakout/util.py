@@ -59,9 +59,11 @@ def progressbar(it, desc="", position=None, size=None, start=0, total=None, file
     count = total or len(it)
 
     def show(j, ips, sec_elapsed_total):
-        f = os.popen("stty size", "r")
-        _, columns = f.read().split()
-        f.close()
+        # f = os.popen("stty size", "r")
+        # _, columns = f.read().split()
+        # f.close()
+
+        columns = 120
 
         # Terminal width - description length - spacing - completed count - spacing - total count - spacing - time - ips
         width = size or (
