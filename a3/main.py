@@ -33,6 +33,7 @@ if __name__ == '__main__':
     breakout_train_command.add_argument('--update-frequency', type=int, default=4, help='Run n steps for every DQN batch fit')
     breakout_train_command.add_argument('--render', action='store_true', help='Show the GUI while training')
     breakout_train_command.add_argument('--max-no-op-actions', type=int, default=30, help='Maximum number of no-op actions to take at the start of every game')
+    breakout_train_command.add_argument('--do-continue', action='store_true', help='Continue training from last saved state')
 
     mountain_car_train_command = game_sp.add_parser('mountain-car', help='Train the DQN algorithm for Mountain Car')
     mountain_car_train_command.add_argument('--score-requirement', type=int, default=-198, help='Set the minimum score requirement')

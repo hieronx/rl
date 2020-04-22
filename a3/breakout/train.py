@@ -11,16 +11,22 @@ from breakout.buffer import create_and_prefill_buffer, create_play_history
 from breakout.dqn import fit_batch
 from breakout.model import copy_model, create_models, get_epsilon_greedy_action
 from breakout.stats import Stats
-from breakout.util import get_epsilon_for_iteration, preprocess, progressbar
+from breakout.util import get_epsilon_for_iteration, load_from_saved_state, preprocess, progressbar
 
 
 def train(args):
     # Initialize environment, model, state, and replay buffer
-    model_path = 'breakout/output/model.h5'
-    stats = Stats()
     env = gym.make('BreakoutDeterministic-v4')
-    model, target_model = create_models(model_path)
-    replay_buffer = create_and_prefill_buffer(env, args)
+    model_path = 'breakout/output/model.h5'
+
+    if args.do_continue:
+        start_iteration, stats, model, target_model, replay_buffer = load_from_saved_state()
+    
+    else:
+        start_iteration = 0
+        stats = Stats()
+        model, target_model = create_models(model_path)
+        replay_buffer = create_and_prefill_buffer(env, args)
 
     backup_target_model_every_n_steps = int(args.backup_target_model_perc * args.num_total_steps)
 
@@ -28,7 +34,7 @@ def train(args):
     is_done = spinup_game(env, args)
 
     # Run the training loop
-    for iteration in progressbar(range(args.num_total_steps), desc="Training"):
+    for iteration in progressbar(range(start_iteration, args.num_total_steps), start=start_iteration, desc="Training"):
         # Play n steps, based on the update frequency
         for _ in range(args.update_frequency):
             action = get_epsilon_greedy_action(env, model, state, args, iteration)
@@ -61,7 +67,7 @@ def train(args):
             target_model = copy_model(model, model_path)
             replay_buffer.save()
 
-            meta = (iteration, args, state, stats)
+            meta = (iteration, stats)
             with open('breakout/output/meta.p', "wb") as meta_file:
                 pickle.dump(meta, meta_file, protocol=pickle.HIGHEST_PROTOCOL)
 

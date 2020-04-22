@@ -27,14 +27,14 @@ class Stats:
         self.num_games_played += 1
         self.running_game_scores.append(self.current_game_score)
         self.total_game_score += self.current_game_score
-        self.print_summary()
+        # self.print_summary()
         self.current_game_score = 0
         self.lives = 5
 
     def print_summary(self):
         """Prints a summary of the statistics obtained during this run so far to the console"""
-        summary = (self.num_games_played, self.current_game_score, statistics.mean(self.running_game_scores))
-        print('Ended game %d with score %d, running average is %.2f' % summary)
+        summary = (self.num_games_played, self.current_game_score, self.max_game_score, statistics.mean(self.running_game_scores))
+        print('Ended game %d with score %d, max score is %d, running average is %.2f.' % summary)
 
     def save_stats(self, data, clear=False):
         if not os.path.exists('breakout/output'): os.makedirs('breakout/output')

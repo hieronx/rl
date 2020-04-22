@@ -1,4 +1,5 @@
 import os
+import pickle
 import random
 import sys
 import time
@@ -6,6 +7,25 @@ import time
 import numpy as np
 import tensorflow as tf
 
+
+def load_from_saved_state():
+    folder = 'breakout/output/'
+
+    print("Loading meta data from saved training state...")
+    with open(folder + 'meta.p', "rb") as f:
+        start_iteration, stats = pickle.load(f)
+    
+    print('Start iteration is %d' % start_iteration)
+
+    print("Loading model from saved training state...")
+    model = tf.keras.models.load_model(folder + 'model.h5')
+    target_model = tf.keras.models.load_model(folder + 'model.h5')
+
+    print("Loading replay buffer from saved training state...")
+    with open(folder + 'replay_buffer.p', "rb") as f:
+        replay_buffer = pickle.load(f)
+    
+    return start_iteration, stats, model, target_model, replay_buffer
 
 def to_grayscale(img):
     """Converts the second axis of RGB color (GREEN) to a 8-bit unsigned integer 0-255, this is done to save memory"""
