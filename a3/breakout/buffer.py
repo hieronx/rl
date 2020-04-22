@@ -20,7 +20,7 @@ def load_random_samples(env, replay_buffer, args):
 
     The environment is also given to this function because it needs it to generate random sample data.
     """
-    random_samples_path = 'breakout/random_samples.p'
+    random_samples_path = 'breakout/output/random_samples.p'
    
     if not args.overwrite_random_samples and os.path.isfile(random_samples_path):
         print("Loading random samples from cache...")
@@ -70,3 +70,7 @@ class ReplayBuffer:
         self.rewards.append(reward)
         self.is_dones.append(is_done)
         self.size = len(self.actions)
+
+    def save(self):
+        with open('breakout/output/replay_buffer.p', "wb") as replay_buffer_file:
+            pickle.dump(self, replay_buffer_file, protocol=pickle.HIGHEST_PROTOCOL)

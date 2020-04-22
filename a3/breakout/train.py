@@ -1,4 +1,5 @@
 import os
+import pickle
 import random
 import statistics
 
@@ -15,7 +16,7 @@ from breakout.util import get_epsilon_for_iteration, preprocess, progressbar
 
 def train(args):
     # Initialize environment, model, state, and replay buffer
-    model_path = 'breakout/model.h5'
+    model_path = 'breakout/output/model.h5'
     stats = Stats()
     env = gym.make('BreakoutDeterministic-v4')
     model, target_model = create_models(model_path)
@@ -58,6 +59,12 @@ def train(args):
 
         if iteration > 0 and iteration % backup_target_model_every_n_steps == 0:
             target_model = copy_model(model, model_path)
+            replay_buffer.save()
+
+            meta = (iteration, args, state, stats)
+            with open('breakout/output/meta.p', "wb") as meta_file:
+                pickle.dump(meta, meta_file, protocol=pickle.HIGHEST_PROTOCOL)
+
 
 def spinup_game(env, args):
     """Does a random amount of spinup with no-op actions"""

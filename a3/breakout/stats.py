@@ -1,3 +1,4 @@
+import os
 import statistics
 from collections import deque
 
@@ -12,9 +13,17 @@ class Stats:
         self.total_game_score = 0
         self.num_games_played = 0
         self.lives = 5
+        self.max_game_score = 0
+
+        self.save_stats(('game_id', 'score', 'max_game_score', 'avg_game_score'), clear=True)
 
     def finished_game(self):
         """Finishes a game, updating statistics and resetting current game score"""
+        if self.current_game_score > self.max_game_score:
+            self.max_game_score = self.current_game_score
+
+        self.save_stats((self.num_games_played, self.current_game_score, self.max_game_score, statistics.mean(self.running_game_scores) if len(self.running_game_scores) > 0 else 0.0))
+
         self.num_games_played += 1
         self.running_game_scores.append(self.current_game_score)
         self.total_game_score += self.current_game_score
@@ -26,3 +35,12 @@ class Stats:
         """Prints a summary of the statistics obtained during this run so far to the console"""
         summary = (self.num_games_played, self.current_game_score, statistics.mean(self.running_game_scores))
         print('Ended game %d with score %d, running average is %.2f' % summary)
+
+    def save_stats(self, data, clear=False):
+        if not os.path.exists('breakout/output'): os.makedirs('breakout/output')
+
+        fn = 'breakout/output/stats.csv'
+        if clear and os.path.isfile(fn): os.remove(fn)
+
+        with open(fn, 'a') as fd:
+            fd.write(';'.join(map(str, data)) + '\n')

@@ -23,7 +23,7 @@ if __name__ == '__main__':
 
     breakout_train_command = game_sp.add_parser('breakout', help='Train the DQN algorithm for Breakout')
     breakout_train_command.add_argument('--num-total-steps', type=int, default=200000, help='Set the number of training iterations')
-    breakout_train_command.add_argument('--backup-target-model-perc', type=float, default=0.05, help='Duplicate the CNN model every %% steps to create a new target network')
+    breakout_train_command.add_argument('--backup-target-model-perc', type=float, default=0.01, help='Duplicate the CNN model every %% steps to create a new target network')
     breakout_train_command.add_argument('--perc-initial-random-samples', type=float, default=0.005, help='%% of initial random samples')
     breakout_train_command.add_argument('--gamma', type=float, default=0.99, help='Discount factor for Q estimation function')
     breakout_train_command.add_argument('--batch-size', type=int, default=32, help='Batch size')
