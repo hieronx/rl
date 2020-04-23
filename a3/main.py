@@ -5,7 +5,9 @@ import sys
 import tensorflow as tf
 from tensorflow.python.client import device_lib
 
+from breakout.plot import plot as plot_breakout
 from breakout.train import train as train_breakout
+from mountaincar.plot import plot as plot_mountain_car
 from mountaincar.train import train as train_mountain_car
 
 logging.basicConfig(format = '%(asctime)s - %(levelname)s - %(message)s',
@@ -25,6 +27,7 @@ if __name__ == '__main__':
     breakout_train_command.add_argument('--num-total-steps', type=int, default=200000, help='Set the number of training iterations')
     breakout_train_command.add_argument('--backup-target-model-perc', type=float, default=0.01, help='Duplicate the CNN model every %% steps to create a new target network')
     breakout_train_command.add_argument('--perc-initial-random-samples', type=float, default=0.005, help='%% of initial random samples')
+    breakout_train_command.add_argument('--dropout-pct', type=float, default=0.0, help='%% of dropout to apply during training')
     breakout_train_command.add_argument('--gamma', type=float, default=0.99, help='Discount factor for Q estimation function')
     breakout_train_command.add_argument('--batch-size', type=int, default=32, help='Batch size')
     breakout_train_command.add_argument('--log-every-n-steps', type=int, default=500, help='Print statistics every n iterations')
@@ -43,6 +46,9 @@ if __name__ == '__main__':
     mountaincar_train_command.add_argument('--steps-per-game-eval', type=int, default=200, help='Set the number of max steps played per game during evaluation')
     mountaincar_train_command.add_argument('--num-threads', type=int, default=10, help='Set the number of threads')
 
+    plot = commands.add_parser('plot', help='Generate all plots')
+    plot.add_argument('--game', type=str, choices=['breakout', 'mountaincar'], help='For which game to generate plots')
+
     args = parser.parse_args(sys.argv[1:])
 
     if tf.__version__[:4] != '1.15':
@@ -58,3 +64,8 @@ if __name__ == '__main__':
             train_breakout(args)
         elif args.game == 'mountaincar':
             train_mountain_car(args)
+    elif args.command == 'plot':
+        if args.game == 'breakout':
+            plot_breakout(args)
+        elif args.game == 'mountaincar':
+            plot_mountain_car(args)

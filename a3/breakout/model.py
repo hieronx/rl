@@ -6,13 +6,13 @@ import tensorflow as tf
 from breakout.util import get_epsilon_for_iteration
 
 
-def create_models(model_path):
+def create_models(model_path, dropout_pct):
     """Creates the model and the target model, returning both"""
-    model = create_dqn_model(4)
+    model = create_dqn_model(4, dropout_pct)
     target_model = copy_model(model, model_path)
     return model, target_model
 
-def create_dqn_model(n_actions):
+def create_dqn_model(n_actions, dropout_pct):
     """Creates and returns the ATARI model with the specified amount of actions that are possible"""
     ATARI_SHAPE = (4, 105, 80) # TODO: maybe make these NONE-magic numbers?
 
@@ -26,8 +26,10 @@ def create_dqn_model(n_actions):
     conv_3 = tf.keras.layers.Conv2D(filters=64, kernel_size=(3, 3), strides=1, padding='same', activation='relu')(conv_2)
     conv_flattened = tf.keras.layers.Flatten()(conv_3)
 
+    print('Dropout %% = %.2f' % dropout_pct)
+
     hidden = tf.keras.layers.Dense(512, activation='relu')(conv_flattened)
-    regularized_hidden = tf.keras.layers.Dropout(0.2)(hidden)
+    regularized_hidden = tf.keras.layers.Dropout(dropout_pct)(hidden)
     output = tf.keras.layers.Dense(n_actions)(regularized_hidden)
 
     filtered_output = tf.keras.layers.multiply([output, actions_input])

@@ -25,7 +25,7 @@ def train(args):
     else:
         start_iteration = 0
         stats = Stats()
-        model, target_model = create_models(model_path)
+        model, target_model = create_models(model_path, args.dropout_pct)
         replay_buffer = create_and_prefill_buffer(env, args)
 
     backup_target_model_every_n_steps = int(args.backup_target_model_perc * args.num_total_steps)

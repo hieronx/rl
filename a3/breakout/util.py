@@ -63,7 +63,7 @@ def progressbar(it, desc="", position=None, size=None, start=0, total=None, file
         # _, columns = f.read().split()
         # f.close()
 
-        columns = 120
+        columns = 80
 
         # Terminal width - description length - spacing - completed count - spacing - total count - spacing - time - ips
         width = size or (
