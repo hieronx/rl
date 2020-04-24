@@ -40,6 +40,7 @@ if __name__ == '__main__':
 
     mountaincar_train_command = game_sp.add_parser('mountaincar', help='Train the DQN algorithm for Mountain Car')
     mountaincar_train_command.add_argument('--score-requirement', type=int, default=-198, help='Set the minimum score requirement')
+    mountaincar_train_command.add_argument('--dropout-pct', type=float, default=0.0, help='%% of dropout to apply during training')
     mountaincar_train_command.add_argument('--num-games-train', type=int, default=100000, help='Set the number of games played for training')
     mountaincar_train_command.add_argument('--num-games-eval', type=int, default=100, help='Set the number of games played for evaluation')
     mountaincar_train_command.add_argument('--steps-per-game-train', type=int, default=200, help='Set the number of max steps played per game during training')

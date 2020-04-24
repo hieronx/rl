@@ -19,7 +19,7 @@ def train(args):
     # Train model
     inputs = np.array(observations).reshape(-1, observation_len)
     outputs = np.array(actions).reshape(-1, action_len)
-    model = build_model(input_size=observation_len, output_size=action_len)
+    model = build_model(observation_len, action_len, args)
     model.fit(inputs, outputs, epochs=5)
 
     evaluate(model, args)
