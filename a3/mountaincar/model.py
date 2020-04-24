@@ -1,6 +1,7 @@
 from tensorflow.keras.layers import Dense, Dropout
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.optimizers import Adam
+import numpy as np
 
 
 def build_model(input_size, output_size):
@@ -16,7 +17,7 @@ def build_model(input_size, output_size):
 
     return model
 
-def get_best_action(observation):
+def get_best_action(model, observation):
     """
     Returns the index of the best action from the provided values out of the prediction.
     If for example the output of the prediction model based on the provided observation 

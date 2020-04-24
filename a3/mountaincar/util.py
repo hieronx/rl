@@ -51,12 +51,11 @@ def model_data_preparation(env, num_games, steps_per_game, score_requirement):
 
 def create_random_training_data(args):
     """Decides, based on if the pickle exists, if it should regenerate or load random samples"""
+    training_data = []
     if os.path.isfile("mountaincar/training_data.p"):
         print("Loading training data from cache...")
         with open("mountaincar/training_data.p", "rb") as f:
             training_data = pickle.load(f)
-        return training_data
-
     else:
         env = gym.make("MountainCar-v0")
         env.reset()
@@ -67,7 +66,9 @@ def create_random_training_data(args):
         )
         with open("mountaincar/training_data.p", "wb") as training_data_file:
             pickle.dump(training_data, training_data_file, protocol=pickle.HIGHEST_PROTOCOL)
-        return training_data
+
+    result = list(zip(*training_data))
+    return result[0], result[1]
 
 class Namespace:
     def __init__(self, **kwargs):
