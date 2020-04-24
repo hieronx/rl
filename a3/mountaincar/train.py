@@ -13,13 +13,11 @@ def train(args):
     """Starts training with the one and only number as the random seed"""
     np.random.seed(42)
     observations, actions = create_random_training_data(args)
-    observation_len = len(observations[0])
-    action_len = len(actions[0])
 
     # Train model
-    inputs = np.array(observations).reshape(-1, observation_len)
-    outputs = np.array(actions).reshape(-1, action_len)
-    model = build_model(observation_len, action_len, args)
+    inputs = np.array(observations).reshape(-1, len(observations[0]))
+    outputs = np.array(actions).reshape(-1, len(actions[0]))
+    model = build_model(len(inputs[0]), len(outputs[0]), args)
     model.fit(inputs, outputs, epochs=5)
 
     evaluate(model, args)
