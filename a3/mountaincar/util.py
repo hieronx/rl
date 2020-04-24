@@ -4,6 +4,7 @@ import time
 import math
 import random
 import time
+import pickle
 
 def cls():
     """Clears the screen, depending on the OS level call, this is merely a small utility function"""
@@ -13,6 +14,7 @@ def cls():
         temp = os.system('clear')
 
 def model_data_preparation(env, num_games, steps_per_game, score_requirement):
+    """Prepares the data for the model by generating a certain amount of random moves"""
     training_data = []
 
     for _ in progressbar(range(num_games), desc="Preparing model data"):
@@ -46,6 +48,26 @@ def model_data_preparation(env, num_games, steps_per_game, score_requirement):
         env.reset()
 
     return training_data
+
+def create_random_training_data(args):
+    """Decides, based on if the pickle exists, if it should regenerate or load random samples"""
+    if os.path.isfile("mountaincar/training_data.p"):
+        print("Loading training data from cache...")
+        with open("mountaincar/training_data.p", "rb") as f:
+            training_data = pickle.load(f)
+        return training_data
+
+    else:
+        env = gym.make("MountainCar-v0")
+        env.reset()
+        env.seed(42)
+
+        training_data = model_data_preparation(
+            env, args.num_games_train, args.steps_per_game_train, args.score_requirement
+        )
+        with open("mountaincar/training_data.p", "wb") as training_data_file:
+            pickle.dump(training_data, training_data_file, protocol=pickle.HIGHEST_PROTOCOL)
+        return training_data
 
 class Namespace:
     def __init__(self, **kwargs):
