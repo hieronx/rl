@@ -7,6 +7,7 @@ from tensorflow.python.client import device_lib
 
 from breakout.plot import plot as plot_breakout
 from breakout.train import train as train_breakout
+from mountaincar.plot import plot as plot_mountaincar
 from mountaincar.train import train as train_mountain_car
 
 logging.basicConfig(format = '%(asctime)s - %(levelname)s - %(message)s',
@@ -45,6 +46,7 @@ if __name__ == '__main__':
     mountaincar_train_command.add_argument('--steps-per-game-train', type=int, default=200, help='Set the number of max steps played per game during training')
     mountaincar_train_command.add_argument('--steps-per-game-eval', type=int, default=200, help='Set the number of max steps played per game during evaluation')
     mountaincar_train_command.add_argument('--num-threads', type=int, default=10, help='Set the number of threads')
+    mountaincar_train_command.add_argument('--overwrite-training-data', action='store_true', help='Whether to overwrite the cached training data')
 
     plot = commands.add_parser('plot', help='Generate all plots')
     plot.add_argument('--game', type=str, choices=['breakout', 'mountaincar'], help='For which game to generate plots')
@@ -69,4 +71,4 @@ if __name__ == '__main__':
         if args.game == 'breakout':
             plot_breakout(args)
         elif args.game == 'mountaincar':
-            raise NotImplementedError("Plotting has not been implemented for the Mountain Car example")
+            plot_mountaincar(args)

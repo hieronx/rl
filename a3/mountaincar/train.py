@@ -9,6 +9,7 @@ from stable_baselines.common.vec_env import SubprocVecEnv
 from mountaincar.model import build_model, get_best_action
 from mountaincar.util import Namespace, create_random_training_data, progressbar
 
+
 def train(args):
     """Starts training with the one and only number as the random seed"""
     np.random.seed(42)
@@ -20,7 +21,7 @@ def train(args):
     model = build_model(len(inputs[0]), len(outputs[0]), args)
     model.fit(inputs, outputs, epochs=5)
 
-    evaluate(model, args)
+    return evaluate(model, args)
 
 def evaluate(model, args):
     """Starts evaluation on the provided model"""
@@ -50,4 +51,6 @@ def evaluate(model, args):
 
         total_scores.extend(rewards)
 
-    print("Average score:", sum(total_scores) / len(total_scores))
+    avg_score = sum(total_scores) / len(total_scores)
+    print("Average score:", avg_score)
+    return avg_score

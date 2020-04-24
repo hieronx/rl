@@ -1,10 +1,12 @@
+import math
 import os
+import pickle
+import random
 import sys
 import time
-import math
-import random
-import time
-import pickle
+
+import gym
+
 
 def cls():
     """Clears the screen, depending on the OS level call, this is merely a small utility function"""
@@ -52,7 +54,7 @@ def model_data_preparation(env, num_games, steps_per_game, score_requirement):
 def create_random_training_data(args):
     """Decides, based on if the pickle exists, if it should regenerate or load random samples"""
     training_data = []
-    if os.path.isfile("mountaincar/training_data.p"):
+    if not args.overwrite_training_data and os.path.isfile("mountaincar/training_data.p"):
         print("Loading training data from cache...")
         with open("mountaincar/training_data.p", "rb") as f:
             training_data = pickle.load(f)
