@@ -9,7 +9,7 @@ def plot(args):
     args.num_threads = 10
     args.num_games_eval = 100
     args.steps_per_game_eval = 200
-    args.num_games_train = 10000
+    args.num_games_train = 100000
     args.steps_per_game_train = 200
     args.score_requirement = -198
 
@@ -17,6 +17,7 @@ def plot(args):
     # plot_random_sample_size(args)
 
 def plot_dropout_effect(args):
+    args.num_games_train = 100000
     args.overwrite_training_data = False
 
     args.dropout_pct = 0.0
@@ -37,7 +38,7 @@ def plot_dropout_effect(args):
     df = pd.DataFrame({ 'Without dropout': scores_with_dropout, 'With dropout': scores_wo_dropout })
     ax = df.plot.hist(bins=12, alpha=0.5)
 
-    fn = 'breakout/output/plot_mountaincar_dropout-effect.png'
+    fn = 'breakout/output/plot_mountaincar_dropout-effect-100k.png'
     ax.get_figure().savefig(fn)
     print('Saved %s' % fn)
 
