@@ -54,8 +54,10 @@ def create_play_history(env):
     return deque([preprocess(frame)] * 4, maxlen=4)
 
 class ReplayBuffer:
+    """The Replay Buffer class merely holds 4 deque objects that each hold a synhronized list of states, actions, etc"""
 
     def __init__(self, size):
+        """Creates a new ReplayBuffer of the provided size"""
         self.start_states = deque([], maxlen=size)
         self.actions = deque([], maxlen=size)
         self.next_frames = deque([], maxlen=size)
@@ -64,6 +66,7 @@ class ReplayBuffer:
         self.size = 0
 
     def append(self, state, action, proc_frame, reward, is_done):
+        """Adds a new entry to the ReplayBuffer"""
         self.start_states.append(state)
         self.actions.append(action)
         self.next_frames.append(proc_frame)
@@ -72,5 +75,6 @@ class ReplayBuffer:
         self.size = len(self.actions)
 
     def save(self):
+        """Saves the ReplayBuffer as a pickle to disc"""
         with open('breakout/output/replay_buffer.p', "wb") as replay_buffer_file:
             pickle.dump(self, replay_buffer_file, protocol=pickle.HIGHEST_PROTOCOL)
