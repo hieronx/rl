@@ -7,7 +7,6 @@ from tensorflow.python.client import device_lib
 
 from breakout.plot import plot as plot_breakout
 from breakout.train import train as train_breakout
-from mountaincar.plot import plot as plot_mountain_car
 from mountaincar.train import train as train_mountain_car
 
 logging.basicConfig(format = '%(asctime)s - %(levelname)s - %(message)s',
@@ -52,8 +51,9 @@ if __name__ == '__main__':
 
     args = parser.parse_args(sys.argv[1:])
 
-    if tf.__version__[:4] != '1.15':
-        logger.critical('Requires Tensorflow 1.15')
+    accepted_versions = ['1.15', '1.14']
+    if tf.__version__[:4] not in accepted_versions:
+        logger.critical('Requires Tensorflow 1.15 or 1.14')
         exit()
 
     # Train command
@@ -69,4 +69,4 @@ if __name__ == '__main__':
         if args.game == 'breakout':
             plot_breakout(args)
         elif args.game == 'mountaincar':
-            plot_mountain_car(args)
+            raise NotImplementedError("Plotting has not been implemented for the Mountain Car example")

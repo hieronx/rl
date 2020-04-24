@@ -5,6 +5,7 @@ import numpy as np
 
 
 def build_model(input_size, output_size, args):
+    """Builds the simple sequential DQN network, using MSE and Adam as an optimizer"""
     model = Sequential()
     model.add(Dense(256, input_dim=input_size, activation="relu"))
     model.add(Dense(128, activation="relu"))
@@ -15,7 +16,6 @@ def build_model(input_size, output_size, args):
         model.add(Dropout(args.dropout_pct))
     model.add(Dense(output_size, activation="linear"))
     model.compile(loss="mse", optimizer=Adam())
-
     return model
 
 def get_best_action(model, observation):
