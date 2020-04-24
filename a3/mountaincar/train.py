@@ -6,7 +6,7 @@ import numpy as np
 from stable_baselines.common import make_vec_env, set_global_seeds
 from stable_baselines.common.vec_env import SubprocVecEnv
 
-from mountaincar.model import build_model
+from mountaincar.model import build_model, get_best_action
 from mountaincar.util import Namespace, create_random_training_data, progressbar
 
 def train(args):
@@ -38,9 +38,7 @@ def evaluate(model, args):
 
         for step_id in range(args.steps_per_game_eval):
 
-            actions = [np.argmax(
-                model.predict(previous_observation.reshape(-1, len(previous_observation)))[0]
-            ) for previous_observation in previous_observations]
+            actions = [get_best_action(observation) for observation in previous_observations]
 
             new_observations, _, dones, _ = env.step(actions)
                         

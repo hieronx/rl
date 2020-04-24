@@ -15,3 +15,11 @@ def build_model(input_size, output_size):
     model.compile(loss="mse", optimizer=Adam())
 
     return model
+
+def get_best_action(observation):
+    """
+    Returns the index of the best action from the provided values out of the prediction.
+    If for example the output of the prediction model based on the provided observation 
+    was [0.45, 0.12, 0.90] this function would return 2
+    """
+    return np.argmax(model.predict(observation.reshape(-1, len(observation)))[0])
