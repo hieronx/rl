@@ -1,6 +1,9 @@
-import numpy as np
-from alphazero.pytorch_classification.utils import Bar, AverageMeter
 import time
+
+import numpy as np
+
+from alphazero.pytorch_classification.utils import AverageMeter, Bar
+
 
 class Arena():
     """

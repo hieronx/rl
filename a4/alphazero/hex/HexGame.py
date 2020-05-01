@@ -24,6 +24,7 @@ class AZHexGame(Game):
     def getNextState(self, board, player, action):
         # if player takes action on board, return next (board,player)
         # action must be a valid move
+        player = HexBoard.RED if player == 1 else HexBoard.BLUE
 
         # TODO: might need to be reversed
         y = action % self.n
@@ -35,6 +36,8 @@ class AZHexGame(Game):
 
     def getValidMoves(self, board, player):
         # return a fixed size binary vector
+        player = HexBoard.RED if player == 1 else HexBoard.BLUE
+
         valids = [0]*self.getActionSize()
         
         legalMoves = board.get_possible_moves()
@@ -50,6 +53,8 @@ class AZHexGame(Game):
 
     def getGameEnded(self, board, player):
         # return 0 if not ended, 1 if player 1 won, -1 if player 1 lost
+        player = HexBoard.RED if player == 1 else HexBoard.BLUE
+
         winner = board.get_winner()
         if winner == HexBoard.RED:
             return 1
@@ -91,6 +96,8 @@ class AZHexGame(Game):
         return str(board)
 
     def getScore(self, board, player):
+        player = HexBoard.RED if player == 1 else HexBoard.BLUE
+        
         if winner == player:
             return math.inf
         elif winner is not None:
