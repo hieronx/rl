@@ -14,7 +14,6 @@ any agent.
 """
 
 def play():
-    mini_othello = True  # Play in 6x6 instead of the normal 8x8.
     human_vs_cpu = True
 
     g = AZHexGame(7)
@@ -24,11 +23,11 @@ def play():
     gp = GreedyHexPlayer(g).play
     hp = HumanHexPlayer(g).play
 
-    checkpoint_path = ""
+    checkpoint_filename = "best_backup.pth.tar"
 
     # nnet players
     n1 = NNet(g)
-    n1.load_checkpoint(checkpoint_path)
+    n1.load_checkpoint("./temp", checkpoint_filename)
 
     args1 = dotdict({'numMCTSSims': 50, 'cpuct':1.0})
     mcts1 = MCTS(g, n1, args1)
@@ -38,7 +37,8 @@ def play():
         player2 = hp
     else:
         n2 = NNet(g)
-        n2.load_checkpoint(checkpoint_path)
+        n2.load_checkpoint("./temp" , checkpoint_filename)
+
 
         args2 = dotdict({'numMCTSSims': 50, 'cpuct': 1.0})
         mcts2 = MCTS(g, n2, args2)
@@ -46,6 +46,6 @@ def play():
 
         player2 = n2p  # Player 2 is neural network if it's cpu vs cpu.
 
-    arena = Arena.Arena(n1p, player2, g, display=OthelloGame.display)
+    arena = Arena.Arena(n1p, player2, g, display=AZHexGame.display)
 
     print(arena.playGames(2, verbose=True))
