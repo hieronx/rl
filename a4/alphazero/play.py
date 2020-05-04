@@ -14,7 +14,7 @@ any agent.
 """
 
 def play():
-    human_vs_cpu = True
+    human_vs_cpu = False
 
     g = AZHexGame(7)
 
