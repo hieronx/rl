@@ -96,9 +96,10 @@ class AZHexGame(Game):
         return str(board)
 
     def getScore(self, board, player):
-        player = HexBoard.RED if player == 1 else HexBoard.BLUE
+        color = HexBoard.RED if player == 1 else HexBoard.BLUE
         
-        if winner == player:
+        winner = board.get_winner()
+        if winner == color:
             return math.inf
         elif winner is not None:
             return -math.inf
