@@ -1,5 +1,6 @@
 import numpy as np
 
+from functools import lru_cache
 from alphazero.Game import Game
 from util.hexboard import HexBoard
 
@@ -13,10 +14,12 @@ class AZHexGame(Game):
         # return initial board
         return HexBoard(self.n)
 
+    @lru_cache(maxsize=4)
     def getBoardSize(self):
         # (a,b) tuple
         return (self.n, self.n)
 
+    @lru_cache(maxsize=4)
     def getActionSize(self):
         # return number of actions
         return self.n*self.n
@@ -36,28 +39,20 @@ class AZHexGame(Game):
 
     def getValidMoves(self, board, player):
         # return a fixed size binary vector
-        player = HexBoard.RED if player == 1 else HexBoard.BLUE
-
-        valids = [0]*self.getActionSize()
-        
+        valids = np.zeros(self.getActionSize())
         legalMoves = board.get_possible_moves()
 
         for x, y in legalMoves:
             valids[self.n*x+y] = 1
-        
-        return np.array(valids)
+        return valids
 
     def getGameEnded(self, board, player):
         # return 0 if not ended, 1 if player 1 won, -1 if player 1 lost
-        player_col = HexBoard.RED if player == 1 else HexBoard.BLUE
-
         winner = board.get_winner()
-        if winner == player_col:
-            return 1
-        elif winner == None:
-            return 0
-        else:
-            return -1
+        if winner is None: return 0
+
+        player_col = HexBoard.RED if player == 1 else HexBoard.BLUE
+        return 1 if player_col == winner else -1
 
     def getCanonicalForm(self, board, player):
         # return state if player==1, else return -state if player==-1
