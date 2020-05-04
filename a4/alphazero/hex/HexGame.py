@@ -42,10 +42,6 @@ class AZHexGame(Game):
         
         legalMoves = board.get_possible_moves()
 
-        if len(legalMoves) == 0:
-            valids[-1] = 1
-            return np.array(valids)
-        
         for x, y in legalMoves:
             valids[self.n*x+y] = 1
         
