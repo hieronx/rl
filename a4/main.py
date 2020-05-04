@@ -2,6 +2,7 @@ import argparse
 import logging
 import sys
 
+from alphazero.play import play as play_alphazero
 from alphazero.train import train as train_alphazero
 from rating.benchmark import run_benchmark
 from rating.configs import configs
@@ -68,7 +69,10 @@ if __name__ == '__main__':
 
     # Play command
     if args.command == 'play':
-        if args.search == 'minimax':
+        if args.search == 'alphazero':
+            play_alphazero()
+            exit()
+        elif args.search == 'minimax':
             if not (args.depth or args.time_limit):
                 logger.critical('Either --depth or --time-limit needs to be set when using Minimax search.')
                 exit()

@@ -100,10 +100,13 @@ class AZHexGame(Game):
         
         winner = board.get_winner()
         if winner == color:
+            print('Score: inf')
             return math.inf
         elif winner is not None:
+            print('Score: -inf')
             return -math.inf
         else:
+            print('Score: 0')
             return 0
 
     @staticmethod
