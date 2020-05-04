@@ -24,15 +24,15 @@ class AZHexGame(Game):
     def getNextState(self, board, player, action):
         # if player takes action on board, return next (board,player)
         # action must be a valid move
-        player = HexBoard.RED if player == 1 else HexBoard.BLUE
+        color = HexBoard.RED if player == 1 else HexBoard.BLUE
 
         # TODO: might need to be reversed
         y = action % self.n
         x = (action - y) / self.n
         move = (int(x), int(y))
 
-        new_board = board.make_move(move, player)
-        return (new_board, HexBoard.get_opposite_color(player))
+        new_board = board.make_move(move, color)
+        return (new_board, -player)
 
     def getValidMoves(self, board, player):
         # return a fixed size binary vector
