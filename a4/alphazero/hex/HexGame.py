@@ -53,15 +53,15 @@ class AZHexGame(Game):
 
     def getGameEnded(self, board, player):
         # return 0 if not ended, 1 if player 1 won, -1 if player 1 lost
-        player = HexBoard.RED if player == 1 else HexBoard.BLUE
+        player_col = HexBoard.RED if player == 1 else HexBoard.BLUE
 
         winner = board.get_winner()
-        if winner == HexBoard.RED:
+        if winner == player_col:
             return 1
-        elif winner == HexBoard.BLUE:
-            return -1
-        else:
+        elif winner == None:
             return 0
+        else:
+            return -1
 
     def getCanonicalForm(self, board, player):
         # return state if player==1, else return -state if player==-1
