@@ -2,6 +2,7 @@ import argparse
 import logging
 import sys
 
+from alphazero.train import train as train_alphazero
 from rating.benchmark import run_benchmark
 from rating.configs import configs
 from rating.trueskill import run_trueskill
@@ -41,6 +42,10 @@ if __name__ == '__main__':
 
     alphazero = search_sp.add_parser('alphazero', help='Play against AlphaZero')
 
+    train = subparsers.add_parser('train', help='Train')
+    train_model_sp = train.add_subparsers(dest='train_model')
+    alphazero = train_model_sp.add_parser('alphazero', help='Train AlphaZero')
+    
     trueskill = subparsers.add_parser('trueskill', help='Evaluate the RL algorithm using TrueSkill')
     trueskill.add_argument('--config', choices=configs.keys(), required=True, help='If added, evaluate using TrueSkill using the chosen configuration set')
     trueskill.add_argument('--max-threads', type=int, help='Set the maximum number of threads')
@@ -84,6 +89,9 @@ if __name__ == '__main__':
         game = HexGame(args)
         board = HexBoard(args.size)
         game.run_interactively(board)
+
+    elif args.command == 'train' and args.train_model == 'alphazero':
+        train_alphazero()
     
     # TrueSkill command
     elif args.command == 'trueskill':
