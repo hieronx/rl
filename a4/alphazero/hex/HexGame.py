@@ -1,6 +1,7 @@
+from functools import lru_cache
+
 import numpy as np
 
-from functools import lru_cache
 from alphazero.Game import Game
 from util.hexboard import HexBoard
 
