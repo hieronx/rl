@@ -85,21 +85,7 @@ class AZHexGame(Game):
         li = [(board, list(pi_new.ravel()) + [pi[-1]]) for board, pi_new in li]
 
         return li
-
-        assert(len(pi) == self.n**2+1)  # 1 for pass
-        pi_board = np.reshape(pi[:-1], (self.n, self.n))
-        l = []
-
-        for i in [2, 4]:
-            for j in [True, False]:
-                newB = np.rot90(board, i)
-                newPi = np.rot90(pi_board, i)
-                if j:
-                    newB = np.fliplr(newB)
-                    newPi = np.fliplr(newPi)
-                l += [(newB, list(newPi.ravel()) + [pi[-1]])]
-        return l
-
+        
     def stringRepresentation(self, board):
         return str(board)
 
