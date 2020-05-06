@@ -17,6 +17,7 @@ from alphazero.hex.HexNNet import HexNNet as onnet
 from alphazero.NeuralNet import NeuralNet
 from alphazero.pytorch_classification.utils import AverageMeter, Bar
 from alphazero.utils import *
+from util.hexboard import HexBoard
 
 sys.path.append('../../')
 
@@ -61,7 +62,7 @@ class NNetWrapper(NeuralNet):
             while batch_idx < int(len(examples)/args.batch_size):
                 sample_ids = np.random.randint(len(examples), size=args.batch_size)
                 boards, pis, vs = list(zip(*[examples[i] for i in sample_ids]))
-                boards = torch.FloatTensor(np.array([board.as_np() for board in boards]).astype(np.float64))
+                boards = torch.FloatTensor(np.array([board.as_np() if isinstance(board, HexBoard) else board for board in boards]).astype(np.float64))
                 target_pis = torch.FloatTensor(np.array(pis))
                 target_vs = torch.FloatTensor(np.array(vs).astype(np.float64))
 
