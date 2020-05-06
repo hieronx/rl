@@ -43,6 +43,15 @@ class HexBoard:
         """Returns if the board is a certain color at the provided coordinate"""
         return self.board[coordinates] == color
 
+    def switch_colors(self):
+        new_board = self.copy()
+        for x in range(self.size):
+            for y in range(self.size):
+                if new_board.board[(x, y)] is not HexBoard.EMPTY:
+                    new_board.board[(x, y)] = self.get_opposite_color(new_board.board[(x, y)])
+
+        return new_board
+
     def get_color(self, coordinates):
         """Returns the color at the provided board coordinate"""
         return self.board[coordinates]

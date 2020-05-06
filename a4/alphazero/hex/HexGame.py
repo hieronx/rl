@@ -57,7 +57,7 @@ class AZHexGame(Game):
 
     def getCanonicalForm(self, board, player):
         # return state if player==1, else return -state if player==-1
-        return board
+        return board.switch_colors() if player == -1 else board
 
     def getSymmetries(self, board, pi):
         # mirror, rotational
@@ -82,7 +82,7 @@ class AZHexGame(Game):
         rotated_pi = np.rot90(pi_board, 2)
 
         li = [(lr_board, lr_pi), (ud_board, ud_pi), (rotated_board, rotated_pi)]
-        li = [(board, list(pi_new.ravel()) + [pi[-1]]) for board, pi_new in li]
+        li = [(board, list(pi_new.ravel())) for board, pi_new in li]
 
         return li
         
