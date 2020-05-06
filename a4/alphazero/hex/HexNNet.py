@@ -34,7 +34,7 @@ class HexNNet(nn.Module):
             self.conv4 = nn.Conv2d(args.num_channels, args.num_channels, 3, stride=1)
             self.bn4 = nn.BatchNorm2d(args.num_channels)
 
-        self.removed_dim = 4 if self.board_size >= 6 else 2
+        self.removed_dim = 4 if self.board_x >= 6 else 2
 
         self.fc1 = nn.Linear(args.num_channels*(self.board_x-self.removed_dim)*(self.board_y-self.removed_dim), 1024)
         self.fc_bn1 = nn.BatchNorm1d(1024)
