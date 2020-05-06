@@ -63,23 +63,42 @@ class AZHexGame(Game):
         # mirror, rotational
 
         # TODO: implement symmetrical board here
-        return [(board, pi)]
+        # return [(board, pi)]
 
-        # board = board.as_np()
+        board = board.as_np()
+        pi_board = np.reshape(pi, (self.n, self.n))
+        # print(pi)
 
-        # assert(len(pi) == self.n**2+1)  # 1 for pass
-        # pi_board = np.reshape(pi[:-1], (self.n, self.n))
-        # l = []
+        # From left to right
+        lr_board = np.fliplr(board)
+        lr_pi = np.fliplr(pi_board)
 
-        # for i in range(1, 5):
-        #     for j in [True, False]:
-        #         newB = np.rot90(board, i)
-        #         newPi = np.rot90(pi_board, i)
-        #         if j:
-        #             newB = np.fliplr(newB)
-        #             newPi = np.fliplr(newPi)
-        #         l += [(newB, list(newPi.ravel()) + [pi[-1]])]
-        # return l
+        # From top to bottom
+        ud_board = np.flipud(board)
+        ud_pi = np.flipud(pi_board)
+
+        # 180 degrees rotation
+        rotated_board = np.rot90(board, 2)
+        rotated_pi = np.rot90(pi_board, 2)
+
+        li = [(lr_board, lr_pi), (ud_board, ud_pi), (rotated_board, rotated_pi)]
+        li = [(board, list(pi_new.ravel()) + [pi[-1]]) for board, pi_new in li]
+
+        return li
+
+        assert(len(pi) == self.n**2+1)  # 1 for pass
+        pi_board = np.reshape(pi[:-1], (self.n, self.n))
+        l = []
+
+        for i in [2, 4]:
+            for j in [True, False]:
+                newB = np.rot90(board, i)
+                newPi = np.rot90(pi_board, i)
+                if j:
+                    newB = np.fliplr(newB)
+                    newPi = np.fliplr(newPi)
+                l += [(newB, list(newPi.ravel()) + [pi[-1]])]
+        return l
 
     def stringRepresentation(self, board):
         return str(board)
