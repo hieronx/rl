@@ -32,7 +32,7 @@ class AZHexGame(Game):
 
         # TODO: might need to be reversed
         y = action % self.n
-        x = (action - y) / self.n
+        x = int(action / self.n)
         move = (int(x), int(y))
 
         new_board = board.make_move(move, color)
@@ -55,16 +55,9 @@ class AZHexGame(Game):
         player_col = HexBoard.RED if player == 1 else HexBoard.BLUE
         return 1 if player_col == winner else -1
 
+    # TODO: we are not 100% sure that canonical form and original form methods are correct, double check
     def getCanonicalForm(self, board, player):
         # return state if player==1, else return -state if player==-1
-
-        # if len(board.get_possible_moves()) < 24:
-        #     board.print()
-        #     mir = board.get_mirrored_board()
-        #     mir.print()
-        #     print('----\n')
-        #     # exit()
-
         return board.get_mirrored_board() if player == -1 else board
 
     def getOriginalForm(self, board, player):
@@ -81,18 +74,19 @@ class AZHexGame(Game):
         # print(pi)
 
         # From left to right
-        lr_board = np.fliplr(board)
-        lr_pi = np.fliplr(pi_board)
+        # lr_board = np.fliplr(board)
+        # lr_pi = np.fliplr(pi_board)
 
-        # From top to bottom
-        ud_board = np.flipud(board)
-        ud_pi = np.flipud(pi_board)
+        # # From top to bottom
+        # ud_board = np.flipud(board)
+        # ud_pi = np.flipud(pi_board)
 
         # 180 degrees rotation
         rotated_board = np.rot90(board, 2)
         rotated_pi = np.rot90(pi_board, 2)
 
-        li = [(lr_board, lr_pi), (ud_board, ud_pi), (rotated_board, rotated_pi)]
+        # li = [(lr_board, lr_pi), (ud_board, ud_pi), (rotated_board, rotated_pi)]
+        li = [(board, pi_board), (rotated_board, rotated_pi)]
         li = [(board, list(pi_new.ravel())) for board, pi_new in li]
 
         return li
