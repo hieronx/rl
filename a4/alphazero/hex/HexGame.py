@@ -28,14 +28,9 @@ class AZHexGame(Game):
     def getNextState(self, board, player, action):
         # if player takes action on board, return next (board,player)
         # action must be a valid move
-        color = HexBoard.RED if player == 1 else HexBoard.BLUE
-
-        # TODO: might need to be reversed
-        y = action % self.n
         x = int(action / self.n)
-        move = (int(x), int(y))
-
-        new_board = board.make_move(move, color)
+        y = int(action % self.n)
+        new_board = board.make_move((x, y), HexBoard.RED if player == 1 else HexBoard.BLUE)
         return (new_board, -player)
 
     def getValidMoves(self, board, player):
@@ -51,9 +46,10 @@ class AZHexGame(Game):
         # return 0 if not ended, 1 if player 1 won, -1 if player 1 lost
         winner = board.get_winner()
         if winner is None: return 0
-
-        player_col = HexBoard.RED if player == 1 else HexBoard.BLUE
-        return 1 if player_col == winner else -1
+        elif winner is HexBoard.RED:
+            return 1 if player == 1 else -1
+        else:
+            return 1 if player == -1 else -1
 
     # TODO: we are not 100% sure that canonical form and original form methods are correct, double check
     def getCanonicalForm(self, board, player):
@@ -65,9 +61,6 @@ class AZHexGame(Game):
 
     def getSymmetries(self, board, pi):
         # mirror, rotational
-
-        # TODO: implement symmetrical board here
-        # return [(board, pi)]
 
         board = board.as_np()
         pi_board = np.reshape(pi, (self.n, self.n))
