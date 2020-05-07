@@ -86,10 +86,10 @@ class AZHexGame(Game):
         return li
         
     def stringRepresentation(self, board):
-        return str(board.hash_code())
+        return str(hash(board))
 
     def stringRepresentationReadable(self, board):
-        return str(board.hash_code())
+        return str(hash(board))
 
     def getScore(self, board, player):
         color = HexBoard.RED if player == 1 else HexBoard.BLUE
