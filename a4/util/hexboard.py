@@ -34,6 +34,18 @@ class HexBoard:
                 arr[x].append(self.board[(x, y)])
         
         return np.array(arr).astype(np.float64)
+    
+    def from_np(self, board_np, size, moves_made):
+        board = {}
+        for x in range(len(board_np)):
+            for y in range(len(board_np[x])):
+                board[(x, y)] = board_np[x][y]
+        
+        hexboard = HexBoard(size)
+        hexboard.board = board
+        hexboard.moves_made = moves_made
+
+        return hexboard
         
     def is_empty(self, coordinates):
         """Returns if the board is empty at the provided coordinate"""
@@ -43,11 +55,21 @@ class HexBoard:
         """Returns if the board is a certain color at the provided coordinate"""
         return self.board[coordinates] == color
 
+    def get_mirrored_board(self):
+        board = self.switch_colors()
+        new_board_np = np.fliplr(np.rot90(board.as_np(), axes=(1, 0)))
+        return self.from_np(new_board_np, board.size, board.moves_made)
+
+    def get_unmirrored_board(self):
+        board = self.switch_colors()
+        new_board_np = np.rot90(np.fliplr(board.as_np(), axes=(0, 1)))
+        return self.from_np(new_board_np, board.size, board.moves_made)
+
     def switch_colors(self):
         new_board = self.copy()
         for x in range(self.size):
             for y in range(self.size):
-                if new_board.board[(x, y)] is not HexBoard.EMPTY:
+                if new_board.board[(x, y)] != HexBoard.EMPTY:
                     new_board.board[(x, y)] = self.get_opposite_color(new_board.board[(x, y)])
 
         return new_board

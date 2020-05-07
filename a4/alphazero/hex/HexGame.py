@@ -57,7 +57,18 @@ class AZHexGame(Game):
 
     def getCanonicalForm(self, board, player):
         # return state if player==1, else return -state if player==-1
-        return board.switch_colors() if player == -1 else board
+
+        # if len(board.get_possible_moves()) < 24:
+        #     board.print()
+        #     mir = board.get_mirrored_board()
+        #     mir.print()
+        #     print('----\n')
+        #     # exit()
+
+        return board.get_mirrored_board() if player == -1 else board
+
+    def getOriginalForm(self, board, player):
+        return board.get_unmirrored_board() if player == -1 else board
 
     def getSymmetries(self, board, pi):
         # mirror, rotational
