@@ -1,6 +1,7 @@
 from functools import lru_cache
 
 import numpy as np
+import math
 
 from alphazero.Game import Game
 from util.hexboard import HexBoard
@@ -85,10 +86,10 @@ class AZHexGame(Game):
         return li
         
     def stringRepresentation(self, board):
-        return str(board)
+        return str(board.hash_code())
 
     def stringRepresentationReadable(self, board):
-        return str(board)
+        return str(board.hash_code())
 
     def getScore(self, board, player):
         color = HexBoard.RED if player == 1 else HexBoard.BLUE
