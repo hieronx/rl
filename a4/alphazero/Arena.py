@@ -57,7 +57,7 @@ class Arena():
                 print("=================")
                 print("Invalid action was: %d" % action)
                 print("=================")
-                print("Invalid board was: ")
+                print("Invalid board was, with player %d: " % curPlayer)
                 board.print()
             board, curPlayer = self.game.getNextState(board, curPlayer, action)
         if verbose:
