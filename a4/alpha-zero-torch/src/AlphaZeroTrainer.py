@@ -35,10 +35,12 @@ class AlphaZeroTrainer(object):
 			prev_nn_wrapper.load_model("models/%d.pt" % start_time)
 			
 			prev_wins, new_wins = 0, 0
-			num_matchup_games = 40
-			for _ in progressbar(range(num_matchup_games), desc="Playing matchups"):
-				winner = self.play_matchup(prev_nn_wrapper, self.nn_wrapper)
-				print(winner)
+			num_matchup_games = 20
+			for i in progressbar(range(num_matchup_games), desc="Playing matchups"):
+				if i % 2 == 0:
+					winner = self.play_matchup(prev_nn_wrapper, self.nn_wrapper)
+				else:
+					winner = self.play_matchup(self.nn_wrapper, prev_nn_wrapper)
 
 				if winner == 1:
 					prev_wins += 1
@@ -71,7 +73,7 @@ class AlphaZeroTrainer(object):
 				temp = self.temp['after']
 			
 			action_probs = mcts.simulate(game, self.nn_wrapper, temp)
-			action = np.random.choice(len(action_probs),p = action_probs) #TODO: should this be uniform or not?
+			action = np.argmax(action_probs)
 			game.play(action)
 				
 			winner = game.check_winner()
@@ -94,7 +96,7 @@ class AlphaZeroTrainer(object):
 			current_player_nn = player1_nn if current_player_idx == 1 else player2_nn
 
 			action_probs = mcts.simulate(game, current_player_nn, temp)
-			action = np.random.choice(len(action_probs), p = action_probs) #TODO: should this be uniform or not?
+			action = np.argmax(action_probs)
 			game.play(action)
 				
 			winner = game.check_winner()
