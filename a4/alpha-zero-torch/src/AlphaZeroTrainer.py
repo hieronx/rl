@@ -24,7 +24,7 @@ class AlphaZeroTrainer(object):
 		self.replay_buffer = ReplayBuffer(self.queue_len)
 
 	def train(self, game, device, lr=0.1, wd=0.005, **params):
-		pool = ThreadPool(cpu_count())
+		pool = ThreadPool(cpu_count() * 4)
 		start_time = int(time.time())
 
 		# Save the initial model before any training
