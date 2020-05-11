@@ -32,6 +32,7 @@ class MCTS():
         """
         for i in range(self.args.numMCTSSims):
             self.search(canonicalBoard)
+            print('\n\n\n\n\n\n---------------------\n\n\n\n\n\n')
 
         s = self.game.stringRepresentation(canonicalBoard)
         counts = [self.Nsa[(s,a)] if (s,a) in self.Nsa else 0 for a in range(self.game.getActionSize())]
@@ -71,13 +72,17 @@ class MCTS():
 
         s = self.game.stringRepresentation(canonicalBoard)
 
+        canonicalBoard.print()
+
         if s not in self.Es:
             self.Es[s] = self.game.getGameEnded(canonicalBoard, 1)
         if self.Es[s]!=0:
+            print('Terminal node')
+            exit()
             # terminal node
             return -self.Es[s]
 
-        if s not in self.Ps:
+        if s not in self.Ps: # this is an unvisited node
             # leaf node
             self.Ps[s], v = self.nnet.predict(canonicalBoard)
             valids = self.game.getValidMoves(canonicalBoard, 1)
@@ -99,6 +104,10 @@ class MCTS():
 
             self.Vs[s] = valids
             self.Ns[s] = 0
+
+            print(self.Ps)
+            # s.print()
+            print('Leaf node')
             return -v
 
         valids = self.Vs[s]
@@ -128,6 +137,8 @@ class MCTS():
 
         # next_s = self.game.getOriginalForm(next_s, player) # NEW
         next_s = self.game.getCanonicalForm(next_s, next_player)
+
+        next_s.print()
 
         v = self.search(next_s)
 
