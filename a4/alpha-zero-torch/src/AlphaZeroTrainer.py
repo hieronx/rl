@@ -1,6 +1,6 @@
 import time
-from multiprocessing.dummy import Pool as ThreadPool
 from multiprocessing import cpu_count
+from multiprocessing.dummy import Pool as ThreadPool
 
 import numpy as np
 
@@ -16,6 +16,8 @@ class AlphaZeroTrainer(object):
 		self.game = game
 		self.mcts = mcts
 		self.queue_len = params['queue_len']
+		self.arena_compare = params['arena_compare']
+		self.update_threshold = params['update_threshold']
 		self.n_games = params['n_games']
 		self.eps = params['eps']
 		self.temp = params['temp']
@@ -36,8 +38,7 @@ class AlphaZeroTrainer(object):
 			prev_nn_wrapper.load_model("models/%d.pt" % start_time)
 			
 			prev_wins, new_wins = 0, 0
-			num_matchup_games = 20
-			for i in progressbar(range(num_matchup_games), desc="Playing matchups"):
+			for i in progressbar(range(self.arena_compare), desc="Playing matchups"):
 				if i % 2 == 0:
 					winner = self.play_matchup(prev_nn_wrapper, self.nn_wrapper)
 				else:
@@ -48,9 +49,9 @@ class AlphaZeroTrainer(object):
 				elif winner == -1:
 					new_wins += 1
 			
-			win_perc = new_wins / num_matchup_games
+			win_perc = new_wins / self.arena_compare
 
-			if win_perc > 0.6:
+			if win_perc > self.update_threshold:
 				self.nn_wrapper.save_model("models", "%d.pt" % start_time)
 				self.nn_wrapper.save_model("models", "best.pt")
 				print("Win perc = %.2f, overwriting previous model." % win_perc)
@@ -119,7 +120,7 @@ class ReplayBuffer(object):
 	    self.buffer.append(game)
 
 	def sample_batch(self, batch_size):
-	    n_positions = self.get_total_positions()
+	    # n_positions = self.get_total_positions()
 
 	    games = np.random.choice(
 	        self.buffer,
