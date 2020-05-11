@@ -4,8 +4,8 @@ from multiprocessing.dummy import Pool as ThreadPool
 import numpy as np
 
 from src.NN import NetWrapper
-
-from .utils.plot import unique_positions_vis
+from src.utils import progressbar
+from src.utils.plot import unique_positions_vis
 
 
 class AlphaZeroTrainer(object):
@@ -21,7 +21,7 @@ class AlphaZeroTrainer(object):
 		self.replay_buffer = ReplayBuffer(self.queue_len)
 
 	def train(self, game, device, lr=0.1, wd=0.005, **params):
-		pool = ThreadPool(4)
+		pool = ThreadPool(8)
 		start_time = int(time.time())
 
 		# Save the initial model before any training
@@ -36,7 +36,7 @@ class AlphaZeroTrainer(object):
 			
 			prev_wins, new_wins = 0, 0
 			num_matchup_games = 40
-			for _ in range(num_matchup_games):
+			for _ in progressbar(range(num_matchup_games), desc="Playing matchups"):
 				winner = self.play_matchup(prev_nn_wrapper, self.nn_wrapper)
 
 				if winner == 1:
@@ -46,9 +46,11 @@ class AlphaZeroTrainer(object):
 			
 			win_perc = new_wins / num_matchup_games
 
-			print("Win perc = %.2f" % win_perc)
 			if win_perc > 0.6:
 				self.nn_wrapper.save_model("models", "%d.pt" % start_time)
+				print("Win perc = %.2f, overwriting previous model." % win_perc)
+			else:
+				print("Win perc = %.2f, keeping previous model." % win_perc)
 
 			print("One self play ep: {}/{}, avg loss: {}".format(i,self.eps, loss))
 

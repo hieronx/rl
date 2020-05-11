@@ -3,7 +3,7 @@ import torch
 import yaml
 
 from src.AlphaZeroTrainer import AlphaZeroTrainer as az
-from src.games.Tictactoe import Tictactoe
+from src.games.Hex import Hex
 from src.MCTS import MCTS
 from src.NN import NetWrapper
 from src.Player import *
@@ -16,7 +16,7 @@ with open("config.yaml", 'r') as f:
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 print("Running on device: %s" % device)
 
-game = Tictactoe(**config['GAME'])
+game = Hex(**config['GAME'])
 mcts = MCTS(**config['MCTS'])
 nn = NetWrapper(game, device, lr=0.01, wd=0.015, **config['NN'])
 #nn.load_model()
