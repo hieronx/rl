@@ -47,8 +47,8 @@ class AlphaZeroTrainer(object):
 			win_perc = new_wins / num_matchup_games
 
 			print("Win perc = %.2f" % win_perc)
-			# if win_perc > 0.6:
-			# 	self.nn_wrapper.save_model("models", "%d.pt" % start_time)
+			if win_perc > 0.6:
+				self.nn_wrapper.save_model("models", "%d.pt" % start_time)
 
 			print("One self play ep: {}/{}, avg loss: {}".format(i,self.eps, loss))
 
