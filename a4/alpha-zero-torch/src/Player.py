@@ -1,6 +1,9 @@
-from .MCTS import MCTS
-import numpy as np
 from math import inf as infinity
+
+import numpy as np
+
+from .MCTS import MCTS
+
 
 def play_game(game, p1, p2, print_b = False):
 	game.reset()
@@ -75,11 +78,11 @@ class HumanPlayer(Player):
 		possible_actions = np.nonzero(game.get_possible_actions())[0]
 		
 		action = input ("Enter an action:")
-		action = int(action) - 1
+		action = int(action)
 		
 		while action not in possible_actions:
 			action = input ("Invalid action. Enter an action:")
-			action = int(action) - 1
+			action = int(action)
 
 		return action
 
@@ -137,5 +140,4 @@ class MinimaxPlayer(Player):
 					best = score  # min value
 
 		return best
-
 

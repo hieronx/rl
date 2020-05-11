@@ -1,6 +1,7 @@
+import torch
 import yaml
 
-from src.games.Tictactoe import Tictactoe
+from src.games.Hex import Hex
 from src.MCTS import MCTS
 from src.NN import NetWrapper
 from src.Player import *
@@ -8,13 +9,12 @@ from src.Player import *
 with open("config.yaml", 'r') as f:
     config = yaml.safe_load(f)
 
-game = Tictactoe(**config['GAME'])
-"""
-nn = NetWrapper(game, **config['NN'])
-nn.load_model("models/the_bestest_of_models.pt")
-"""
-nn1 = NetWrapper(game, **config['NN'])
-nn1.load_model()
+device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+print("Running on device: %s" % device)
+
+game = Hex(**config['GAME'])
+nn1 = NetWrapper(game, device, lr=0.01, wd=0.015, **config['NN'])
+nn1.load_model("models/1589203166.pt")
 
 mcts = MCTS(**config['MCTS'])
 

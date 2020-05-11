@@ -38,6 +38,7 @@ class AlphaZeroTrainer(object):
 			num_matchup_games = 40
 			for _ in progressbar(range(num_matchup_games), desc="Playing matchups"):
 				winner = self.play_matchup(prev_nn_wrapper, self.nn_wrapper)
+				print(winner)
 
 				if winner == 1:
 					prev_wins += 1
@@ -48,8 +49,10 @@ class AlphaZeroTrainer(object):
 
 			if win_perc > 0.6:
 				self.nn_wrapper.save_model("models", "%d.pt" % start_time)
+				self.nn_wrapper.save_model("models", "best.pt")
 				print("Win perc = %.2f, overwriting previous model." % win_perc)
 			else:
+				self.nn_wrapper.load_model("models/%d.pt" % start_time)
 				print("Win perc = %.2f, keeping previous model." % win_perc)
 
 			print("One self play ep: {}/{}, avg loss: {}".format(i,self.eps, loss))

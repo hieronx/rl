@@ -19,7 +19,7 @@ class Hex(Game):
 
 	def reset(self):
 		self.player = 1
-		self.board = HexBoard(self.board_size)
+		self.board = HexBoard(self.board_size[0])
 
 	def new_game(self):
 		return Hex(**self.params)
