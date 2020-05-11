@@ -44,7 +44,7 @@ class NetWrapper(object):
         with torch.no_grad():
             v, p = self.nn(board)
 
-        p = p.detach().numpy()
+        p = p.detach().cpu().numpy()
         return v, p
 
     def save_model(self, folder = "models", model_name = "fdsmodel.pt"):
@@ -72,7 +72,7 @@ class AlphaZeroNet(nn.Module):
         board_dim = game.get_board_dimensions()
 
         self.conv = ConvLayer(board_dim = board_dim, inplanes = input_planes)
-        self.res_layers = [ ResLayer() for i in range(res_layer_number)]
+        self.res_layers = nn.ModuleList([ ResLayer() for i in range(res_layer_number)])
         self.valueHead = ValueHead(board_dim = board_dim)
         self.policyHead = PolicyHead(board_dim = board_dim, action_size = game.get_action_size(), output_planes = game.get_output_planes())
 
