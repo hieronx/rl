@@ -1,7 +1,7 @@
 import torch
 import yaml
 
-from src.games.Hex import Hex
+from src.games.hex import Hex
 from src.mcts import MCTS
 from src.nn.wrapper import ModelWrapper
 from src.trainer import AlphaZeroTrainer

@@ -1,8 +1,7 @@
 import numpy as np
 
+from src.games.game import Game
 from src.utils.hexboard import HexBoard
-
-from .Game import Game
 
 
 class Hex(Game):

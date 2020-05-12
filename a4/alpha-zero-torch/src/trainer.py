@@ -5,7 +5,7 @@ from multiprocessing.dummy import Pool as ThreadPool
 import numpy as np
 
 from src.nn.wrapper import ModelWrapper
-from src.utils import progressbar
+from src.utils import print_progressbar, progressbar
 from src.utils.plot import unique_positions_vis
 from src.utils.replay_buffer import ReplayBuffer
 
@@ -20,7 +20,7 @@ class AlphaZeroTrainer(object):
 		self.arena_compare = params['arena_compare']
 		self.update_threshold = params['update_threshold']
 		self.n_games = params['n_games']
-		self.eps = params['eps']
+		self.iterations = params['iterations']
 		self.temp = params['temp']
 		self.replay_buffer = ReplayBuffer(self.queue_len)
 
@@ -31,15 +31,22 @@ class AlphaZeroTrainer(object):
 		# Save the initial model before any training
 		self.nn_wrapper.save_model("models", "%d.pt" % start_time)
 
-		for i in range(self.eps):
-			pool.map(self.play_game, range(self.n_games))
+		for i in progressbar(range(self.iterations), desc="Training", position=0):
+			completed_games = 0
+			start_time = time.time()
+			print_progressbar(desc='Playing games', completed=0, start_time=start_time, total=self.n_games, position=1)
+			# pool.map(self.play_game, range(self.n_games))
+			for _ in pool.imap_unordered(self.play_game, range(self.n_games)):
+				completed_games += 1
+				print_progressbar(desc='Playing games', completed=completed_games, start_time=start_time, total=self.n_games, position=1)
+
 			loss = self.nn_wrapper.train(self.replay_buffer)
 
 			prev_nn_wrapper = ModelWrapper(game, device, **params)
 			prev_nn_wrapper.load_model("models/%d.pt" % start_time)
 			
 			prev_wins, new_wins = 0, 0
-			for j in progressbar(range(self.arena_compare), desc="Playing matchups"):
+			for j in progressbar(range(self.arena_compare), desc="Playing matchups", position=1):
 				if j % 2 == 0:
 					winner = self.play_matchup(prev_nn_wrapper, self.nn_wrapper)
 				else:
@@ -60,17 +67,16 @@ class AlphaZeroTrainer(object):
 				self.nn_wrapper.load_model("models/%d.pt" % start_time)
 				print("Win perc = %.2f, keeping previous model." % win_perc)
 
-			print("One self play ep: {}/{}, avg loss: {}".format(i,self.eps, loss))
+			print("Finished self-play iteration %d/%d, avg loss: %.2f" % (i+1, self.iterations, loss))
 
 		return loss
 
-	def play_game(self, n_game):
+	def play_game(self, i):
 		winner = None
 		game = self.game.new_game()
 		mcts = self.mcts.new_mcts()
 		game_step = 0
 		temp = self.temp['before']
-		print(f'Playing game number {n_game}...')
 		while winner == None:
 			if game_step < self.temp['treshold']:
 				temp = self.temp['after']

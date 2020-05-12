@@ -8,6 +8,7 @@ import torch.optim as optim
 import torch.utils.data
 
 from src.nn.model import AlphaZeroNet
+from src.utils import print_progressbar, progressbar
 
 
 class ModelWrapper(object):
@@ -23,7 +24,7 @@ class ModelWrapper(object):
         total_loss = 0.0
         running_loss = 0
 
-        for i in range(training_steps): 
+        for i in progressbar(range(training_steps), desc="Training model", position=1): 
             board, policy, value = data.sample_batch(batch_size)
             self.optimizer.zero_grad()
             v, p = self.nn(torch.Tensor(board).to(self.device))
@@ -33,10 +34,10 @@ class ModelWrapper(object):
             running_loss += loss.item()
             total_loss += loss.item()
             
-            if i!= 0 and i % loss_display == 0:    
-                print('[%d, %5d] loss: %.3f' %
-                      (1, i + 1, running_loss / loss_display))
-                running_loss = 0.0
+            # if i!= 0 and i % loss_display == 0:    
+            #     print('[%d, %5d] loss: %.3f' %
+            #           (1, i + 1, running_loss / loss_display))
+            #     running_loss = 0.0
 
         return total_loss/training_steps
     
