@@ -7,6 +7,7 @@ import numpy as np
 from src.nn.wrapper import ModelWrapper
 from src.utils import progressbar
 from src.utils.plot import unique_positions_vis
+from src.utils.replay_buffer import ReplayBuffer
 
 
 class AlphaZeroTrainer(object):
@@ -23,8 +24,8 @@ class AlphaZeroTrainer(object):
 		self.temp = params['temp']
 		self.replay_buffer = ReplayBuffer(self.queue_len)
 
-	def train(self, game, device, lr=0.1, wd=0.005, **params):
-		pool = ThreadPool(cpu_count() * 4)
+	def train(self, game, device,  **params):
+		pool = ThreadPool(cpu_count())
 		start_time = int(time.time())
 
 		# Save the initial model before any training
@@ -34,7 +35,7 @@ class AlphaZeroTrainer(object):
 			pool.map(self.play_game, range(self.n_games))
 			loss = self.nn_wrapper.train(self.replay_buffer)
 
-			prev_nn_wrapper = ModelWrapper(game, device, lr, wd, **params)
+			prev_nn_wrapper = ModelWrapper(game, device, **params)
 			prev_nn_wrapper.load_model("models/%d.pt" % start_time)
 			
 			prev_wins, new_wins = 0, 0
@@ -107,28 +108,3 @@ class AlphaZeroTrainer(object):
 			current_player_idx = 2 if current_player_idx == 1 else 1
 		
 		return winner
-
-class ReplayBuffer(object):
-	def __init__(self, window_size):
-		super(ReplayBuffer, self).__init__()
-		self.buffer = []
-		self.window_size = window_size
-
-	def save_game(self, game):
-	    if len(self.buffer) > self.window_size:
-	      self.buffer.pop(0)
-	    self.buffer.append(game)
-
-	def sample_batch(self, batch_size):
-	    # n_positions = self.get_total_positions()
-
-	    games = np.random.choice(
-	        self.buffer,
-	        size= batch_size)
-
-	    game_pos = [(g, np.random.randint(len(g.history))) for g in games]
-	    pos = np.array([[g.make_input(i), *g.make_target(i)] for (g, i) in game_pos])
-	    return list(pos[:,0]), list(pos[:,1]), list(pos[:,2])
-
-	def get_total_positions(self):
-		return float(sum(len(g.history) for g in self.buffer))
