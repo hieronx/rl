@@ -1,12 +1,13 @@
 GAME:
   board_size: [5, 5]
-  # in_row: 3
 MCTS:
   n_simulations: 25
   cpuct: 1.0
   dirichlet_alpha: 1.10
 NN:
   n_res_layers: 5
+  learning_rate: 0.01
+  weight_decay: 0.015
 AZ:
   eps: 1000
   n_games: 50

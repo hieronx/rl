@@ -4,7 +4,7 @@ from multiprocessing.dummy import Pool as ThreadPool
 
 import numpy as np
 
-from src.NN import NetWrapper
+from src.nn.wrapper import ModelWrapper
 from src.utils import progressbar
 from src.utils.plot import unique_positions_vis
 
@@ -34,12 +34,12 @@ class AlphaZeroTrainer(object):
 			pool.map(self.play_game, range(self.n_games))
 			loss = self.nn_wrapper.train(self.replay_buffer)
 
-			prev_nn_wrapper = NetWrapper(game, device, lr, wd, **params)
+			prev_nn_wrapper = ModelWrapper(game, device, lr, wd, **params)
 			prev_nn_wrapper.load_model("models/%d.pt" % start_time)
 			
 			prev_wins, new_wins = 0, 0
-			for i in progressbar(range(self.arena_compare), desc="Playing matchups"):
-				if i % 2 == 0:
+			for j in progressbar(range(self.arena_compare), desc="Playing matchups"):
+				if j % 2 == 0:
 					winner = self.play_matchup(prev_nn_wrapper, self.nn_wrapper)
 				else:
 					winner = self.play_matchup(self.nn_wrapper, prev_nn_wrapper)
