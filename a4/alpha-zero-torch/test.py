@@ -3,7 +3,7 @@ import yaml
 
 from src.gameplay.logic import play_game, player_vs_player
 from src.gameplay.players import AlphaZeroPlayer, HumanPlayer
-from src.games.Hex import Hex
+from src.games.hex import Hex
 from src.mcts import MCTS
 from src.nn.wrapper import ModelWrapper
 
