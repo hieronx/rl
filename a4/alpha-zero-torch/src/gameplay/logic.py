@@ -39,7 +39,7 @@ def player_vs_player(game, p1, p2, n_games = 10, treshold = 0.5, print_b = False
 		elif winner == -1 and reverse_players:
 			wins_p1 += 1
 
-	print("Player 1 won:{}%, lost:{}%, drew:{}%".format(wins_p1, n_games - wins_p1 - draws, draws))
+	print("Player 1 won:{}, lost:{}, drew:{}, total:{}".format(wins_p1, n_games - wins_p1 - draws, draws, n_games))
 
 	winner_model = p1 if wins_p1/n_games > treshold else p2
 
