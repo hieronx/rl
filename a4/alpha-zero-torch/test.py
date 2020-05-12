@@ -23,4 +23,4 @@ mcts1 = MCTS(**config['MCTS'])
 mcts2 = MCTS(**config['MCTS'])
 
 #play_game(game, p1 =  AlphaZeroPlayer(nn1, mcts), p2 =  HumanPlayer(), print_b = True)
-player_vs_player(game, p1 =  AlphaZeroPlayer(nn1, mcts1),  p2 =  AlphaZeroPlayer(nn2, mcts2), n_games = 10, treshold = 0.5, print_b = False)
+player_vs_player(game, p1 =  AlphaZeroPlayer(nn1, mcts1),  p2 =  AlphaZeroPlayer(nn2, mcts2), n_games = 100, treshold = 0.5, print_b = False)
