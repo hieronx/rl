@@ -14,9 +14,11 @@ print("Running on device: %s" % device)
 
 game = Hex(**config['GAME'])
 nn1 = NetWrapper(game, device, lr=0.01, wd=0.015, **config['NN'])
-nn1.load_model("models/1589203166.pt")
+nn1.load_model("models/best_after_6_hours.pt")
+nn2 = NetWrapper(game, device, lr=0.01, wd=0.015, **config['NN'])
+nn2.load_model("models/best_after_29_ep.pt")
 
 mcts = MCTS(**config['MCTS'])
 
-play_game(game, p1 =  AlphaZeroPlayer(nn1, mcts), p2 =  HumanPlayer(), print_b = True)
-#player_vs_player(game, p1 =  AlphaZeroPlayer(nn, mcts),  p2 =  AlphaZeroPlayer(nn1, mcts), n_games = 100, treshold = 0.5, print_b = False)
+#play_game(game, p1 =  AlphaZeroPlayer(nn1, mcts), p2 =  HumanPlayer(), print_b = True)
+player_vs_player(game, p1 =  AlphaZeroPlayer(nn1, mcts),  p2 =  AlphaZeroPlayer(nn2, mcts), n_games = 100, treshold = 0.5, print_b = False)
