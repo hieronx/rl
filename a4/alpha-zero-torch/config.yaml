@@ -10,10 +10,8 @@ NN:
   weight_decay: 0.015
 AZ:
   iterations: 1000
-  n_games: 50
+  n_games: 5
   queue_len: 200000
-  arena_compare: 40
-  update_threshold: 0.6
   temp:
     treshold: 15
     before: 1
