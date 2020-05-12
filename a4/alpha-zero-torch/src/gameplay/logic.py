@@ -20,14 +20,16 @@ def play_game(game, p1, p2, print_b = False):
 		if print_b:
 			game.print_board()
 
-	return winner*game.get_player()
+	return winner
 
 def player_vs_player(game, p1, p2, n_games = 10, treshold = 0.5, print_b = False): 
 	draws = 0
 	wins_p1 = 0
+	
 	for i in progressbar(range(n_games), desc="Playing"):
 		print("Game: {}/{}".format(i,n_games))
 		winner = play_game(game = game, p1 = p1, p2 = p2, print_b = print_b) #todo: we should probabily vary who plays first, some games are biased torwards first players
+		print(winner)
 		if winner == 0:
 			draws += 1
 		elif winner == 1:
