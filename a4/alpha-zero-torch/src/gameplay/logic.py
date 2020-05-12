@@ -20,7 +20,7 @@ def play_game(game, p1, p2, print_b = False):
 		if print_b:
 			game.print_board()
 
-	return winner*game.get_player()
+	return winner
 
 def player_vs_player(game, p1, p2, n_games = 10, treshold = 0.5, print_b = False): 
 	draws = 0
