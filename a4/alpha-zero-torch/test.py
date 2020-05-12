@@ -14,9 +14,9 @@ print("Running on device: %s" % device)
 
 game = Hex(**config['GAME'])
 nn1 = NetWrapper(game, device, lr=0.01, wd=0.015, **config['NN'])
-nn1.load_model("models/best_after_6_hours.pt")
+nn1.load_model("tests/best_after_6_hours.pt")
 nn2 = NetWrapper(game, device, lr=0.01, wd=0.015, **config['NN'])
-nn2.load_model("models/best_after_29_ep.pt")
+nn2.load_model("tests/best_after_29_ep.pt")
 
 mcts = MCTS(**config['MCTS'])
 
