@@ -60,7 +60,7 @@ class ModelWrapper(object):
             }, "{}/{}".format(folder, model_name))
 
     def load_model(self, path = "models/fdsmodel.pt", load_optim = False):
-        cp = torch.load(path)
+        cp = torch.load(path, map_location=self.device)
         self.nn.load_state_dict(cp['model_state_dict'])
         if load_optim:   
             self.optimizer = optim.Adam(self.nn.parameters(), lr = 0.1, weight_decay = 0.005)
