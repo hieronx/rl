@@ -10,7 +10,7 @@ NN:
   weight_decay: 0.015
 AZ:
   iterations: 1000
-  n_games: 5
+  n_games: 50
   queue_len: 200000
   temp:
     treshold: 15
