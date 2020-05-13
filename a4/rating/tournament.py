@@ -34,8 +34,6 @@ def run_tournament(args):
             if player != opponent:
                 pairs.append((player, opponent))
     
-    pairs = pairs * args.num_games
-    
     results = {}
     for player in players:
         results[player['id']] = Rating()
@@ -50,26 +48,35 @@ def run_tournament(args):
     start_time = time.time()
     print_progressbar(desc='Running tournament', completed=0, start_time=start_time, total=len(pairs))
     
-    for winner, player_id, opponent_id in pool.imap_unordered(run_matchup, pairs):
-        completed_pairs += 1
-        print_progressbar(desc='Running tournament', completed=completed_pairs, start_time=start_time, total=len(pairs))
+    max_sigma = max(results[r].sigma for r in results)
+    i = 1
+    while max_sigma > args.sigma_threshold:
+        print('Max sigma %.2f > %.2f.' % (max_sigma, args.sigma_threshold))
         
-        # Calculate new ratings
-        r1 = results[player_id]
-        r2 = results[opponent_id]
+        for winner, player_id, opponent_id in pool.imap_unordered(run_matchup, pairs):
+            completed_pairs += 1
+            print_progressbar(desc='Running tournament', completed=completed_pairs, start_time=start_time, total=len(pairs) * i)
+            
+            # Calculate new ratings
+            r1 = results[player_id]
+            r2 = results[opponent_id]
 
-        if winner == -1:
-            r1, r2 = rate_1vs1(r1, r2, drawn=True)
-        elif winner == player_id:
-            r1, r2 = rate_1vs1(r1, r2, drawn=False)
-        elif winner == opponent_id:
-            r2, r1 = rate_1vs1(r2, r1, drawn=False)
+            if winner == -1:
+                r1, r2 = rate_1vs1(r1, r2, drawn=True)
+            elif winner == player_id:
+                r1, r2 = rate_1vs1(r1, r2, drawn=False)
+            elif winner == opponent_id:
+                r2, r1 = rate_1vs1(r2, r1, drawn=False)
 
-        results[player_id] = r1
-        results[opponent_id] = r2
+            results[player_id] = r1
+            results[opponent_id] = r2
+            
+        max_sigma = max(results[r].sigma for r in results)
+        i += 1
     
+    print()
     for player_id in results:
-        print('%s: mu=%.2f (sigma=%.2f)' % (player_id, results[player_id].mu, results[player_id].sigma))
+        print('%s: μ = %.2f, σ = %.2f' % (player_id, results[player_id].mu, results[player_id].sigma))
 
 def run_matchup(matchup_input):
     """Runs a single matchup and updates the winner accordingly"""
