@@ -9,8 +9,8 @@ NN:
   learning_rate: 0.01
   weight_decay: 0.015
 AZ:
-  iterations: 50
-  n_games: 1
+  iterations: 1000
+  n_games: 50
   queue_len: 1000
   temp:
     treshold: 15
