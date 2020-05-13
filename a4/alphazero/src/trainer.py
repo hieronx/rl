@@ -1,3 +1,5 @@
+import os
+import pickle
 import time
 from multiprocessing import cpu_count
 from multiprocessing.dummy import Pool as ThreadPool
@@ -23,10 +25,10 @@ class AlphaZeroTrainer(object):
 		self.replay_buffer = ReplayBuffer(self.queue_len)
 
 	def train(self, game, device,  **params):
-		start_time = int(time.time())
+		run_start_time = int(time.time())
 
 		# Save the initial model before any training
-		self.nn_wrapper.save_model("models", "%d.pt" % start_time)
+		self.nn_wrapper.save_model("models", "%d.pt" % run_start_time)
 
 		for i in progressbar(range(self.iterations), desc="Overall progress", position=0):
 			completed_games = 0
@@ -39,7 +41,9 @@ class AlphaZeroTrainer(object):
 
 			loss = self.nn_wrapper.train(self.replay_buffer)
 
-			self.nn_wrapper.save_model("models", "%d.pt" % start_time)
+			self.nn_wrapper.save_model("models", "%d.pt" % run_start_time)
+			pickle.dump(self.replay_buffer, open(os.path.join("models", "%d-rb.p" % run_start_time), "wb"))
+
 			# print("Finished self-play iteration %d/%d, avg loss: %.2f" % (i+1, self.iterations, loss))
 
 		return loss
