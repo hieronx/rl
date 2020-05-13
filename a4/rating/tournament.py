@@ -16,14 +16,16 @@ from . import get_search_class
 
 logger = logging.getLogger(__name__)
 
+board_size = 7
+
 def run_tournament(args):
     freeze_support()
 
     players = [
-        { 'id': 'minimax', 'search': 'minimax', 'depth': 2, 'time_limit': None, 'eval': 'Dijkstra', 'rave_k': -1 },
-        { 'id': 'mcts', 'search': 'mcts', 'depth': 2, 'time_limit': None, 'eval': 'Dijkstra', 'rave_k': -1 },
-        { 'id': 'alphazero-6hrs', 'search': 'alphazero', 'model_path': 'alphazero/tests/best_after_6_hours.pt', 'name': '6 hours' },
-        { 'id': 'alphazero-29it', 'search': 'alphazero', 'model_path': 'alphazero/tests/best_after_29_ep.pt', 'name': '29 iterations' },
+        { 'id': 'minimax', 'search': 'minimax', 'depth': None, 'time_limit': 0.1, 'eval': 'Dijkstra', 'rave_k': -1 },
+        { 'id': 'mcts', 'search': 'mcts', 'depth': None, 'time_limit': 0.1, 'eval': 'Dijkstra', 'rave_k': -1 },
+        { 'id': 'alphazero-6hrs', 'search': 'alphazero', 'model_path': 'alphazero/tests/50iterations_1.pt', 'name': 'AlphaZero, 50 iterations (1)' },
+        { 'id': 'alphazero-29it', 'search': 'alphazero', 'model_path': 'alphazero/tests/50iterations_2.pt', 'name': 'AlphaZero, 50 iterations (2)' },
     ]
 
     pairs = []
@@ -84,11 +86,11 @@ def run_matchup(matchup_input):
     """Runs a single matchup and updates the winner accordingly"""
     player, opponent = matchup_input
 
-    m1, m2 = get_search_class(player, board_size=5), get_search_class(opponent, board_size=5)
+    m1, m2 = get_search_class(player, board_size=board_size), get_search_class(opponent, board_size=board_size)
     r1_color, r2_color = HexBoard.RED, HexBoard.BLUE
     r1_first = bool(random.getrandbits(1))
     
-    winner, r1_first = simulate_single_game_winner(5, m1, m2, r1_first, r1_color, r2_color)
+    winner, r1_first = simulate_single_game_winner(board_size, m1, m2, r1_first, r1_color, r2_color)
 
     if winner == HexBoard.EMPTY:
         return (-1, player['id'], opponent['id'])
