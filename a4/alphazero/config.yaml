@@ -1,5 +1,5 @@
 GAME:
-  board_size: [5, 5]
+  board_size: [7, 7]
 MCTS:
   n_simulations: 25
   cpuct: 1.0
