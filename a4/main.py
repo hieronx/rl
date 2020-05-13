@@ -56,7 +56,7 @@ if __name__ == '__main__':
 
     tournament = subparsers.add_parser('tournament', help='Evaluate the RL algorithm using a tournament')
     tournament.add_argument('--max-threads', type=int, help='Set the maximum number of threads')
-    tournament.add_argument('--sigma_threshold', type=float, default=1.5, help='Set the confidence threshold')
+    tournament.add_argument('--sigma_threshold', type=float, default=1.0, help='Set the confidence threshold')
 
     tune = subparsers.add_parser('tune', help='Run a hyperparameter search for MCTS')
     tune.add_argument('--search', choices=searches.keys(), help='If added, run hyperparameter search for the chosen settings')
