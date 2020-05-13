@@ -1,20 +1,16 @@
 import numpy as np
-
+from collections import deque
 
 class ReplayBuffer(object):
 	def __init__(self, window_size):
 		super(ReplayBuffer, self).__init__()
-		self.buffer = []
+		self.buffer = deque(maxlen=window_size)
 		self.window_size = window_size
 
 	def save_game(self, game):
-	    if len(self.buffer) > self.window_size:
-	      self.buffer.pop(0)
 	    self.buffer.append(game)
 
 	def sample_batch(self, batch_size):
-	    # n_positions = self.get_total_positions()
-
 	    games = np.random.choice(
 	        self.buffer,
 	        size= batch_size)
