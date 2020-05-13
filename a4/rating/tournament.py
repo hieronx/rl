@@ -20,8 +20,8 @@ def run_tournament(args):
     freeze_support()
 
     players = [
-        { 'id': 'minimax', 'search': 'minimax', 'depth': None, 'time_limit': 0.1, 'eval': 'Dijkstra', 'rave_k': -1 },
-        { 'id': 'mcts', 'search': 'mcts', 'depth': None, 'time_limit': 0.1, 'eval': 'Dijkstra', 'rave_k': -1 },
+        { 'id': 'minimax', 'search': 'minimax', 'depth': 2, 'time_limit': None, 'eval': 'Dijkstra', 'rave_k': -1 },
+        { 'id': 'mcts', 'search': 'mcts', 'depth': 2, 'time_limit': None, 'eval': 'Dijkstra', 'rave_k': -1 },
         { 'id': 'alphazero-6hrs', 'search': 'alphazero', 'model_path': 'alphazero/tests/best_after_6_hours.pt', 'name': '6 hours' },
         { 'id': 'alphazero-29it', 'search': 'alphazero', 'model_path': 'alphazero/tests/best_after_29_ep.pt', 'name': '29 iterations' },
     ]
@@ -37,6 +37,8 @@ def run_tournament(args):
     results = {}
     for player in players:
         results[player['id']] = Rating()
+    
+    pairs = pairs * 2
 
     # Start the multi-threaded hyperparameter search
     thread_count = args.max_threads or (4 * cpu_count())
