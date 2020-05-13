@@ -2,7 +2,7 @@ import argparse
 import logging
 import sys
 
-from alphazero.play import play as play_alphazero
+# from alphazero.play import play as play_alphazero
 from alphazero.train import train as train_alphazero
 from rating.benchmark import run_benchmark
 from rating.configs import configs
