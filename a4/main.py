@@ -6,6 +6,7 @@ import sys
 from alphazero.train import train as train_alphazero
 from rating.benchmark import run_benchmark
 from rating.configs import configs
+from rating.tournament import run_tournament
 from rating.trueskill import run_trueskill
 from tune.plot import generate_custom_plots
 from tune.searches import searches
@@ -52,6 +53,10 @@ if __name__ == '__main__':
     trueskill.add_argument('--max-threads', type=int, help='Set the maximum number of threads')
     trueskill.add_argument('--plot', action='store_true', help='If added, save the plots of the TrueSkill evaluations')
     trueskill.add_argument('--disable-tt', action='store_true', help='If added, disables the transposition table')
+
+    tournament = subparsers.add_parser('tournament', help='Evaluate the RL algorithm using a tournament')
+    tournament.add_argument('--max-threads', type=int, help='Set the maximum number of threads')
+    tournament.add_argument('--num-games', type=int, default=4, help='Set the number of games per pair')
 
     tune = subparsers.add_parser('tune', help='Run a hyperparameter search for MCTS')
     tune.add_argument('--search', choices=searches.keys(), help='If added, run hyperparameter search for the chosen settings')
@@ -101,6 +106,11 @@ if __name__ == '__main__':
     elif args.command == 'trueskill':
         logger.info('Booting TrueSkill rating script...')
         run_trueskill(args)
+    
+    # Tournament command
+    elif args.command == 'tournament':
+        logger.info('Booting tournament rating script...')
+        run_tournament(args)
     
     # Tune command
     elif args.command == 'tune':

@@ -14,7 +14,7 @@ class Hex(Game):
 		self.probs = probs or []
 
 	def set_board(self, board):
-		raise NotImplementedError
+		self.board = board
 
 	def reset(self):
 		self.player = 1
