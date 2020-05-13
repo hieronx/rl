@@ -23,7 +23,6 @@ class AlphaZeroTrainer(object):
 		self.replay_buffer = ReplayBuffer(self.queue_len)
 
 	def train(self, game, device,  **params):
-		pool = ThreadPool(cpu_count())
 		start_time = int(time.time())
 
 		# Save the initial model before any training
@@ -33,7 +32,8 @@ class AlphaZeroTrainer(object):
 			completed_games = 0
 			start_time = time.time()
 			print_progressbar(desc='Playing games', completed=0, start_time=start_time, total=self.n_games, position=1)
-			for _ in pool.imap_unordered(self.play_game, range(self.n_games)):
+			for _ in range(self.n_games):
+				self.play_game(i)
 				completed_games += 1
 				print_progressbar(desc='Playing games', completed=completed_games, start_time=start_time, total=self.n_games, position=1)
 

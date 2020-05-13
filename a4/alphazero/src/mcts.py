@@ -44,7 +44,7 @@ class MCTS(object):
 		if winner != None:
 			return -winner
 
-		if not self.game_expanded(s):
+		if s not in self.game_states:
 			return -self.expand(s, game)
 		else:
 			game_state = self.game_states[s]
@@ -76,9 +76,6 @@ class MCTS(object):
 			valid_actions = poss
 
 		return valid_actions/sum(valid_actions)
-
-	def game_expanded(self, s):
-		return s in self.game_states
 
 
 class GameState():

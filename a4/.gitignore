@@ -5,6 +5,7 @@ __pycache__
 plots
 .vscode
 output
+models
 *.pyc
 __pycache__
 temp
