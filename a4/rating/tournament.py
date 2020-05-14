@@ -25,7 +25,7 @@ def run_tournament(args):
         { 'id': 'minimax', 'search': 'minimax', 'depth': None, 'time_limit': 0.1, 'eval': 'Dijkstra', 'rave_k': -1 },
         { 'id': 'mcts', 'search': 'mcts', 'depth': None, 'time_limit': 0.1, 'eval': 'Dijkstra', 'rave_k': -1 },
         { 'id': 'alphazero-50it-1', 'search': 'alphazero', 'model_path': 'alphazero/tests/50iterations_1.pt', 'name': 'AlphaZero, 50 iterations (1)' },
-        { 'id': 'alphazero-50it-2', 'search': 'alphazero', 'model_path': 'alphazero/tests/50iterations_2.pt', 'name': 'AlphaZero, 50 iterations (2)' },
+        { 'id': 'alphazero-50-after-fix', 'search': 'alphazero', 'model_path': 'alphazero/tests/50iterations_bugfixed.pt', 'name': 'AlphaZero, 50 bugfixed' },
         { 'id': 'alphazero-147it', 'search': 'alphazero', 'model_path': 'alphazero/tests/147it.pt', 'name': 'AlphaZero, 147 iterations' },
         { 'id': 'alphazero-random', 'search': 'alphazero', 'model_path': 'alphazero/tests/random.pt', 'name': 'AlphaZero, random weights' },
     ]
