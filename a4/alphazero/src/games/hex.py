@@ -84,7 +84,7 @@ class Hex(Game):
 		elif winner == HexBoard.EMPTY:
 			return 0
 		else:
-			return 1 if winner == HexBoard.RED else -1
+			return 1 * self.player if winner == HexBoard.RED else -1 * self.player
 
 	def print_board(self):
 		self.board.print()

@@ -20,6 +20,7 @@ def play_game(game, p1, p2, print_b = False):
 		if print_b:
 			game.print_board()
 
+	# TODO: this is now incorrect, as it used to return the player id, but now returns if current player won
 	return winner
 
 def player_vs_player(game, p1, p2, n_games = 10, treshold = 0.5, print_b = False): 
