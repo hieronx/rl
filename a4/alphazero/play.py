@@ -1,0 +1,26 @@
+import torch
+import yaml
+
+from alphazero.src.gameplay.logic import play_game, player_vs_player
+from alphazero.src.gameplay.players import AlphaZeroPlayer, HumanPlayer
+from alphazero.src.games.hex import Hex
+from alphazero.src.mcts import MCTS
+from alphazero.src.nn.wrapper import ModelWrapper
+
+with open("config.yaml", 'r') as f:
+    config = yaml.safe_load(f)
+
+device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+print("Running on device: %s" % device)
+
+game = Hex(**config['GAME'])
+nn1 = ModelWrapper(game, device, **config['NN'])
+nn1.load_model("tests/best_after_6_hours.pt")
+nn2 = ModelWrapper(game, device, **config['NN'])
+nn2.load_model("tests/best_after_29_ep.pt")
+
+mcts1 = MCTS(**config['MCTS'])
+mcts2 = MCTS(**config['MCTS'])
+
+#play_game(game, p1 =  AlphaZeroPlayer(nn1, mcts), p2 =  HumanPlayer(), print_b = True)
+player_vs_player(game, p1 =  AlphaZeroPlayer(nn1, mcts1),  p2 =  AlphaZeroPlayer(nn2, mcts2), n_games = 50, treshold = 0.5, print_b = False)
