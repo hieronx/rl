@@ -89,15 +89,6 @@ class Hex(Game):
 	def print_board(self):
 		self.board.print()
 
-	def get_board(self):
-		raise NotImplementedError
-
-	def get_input_representation(self):
-		raise NotImplementedError
-
-	def hashed_board(self):
-		raise NotImplementedError
-
 	def get_canonical_board(self):
 		return self.board.get_mirrored_board().as_np() if self.player == -1 else self.board.as_np()
 
