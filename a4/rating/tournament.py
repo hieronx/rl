@@ -24,8 +24,9 @@ def run_tournament(args):
     players = [
         { 'id': 'minimax', 'search': 'minimax', 'depth': None, 'time_limit': 0.1, 'eval': 'Dijkstra', 'rave_k': -1 },
         { 'id': 'mcts', 'search': 'mcts', 'depth': None, 'time_limit': 0.1, 'eval': 'Dijkstra', 'rave_k': -1 },
-        { 'id': 'alphazero-1', 'search': 'alphazero', 'model_path': 'alphazero/tests/50iterations_1.pt', 'name': 'AlphaZero, 50 iterations (1)' },
-        { 'id': 'alphazero-2', 'search': 'alphazero', 'model_path': 'alphazero/tests/50iterations_2.pt', 'name': 'AlphaZero, 50 iterations (2)' },
+        { 'id': 'alphazero-50it-1', 'search': 'alphazero', 'model_path': 'alphazero/tests/50iterations_1.pt', 'name': 'AlphaZero, 50 iterations (1)' },
+        { 'id': 'alphazero-50it-2', 'search': 'alphazero', 'model_path': 'alphazero/tests/50iterations_2.pt', 'name': 'AlphaZero, 50 iterations (2)' },
+        { 'id': 'alphazero-147it', 'search': 'alphazero', 'model_path': 'alphazero/tests/147it.pt', 'name': 'AlphaZero, 147 iterations' },
     ]
 
     pairs = []
@@ -40,26 +41,26 @@ def run_tournament(args):
     for player in players:
         results[player['id']] = Rating()
     
-    pairs = pairs * 2
+    pairs = pairs
 
     # Start the multi-threaded hyperparameter search
-    thread_count = args.max_threads or (4 * cpu_count())
+    thread_count = args.max_threads or cpu_count()
     logger.info('Creating %d threads for parallel search.' % thread_count)
 
     pool = ThreadPool(thread_count) if os.name == 'nt' else Pool(thread_count)
-
-    completed_pairs = 0
-    start_time = time.time()
-    print_progressbar(desc='Running tournament', completed=0, start_time=start_time, total=len(pairs))
     
     max_sigma = max(results[r].sigma for r in results)
     i = 1
     while max_sigma > args.sigma_threshold:
         print('Max sigma %.2f > %.2f.' % (max_sigma, args.sigma_threshold))
+
+        completed_pairs = 0
+        start_time = time.time()
+        print_progressbar(desc='Running tournament', completed=0, start_time=start_time, total=len(pairs))
         
         for winner, player_id, opponent_id in pool.imap_unordered(run_matchup, pairs):
             completed_pairs += 1
-            print_progressbar(desc='Running tournament', completed=completed_pairs, start_time=start_time, total=len(pairs) * i)
+            print_progressbar(desc='Running tournament', completed=completed_pairs, start_time=start_time, total=len(pairs))
             
             # Calculate new ratings
             r1 = results[player_id]
@@ -77,6 +78,10 @@ def run_tournament(args):
             
         max_sigma = max(results[r].sigma for r in results)
         i += 1
+
+        print()
+        for player_id in results:
+            print('%s: μ = %.2f, σ = %.2f' % (player_id, results[player_id].mu, results[player_id].sigma))
     
     print()
     for player_id in results:
