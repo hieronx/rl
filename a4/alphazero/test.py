@@ -1,26 +1,27 @@
-import torch
-import yaml
+import unittest
 
-from alphazero.src.gameplay.logic import play_game, player_vs_player
-from alphazero.src.gameplay.players import AlphaZeroPlayer, HumanPlayer
 from alphazero.src.games.hex import Hex
-from alphazero.src.mcts import MCTS
-from alphazero.src.nn.wrapper import ModelWrapper
+from util.hexboard import HexBoard
 
-with open("config.yaml", 'r') as f:
-    config = yaml.safe_load(f)
+class TestHex(unittest.TestCase):
+    """Have to write compulsive comments""" 
 
-device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-print("Running on device: %s" % device)
+    def test_canonical_board_state(self):
+       game = Hex(board_size = (7, 7))
+       for i in range(5):
+           game.play(i)
+       game.print_board()
+       
+       board = HexBoard(7)
+       board.from_np(game.get_canonical_board(), 7, 0).print()
+        
+       game.play(5)
+       board.from_np(game.get_canonical_board(), 7, 0).print()
+       
+       game.play(6)
+       board.from_np(game.get_canonical_board(), 7, 0).print()
 
-game = Hex(**config['GAME'])
-nn1 = ModelWrapper(game, device, **config['NN'])
-nn1.load_model("tests/best_after_6_hours.pt")
-nn2 = ModelWrapper(game, device, **config['NN'])
-nn2.load_model("tests/best_after_29_ep.pt")
 
-mcts1 = MCTS(**config['MCTS'])
-mcts2 = MCTS(**config['MCTS'])
-
-#play_game(game, p1 =  AlphaZeroPlayer(nn1, mcts), p2 =  HumanPlayer(), print_b = True)
-player_vs_player(game, p1 =  AlphaZeroPlayer(nn1, mcts1),  p2 =  AlphaZeroPlayer(nn2, mcts2), n_games = 50, treshold = 0.5, print_b = False)
+   
+if __name__ == '__main__':
+    unittest.main()
