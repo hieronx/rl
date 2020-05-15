@@ -44,8 +44,6 @@ class AlphaZeroTrainer(object):
 			self.nn_wrapper.save_model("models", "%d.pt" % run_start_time)
 			pickle.dump(self.replay_buffer, open(os.path.join("models", "%d-rb.p" % run_start_time), "wb"))
 
-			# print("Finished self-play iteration %d/%d, avg loss: %.2f" % (i+1, self.iterations, loss))
-
 		return loss
 
 	def play_game(self, i):
@@ -59,7 +57,8 @@ class AlphaZeroTrainer(object):
 				temp = self.temp['after']
 			
 			action_probs = mcts.simulate(game, self.nn_wrapper, temp)
-			action = np.argmax(action_probs)
+			action = np.random.choice(len(action_probs), p=action_probs)
+
 			game.play(action)
 				
 			winner = game.check_winner()
