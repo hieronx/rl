@@ -1,5 +1,9 @@
-import numpy as np
 from collections import deque
+
+import numpy as np
+
+from util.hexboard import HexBoard
+
 
 class ReplayBuffer(object):
     """
@@ -23,7 +27,28 @@ class ReplayBuffer(object):
 
         game_pos = [(g, np.random.randint(len(g.history))) for g in games]
         pos = np.array([[g.make_input(i), *g.make_target(i)] for (g, i) in game_pos])
-        return list(pos[:,0]), list(pos[:,1]), list(pos[:,2])
+        ret = list(pos[:,0]), list(pos[:,1]), list(pos[:,2])
+
+        # for game in games:
+        #     for i in range(len(game.history)):
+        #         board_np = game.make_input(i)
+        #         policy, value = game.make_target(i)
+
+        #         board = HexBoard(7)
+        #         board.from_np(board_np, 7, 0).print()
+        #         print(policy)
+        #         print(value)
+        #         print('\n\n\n\n')
+        #     print('Winner: %s' % game.check_winner()) 
+        #     exit()   
+
+        # board = HexBoard(7)
+        # board.from_np(ret[0][0], 7, 0).print()
+        # print(ret[1][0])
+        # print(ret[2][0])
+        # print('\n\n\n\n')
+        
+        return ret
 
     def get_total_positions(self):
         """Returns the complete length of ALL the frames in the replay buffer"""

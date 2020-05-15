@@ -47,9 +47,6 @@ class Hex(Game):
 	def get_possible_actions_index(self):
 		return np.argwhere(self.get_possible_actions() != 0).flatten()
 
-	def get_player(self):
-		return self.player
-
 	def play(self, action):
 		x = int(action / self.board_size[0])
 		y = int(action % self.board_size[1])
@@ -67,14 +64,30 @@ class Hex(Game):
 		self.probs.append(p)
 
 	def make_input(self, i):
-		player = -1 if i % 2 == 0 else 1  
-		return player * self.history[i]
+		player = -1 if i % 2 == 0 else 1
 
-	def make_target(self, i):
-		player = -1 if i % 2 == 0 else 1  
-		winner = self.check_winner()		
+		board = HexBoard(self.board_size[0])
+		board = board.from_np(self.history[i], self.board_size[0], 0)
+		canonical_board = board.get_mirrored_board().as_np() if player == -1 else board.as_np()
 
-		return self.probs[i], winner*self.get_player()*player 
+		return canonical_board
+
+	def make_target(self, i):	
+		# Get canonical policy	
+		policy = self.probs[i].reshape((self.board_size[0], self.board_size[1]))
+		canonical_policy = np.fliplr(np.rot90(policy, axes=(1, 0)))
+		flattened_policy = canonical_policy.reshape((self.get_action_size()))
+
+		# Get value based on whether red won
+		winner = self.board.get_winner()
+		assert winner == 1 or winner == 2, "Winner is actually %s" % winner
+		value = 1 if winner == HexBoard.RED else -1
+
+		# Flip value based on the player of the current frame
+		player = -1 if i % 2 == 0 else 1
+		value = value * player
+
+		return flattened_policy, value
 
 	def check_winner(self):
 		winner = self.board.get_winner()
@@ -93,7 +106,7 @@ class Hex(Game):
 		return self.board.get_mirrored_board().as_np() if self.player == -1 else self.board.as_np()
 
 	def copy_game(self):
-		g = Hex(player = self.get_player(), 
+		g = Hex(player = self.player, 
 			history = list(self.history), 
 			probs = list(self.probs), 
 			**self.params)
