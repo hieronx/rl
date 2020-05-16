@@ -17,7 +17,8 @@ def progressbar(it, desc="", position=None, size=None, start=0, total=None, file
     count = total or len(it)
 
     def show(j, ips, sec_elapsed_total):
-        _, columns = os.popen('stty size', 'r').read().split()
+        # _, columns = os.popen('stty size', 'r').read().split()
+        columns = 140
 
         # Terminal width - description length - spacing - completed count - spacing - total count - spacing - time - ips
         width = size or (int(columns) - len(desc) - 5 - len(str(start + j)) - 1 - len(str(count)) - 2 - 11 - 10 - len(str(int(ips)))) 
@@ -52,7 +53,8 @@ def moveto(fp, n):
 
 def print_progressbar(desc="", completed=0, start_time=None, total=0, position=None, file=sys.stdout):
     """Prints a progressbar to the console using the provided parameters"""
-    _, columns = os.popen('stty size', 'r').read().split()
+    # _, columns = os.popen('stty size', 'r').read().split()
+    columns = 140
 
     # Terminal width - description length - spacing - completed count - spacing - total count - spacing - time - ips
     width = (int(columns) - len(desc) - 5 - len(str(completed)) - 1 - len(str(total)) - 2 - 11 - 13) 
