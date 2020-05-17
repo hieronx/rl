@@ -2,15 +2,15 @@ GAME:
   board_size: [7, 7]
 MCTS:
   n_simulations: 25
-  cpuct: 2.0
+  cpuct: 0.4
   dirichlet_alpha: 1.10
 NN:
   n_res_layers: 5
   learning_rate: 0.01
   weight_decay: 0.015
 AZ:
-  iterations: 250
-  n_games: 10
+  iterations: 50
+  n_games: 50
   queue_len: 150
   temp:
     treshold: 15
