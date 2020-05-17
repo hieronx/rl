@@ -15,4 +15,4 @@ AZ:
   temp:
     treshold: 15
     before: 1
-    after: 1
+    after: 0.2
