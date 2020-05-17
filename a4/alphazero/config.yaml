@@ -2,7 +2,7 @@ GAME:
   board_size: [7, 7]
 MCTS:
   n_simulations: 25
-  cpuct: 5
+  cpuct: 2
   dirichlet_alpha: 1.10
 NN:
   n_res_layers: 5
@@ -11,7 +11,7 @@ NN:
 AZ:
   iterations: 50
   n_games: 50
-  queue_len: 150
+  queue_len: 1500
   temp:
     treshold: 15
     before: 1
