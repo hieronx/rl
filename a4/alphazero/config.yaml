@@ -2,7 +2,7 @@ GAME:
   board_size: [7, 7]
 MCTS:
   n_simulations: 25
-  cpuct: 0.4
+  cpuct: 5
   dirichlet_alpha: 1.10
 NN:
   n_res_layers: 5
