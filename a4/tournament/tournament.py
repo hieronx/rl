@@ -11,23 +11,13 @@ from trueskill import Rating, rate_1vs1
 from rating import get_search_class
 from rating.simulate import simulate_single_game_winner
 from tournament.configs import configs
+from tournament.export import save_plots, save_results
 from util import print_progressbar
 from util.hexboard import HexBoard
 
 logger = logging.getLogger(__name__)
 
 board_size = 7
-
-def save_results(tournament_name, line, clear=False):
-    if not os.path.exists('output'): os.makedirs('output')
-
-    fn = 'output/tournament_%s.csv' % tournament_name
-    if clear and os.path.isfile(fn): os.remove(fn)
-
-    with open(fn, 'a') as fd:
-        fd.write(';'.join(map(str, line)) + '\n')
-
-
 
 
 def run_tournament(args):
@@ -89,6 +79,7 @@ def run_tournament(args):
             data = [rating.mu for player_id, rating in results.items()]
             data += [rating.sigma for player_id, rating in results.items()]
             save_results(args.config, data)
+            save_plots(args.config)
             
         max_sigma = max(results[r].sigma for r in results)
         i += 1
