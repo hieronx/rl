@@ -27,6 +27,4 @@ def save_plots(tournament_name):
     ax.legend(player_ids)
     
     fn = 'output/tournament_%s.png' % tournament_name
-    fig = ax.get_figure()
-    fig.savefig(fn)
-    plt.close(fig)
+    ax.get_figure().savefig(fn)
