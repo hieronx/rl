@@ -3,7 +3,7 @@ GAME:
 MCTS:
   n_simulations: 25
   cpuct: .4
-  dirichlet_alpha: 1.10
+  dirichlet_alpha: 2.20
 NN:
   n_res_layers: 5
   learning_rate: 0.01
