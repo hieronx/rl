@@ -3,6 +3,21 @@ configs = {
         { 'id': 'minimax', 'search': 'minimax', 'depth': None, 'time_limit': 0.1, 'eval': 'Dijkstra', 'rave_k': -1 },
         { 'id': 'mcts', 'search': 'mcts', 'depth': None, 'time_limit': 0.1, 'eval': 'Dijkstra', 'rave_k': -1 },
     ],
+    'not_working':[
+        { 'id': 'AZ_50it_50g_old', 'search': 'alphazero', 'model_path': 'alphazero/tests/old_50iterations_1.pt'},
+        { 'id': 'Random', 'search': 'alphazero', 'model_path': 'alphazero/tests/random.pt'},
+    ],
+    'still_not_working':[
+        { 'id': 'AZ_50it_50g_bugfixed', 'search': 'alphazero', 'model_path': 'alphazero/tests/old_50iterations_bugfixed.pt'},
+        { 'id': 'AZ_50it_50g_old', 'search': 'alphazero', 'model_path': 'alphazero/tests/old_50iterations_1.pt'},
+        { 'id': 'Random', 'search': 'alphazero', 'model_path': 'alphazero/tests/random.pt'},
+    ],
+    'finally_success':[
+        { 'id': 'AZ_50it_50g_success', 'search': 'alphazero', 'model_path': 'alphazero/tests/new_50x50it_cp2_da1.1_q150.pt'},
+        { 'id': 'AZ_50it_50g_bugfixed', 'search': 'alphazero', 'model_path': 'alphazero/tests/old_50iterations_bugfixed.pt'},
+        { 'id': 'AZ_50it_50g_old', 'search': 'alphazero', 'model_path': 'alphazero/tests/old_50iterations_1.pt'},
+        { 'id': 'Random', 'search': 'alphazero', 'model_path': 'alphazero/tests/random.pt'},
+    ],
     '50_50_mcts_minimax': [
         { 'id': 'AZ_50it_50g_1', 'search': 'alphazero', 'model_path': 'alphazero/tests/new_50x50it_cp2_da1.1_q150.pt'},
         { 'id': 'AZ_50it_50g_2', 'search': 'alphazero', 'model_path': 'alphazero/tests/new_50x50it_cp2_da1.1_q150_2.pt'},
