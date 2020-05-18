@@ -27,4 +27,3 @@ def save_plots(tournament_name):
     
     fn = 'output/tournament_%s.png' % tournament_name
     ax.get_figure().savefig(fn)
-    print('Saved %s' % fn)
