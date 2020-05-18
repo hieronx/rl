@@ -6,8 +6,9 @@ import sys
 from alphazero.train import train as train_alphazero
 from rating.benchmark import run_benchmark
 from rating.configs import configs
-from rating.tournament import run_tournament
 from rating.trueskill import run_trueskill
+from tournament.configs import configs as tournament_configs
+from tournament.tournament import run_tournament
 from tune.plot import generate_custom_plots
 from tune.searches import searches
 from tune.tune import run_tune
@@ -55,6 +56,7 @@ if __name__ == '__main__':
     trueskill.add_argument('--disable-tt', action='store_true', help='If added, disables the transposition table')
 
     tournament = subparsers.add_parser('tournament', help='Evaluate the RL algorithm using a tournament')
+    tournament.add_argument('--config', choices=tournament_configs.keys(), required=True, help='If added, run the given tournament configuration set')
     tournament.add_argument('--max-threads', type=int, help='Set the maximum number of threads')
     tournament.add_argument('--sigma_threshold', type=float, default=1.0, help='Set the confidence threshold')
 

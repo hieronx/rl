@@ -8,27 +8,32 @@ from multiprocessing.pool import ThreadPool
 
 from trueskill import Rating, rate_1vs1
 
+from rating import get_search_class
 from rating.simulate import simulate_single_game_winner
+from tournament.configs import configs
 from util import print_progressbar
 from util.hexboard import HexBoard
-
-from . import get_search_class
 
 logger = logging.getLogger(__name__)
 
 board_size = 7
 
+def save_results(tournament_name, line, clear=False):
+    if not os.path.exists('output'): os.makedirs('output')
+
+    fn = 'output/tournament_%s.csv' % tournament_name
+    if clear and os.path.isfile(fn): os.remove(fn)
+
+    with open(fn, 'a') as fd:
+        fd.write(';'.join(map(str, line)) + '\n')
+
+
+
+
 def run_tournament(args):
     freeze_support()
 
-    players = [
-        { 'id': 'alphazero-50it-1', 'search': 'alphazero', 'model_path': 'alphazero/tests/50iterations_1.pt', 'name': 'AlphaZero, 50 iterations (1)' },
-        { 'id': 'alphazero-150it', 'search': 'alphazero', 'model_path': 'alphazero/tests/150it.pt', 'name': 'AlphaZero, 150 iterations' },
-        { 'id': 'alphazero-random', 'search': 'alphazero', 'model_path': 'alphazero/tests/random.pt', 'name': 'AlphaZero, random weights' },
-        { 'id': 'alphazero-50it-final', 'search': 'alphazero', 'model_path': 'alphazero/tests/50it_fixed.pt', 'name': 'AlphaZero, trained after all revisions' },
-        # { 'id': 'minimax', 'search': 'minimax', 'depth': None, 'time_limit': 0.1, 'eval': 'Dijkstra', 'rave_k': -1 },
-        # { 'id': 'mcts', 'search': 'mcts', 'depth': None, 'time_limit': 0.1, 'eval': 'Dijkstra', 'rave_k': -1 },
-    ]
+    players = configs[args.config]
 
     pairs = []
     opponents = copy.deepcopy(players)
@@ -44,6 +49,10 @@ def run_tournament(args):
     
     pairs = pairs
 
+    header = [player_id + '_mu' for player_id, rating in results.items()]
+    header += [player_id + '_sigma' for player_id, rating in results.items()]
+    save_results(args.config, header, clear=True)
+
     # Start the multi-threaded hyperparameter search
     thread_count = args.max_threads or cpu_count()
     logger.info('Creating %d threads for parallel search.' % thread_count)
@@ -52,7 +61,6 @@ def run_tournament(args):
     
     max_sigma = max(results[r].sigma for r in results)
     i = 1
-    args.sigma_threshold = 0.85
     while max_sigma > args.sigma_threshold:
         print('Max sigma %.2f > %.2f.' % (max_sigma, args.sigma_threshold))
 
@@ -77,6 +85,10 @@ def run_tournament(args):
 
             results[player_id] = r1
             results[opponent_id] = r2
+
+            data = [rating.mu for player_id, rating in results.items()]
+            data += [rating.sigma for player_id, rating in results.items()]
+            save_results(args.config, data)
             
         max_sigma = max(results[r].sigma for r in results)
         i += 1
