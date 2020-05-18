@@ -1,9 +1,10 @@
 import math
+import pickle
+import time
+
 import numpy as np
 import torch
-import pickle
 
-#TODO add asserts
 
 class MCTS(object):
 	def __init__(self, **params):
@@ -14,18 +15,24 @@ class MCTS(object):
 		self.n_simulations = params['n_simulations']
 		self.dirichlet_alpha = params['dirichlet_alpha']
 
-	def reset(self):  #discards tree TODO: there's no need to completly discard the tree
+	def reset(self):
 		self.game_states = {}
 
 	def new_mcts(self):
 		return MCTS(**self.params)
 
-	def simulate(self, game, nn, temp = 1):
+	def simulate(self, game, nn, temp = 1, time_limit=None):
 		self.root_node = str(game.get_canonical_board())
 		self.nn_wrapper = nn
 
-		for i in range(self.n_simulations):
-			self.search(game)
+		if time_limit:
+			start_time = time.time()
+			while (time.time() - start_time) < time_limit:
+				self.search(game)
+		else:
+			print('Running for %d iterations' % self.n_simulations)
+			for i in range(self.n_simulations):
+				self.search(game)
 
 		p = self.calc_policy(self.game_states[self.root_node], temp) 
 		game.add_policy(p)

@@ -33,9 +33,9 @@ class AlphaZeroPlayer(Player):
 		# print(action_probs)
 		return action
 
-	def get_action_for_board(self, game, board):
+	def get_action_for_board(self, game, board, time_limit=None):
 		game.set_board(board)
-		action_probs = self.mcts.simulate(game, self.nn)
+		action_probs = self.mcts.simulate(game, self.nn, time_limit=time_limit)
 		action = np.argmax(action_probs)
 		return action
 
