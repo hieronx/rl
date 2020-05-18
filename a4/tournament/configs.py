@@ -27,6 +27,13 @@ configs = {
         { 'id': 'ID-TT alpha-beta', 'search': 'minimax', 'depth': None, 'time_limit': 0.1, 'eval': 'Dijkstra', 'rave_k': -1 },
         { 'id': 'MCTS', 'search': 'mcts', 'depth': None, 'time_limit': 0.1, 'eval': 'Dijkstra', 'rave_k': -1 },
     ],
+    '50_50_temp_mcts_minimax': [
+        { 'id': 'AlphaZero 50 it. (1)', 'search': 'alphazero', 'model_path': 'alphazero/tests/new_50x50it_cp2_da1.1_q150.pt'},
+        { 'id': 'AlphaZero 50 it. (2)', 'search': 'alphazero', 'model_path': 'alphazero/tests/new_50x50it_cp2_da1.1_q150_2.pt'},
+        { 'id': 'AlphaZero 50 it. temp 0.2.', 'search': 'alphazero', 'model_path': 'alphazero/tests/new_50x50it_cp2_da1.1_q1500_temp0.2.pt'},
+        { 'id': 'ID-TT alpha-beta', 'search': 'minimax', 'depth': None, 'time_limit': 0.1, 'eval': 'Dijkstra', 'rave_k': -1 },
+        { 'id': 'MCTS', 'search': 'mcts', 'depth': None, 'time_limit': 0.1, 'eval': 'Dijkstra', 'rave_k': -1 },
+    ],
     'training_length': [
         { 'id': '0 it. (random weights)', 'search': 'alphazero', 'model_path': 'alphazero/tests/random.pt'},
         { 'id': '50 it.', 'search': 'alphazero', 'model_path': 'alphazero/tests/new_50x50it_cp2_da1.1_q150.pt'},
