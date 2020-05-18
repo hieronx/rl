@@ -79,9 +79,9 @@ def run_tournament(args):
             data = [rating.mu for player_id, rating in results.items()]
             data += [rating.sigma for player_id, rating in results.items()]
             save_results(args.config, data)
-            save_plots(args.config)
             
         max_sigma = max(results[r].sigma for r in results)
+        save_plots(args.config)
         i += 1
 
         print()
