@@ -1,5 +1,6 @@
 import os
 
+import matplotlib.pyplot as plt
 import pandas as pd
 
 
@@ -26,4 +27,6 @@ def save_plots(tournament_name):
     ax.legend(player_ids)
     
     fn = 'output/tournament_%s.png' % tournament_name
-    ax.get_figure().savefig(fn)
+    fig = ax.get_figure()
+    fig.savefig(fn)
+    plt.close(fig)
