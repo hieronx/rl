@@ -12,7 +12,7 @@ def get_search_class(player, disable_tt=False, board_size=5):
     elif player['search'] == 'mcts':
         return MCTS(player['depth'], player['time_limit'], 0.4, False, player['rave_k'])
     elif player['search'] == 'alphazero':
-        return AlphaZero(player['model_path'], player['id'], board_size)
+        return AlphaZero(player['model_path'], player['id'], board_size, player['time_limit'])
 
 def get_eval_class(eval_method):
     if eval_method == 'Dijkstra':

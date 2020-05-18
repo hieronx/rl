@@ -13,10 +13,11 @@ logger = logging.getLogger(__name__)
 
 class AlphaZero(HexSearchMethod):
 
-    def __init__(self, model_path, name, board_size):
+    def __init__(self, model_path, name, board_size, time_limit=None):
         self.model_path = model_path
         self.name = name
         self.board_size = board_size
+        self.time_limit = time_limit
         
         device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
             
@@ -31,7 +32,7 @@ class AlphaZero(HexSearchMethod):
         self.player = AlphaZeroPlayer(self.nn, self.mcts)
         
     def get_next_move(self, board, color):
-        action = self.player.get_action_for_board(self.game, board)
+        action = self.player.get_action_for_board(self.game, board, self.time_limit)
 
         x = int(action / self.board_size)
         y = int(action % self.board_size)
