@@ -51,7 +51,8 @@ def run_tournament(args):
     
     max_sigma = max(results[r].sigma for r in results)
     i = 1
-    while max_sigma > args.sigma_threshold:
+    total_games = 0
+    while max_sigma > args.sigma_threshold and total_games < 610:
         print('Max sigma %.2f > %.2f.' % (max_sigma, args.sigma_threshold))
 
         completed_pairs = 0
@@ -81,13 +82,14 @@ def run_tournament(args):
             save_results(args.config, data)
             
         max_sigma = max(results[r].sigma for r in results)
-        save_plots(args.config)
+        total_games += completed_pairs
         i += 1
 
         print()
         for player_id in results:
             print('%s: μ = %.2f, σ = %.2f' % (player_id, results[player_id].mu, results[player_id].sigma))
     
+    save_plots(args.config)
     print()
     for player_id in results:
         print('%s: μ = %.2f, σ = %.2f' % (player_id, results[player_id].mu, results[player_id].sigma))
